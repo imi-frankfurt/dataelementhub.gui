@@ -1,0 +1,37 @@
+---
+kind: pipeline
+type: docker
+name: build-gui
+
+steps:
+  - name: docker
+    image: docker
+    volumes:
+      - name: docker
+        path: /var/run/docker.sock
+    environment:
+      nexus_user:
+        from_secret: nexus_user
+      nexus_pass:
+        from_secret: nexus_pass
+      docker_path: /mdr/mdr.gui
+      docker_registry: docker.dev.mig-frankfurt.de
+    commands:
+      - export docker_image=$docker_registry$docker_path
+      - docker build --pull -t $docker_image:dev .
+      - docker login $docker_registry -u $nexus_user -p $nexus_pass
+      - docker push $docker_image:dev
+
+volumes:
+  - name: docker
+    host:
+      path: /var/run/docker.sock
+
+trigger:
+  event:
+    - pull_request
+    - cron
+  cron:
+    - daily-build
+  branch:
+    - develop
