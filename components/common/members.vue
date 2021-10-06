@@ -74,7 +74,8 @@ export default {
     draggable
   },
   props: {
-    namespaceUrn: { required: true, type: String }
+    namespaceUrn: { required: true, type: String },
+    elementUrn: { required: false, default: '', type: String }
   },
   data () {
     return {
@@ -87,7 +88,7 @@ export default {
       },
       ajax: {
         namespaceUrl: process.env.mdrBackendUrl + '/v1/namespaces/',
-        dataElementGroupUrl: process.env.mdrBackendUrl + '/v1/element/'
+        elementUrl: process.env.mdrBackendUrl + '/v1/element/'
       },
       namespaceMembers: [],
       selectedMembers: [],
@@ -102,7 +103,10 @@ export default {
   watch: {
     $props: {
       handler () {
-        this.fetchMembers(this.namespaceUrn)
+        this.fetchNamespaceMembers(this.namespaceUrn)
+        if (this.elementUrn !== '') { // load group/record members only in edit mode
+          this.fetchElementMembers(this.elementUrn)
+        }
       },
       deep: true,
       immediate: true
@@ -130,7 +134,7 @@ export default {
     }
   },
   methods: {
-    async fetchMembers (namespaceUrn) {
+    async fetchNamespaceMembers (namespaceUrn) {
       const namespaceIdentifier = namespaceUrn.split(':')[1]
       await this.$axios.$get(this.ajax.namespaceUrl + namespaceIdentifier +
         '/members', Ajax.header.listView)
@@ -148,6 +152,23 @@ export default {
             })
           }
           this.namespaceMembers = members
+        }.bind(this))
+    },
+    async fetchElementMembers (elementUrn) {
+      await this.$axios.$get(this.ajax.elementUrl + elementUrn +
+        '/members', Ajax.header.listView)
+        .then(function (res) {
+          const members = []
+          for (const member of Array.from(res)) {
+            const elementType = member.urn.split(':')[2]
+            members.push({
+              id: member.urn,
+              elementType,
+              designation: member.definition.designation,
+              definition: member.definition.definition
+            })
+          }
+          this.selectedMembers = members
         }.bind(this))
     },
     executeSearch () {

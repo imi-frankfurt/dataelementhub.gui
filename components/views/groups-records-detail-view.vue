@@ -7,7 +7,7 @@
       :element-type="elementType"
       @save="$emit('save', $event); loadDetails()"
       @saveFailure="$emit('saveFailure', $event)"
-      @dialogClosed="dialog.showDataElementGroup = false"
+      @dialogClosed="dialog = false"
     />
     <v-card
       color="grey lighten-4"
@@ -21,6 +21,7 @@
           v-if="editable"
           icon
           color="primary"
+          @click="editItem"
         >
           <v-icon>mdi-pencil</v-icon>
         </v-btn>
@@ -89,6 +90,9 @@ export default {
         .then(function (res) {
           this.element = res
         }.bind(this))
+    },
+    editItem () {
+      this.dialog = true
     },
     async deleteItem () {
       if (confirm(this.$i18n.t('global.itemDialog.deleteItemTitle').toString())) {
