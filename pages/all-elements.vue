@@ -30,7 +30,7 @@
       v-if="dialog.elementType === 'DATAELEMENT'"
       :show="dialog.showDataElement"
       :namespace-urn="dialog.namespaceUrn"
-      @save="updateTree($event);snackbar.saveSuccess = true"
+      @save="updateTree($event); snackbar.saveSuccess = true"
       @saveFailure="snackbar.saveFailure = true"
       @dialogClosed="dialog.showDataElement = false"
     />
@@ -39,7 +39,7 @@
       :show="dialog.showDataElementGroup"
       :namespace-urn="dialog.namespaceUrn"
       :element-type="dialog.elementType"
-      @save="snackbar.saveSuccess = true"
+      @save="updateTree($event); snackbar.saveSuccess = true"
       @saveFailure="snackbar.saveFailure = true"
       @dialogClosed="dialog.showDataElementGroup = false"
     />
@@ -61,6 +61,7 @@
         </v-btn>
         <v-treeview
           :key="componentKey"
+          :v-model="treeItems"
           :active.sync="activeElements"
           :open.sync="openNodes"
           :items="treeItems"
@@ -131,7 +132,7 @@
             :deletable="true"
             @save="updateTree($event); snackbar.saveSuccess = true"
             @saveFailure="snackbar.saveFailure = true"
-            @delete="snackbar.deleteSuccess = true"
+            @delete="updateTree(selectedElement) ; snackbar.deleteSuccess = true"
             @deleteFailure="snackbar.deleteFailure = true"
           />
           <GroupsRecordsDetailView
@@ -142,7 +143,7 @@
             :deletable="true"
             @save="snackbar.saveSuccess = true"
             @saveFailure="snackbar.saveFailure = true"
-            @delete="snackbar.deleteSuccess = true"
+            @delete="updateTree(selectedElement) ; snackbar.deleteSuccess = true"
             @deleteFailure="snackbar.deleteFailure = true"
           />
           <NamespaceDetailView
@@ -153,7 +154,7 @@
             :deletable="true"
             @save="updateTree($event); snackbar.saveSuccess = true"
             @saveFailure="snackbar.saveFailure = true"
-            @delete="snackbar.deleteSuccess = true"
+            @delete="updateTree(selectedElement) ; snackbar.deleteSuccess = true"
             @deleteFailure="snackbar.deleteFailure = true"
           />
         </div>
@@ -193,7 +194,8 @@ export default {
       showDataElement: false,
       showDataElementGroup: false,
       elementType: 'None',
-      namespaceUrn: ''
+      namespaceUrn: '',
+      parentUrn: ''
     },
     snackbar: {
       deleteFailure: false,
@@ -229,27 +231,45 @@ export default {
     this.fetchNamespaces()
   },
   methods: {
-    refreshTree () {
-      this.fetchNamespaces()
-      this.componentKey = this.componentKey + 1
-    },
-    updateTree (e) {
+    updateTree (element) {
       this.$log.debug('Element saved now update the Tree ...')
-      this.$log.debug(e)
-      switch (e.identification.elementType) {
+      this.$log.debug(element)
+      const findAnd = require('find-and')
+      const item = {
+        id: element.identification.urn,
+        editable: true,
+        name: element.definitions[0].designation,
+        elementType: element.identification.elementType,
+        children: element.identification.elementType === 'DATAELEMENT' ? undefined : []
+      }
+      switch (element.identification.elementType) {
         case 'NAMESPACE': {
-          const item = {
-            id: e.identification.urn,
-            editable: true,
-            name: e.definitions[0].designation,
-            elementType: 'NAMESPACE',
-            children: []
+          if (element.action === 'CREATE') {
+            item.children = []
+            this.treeItems.push(item)
+          } else if (element.action === 'UPDATE') {
+            const previousItem = findAnd.returnFound(this.treeItems, { id: element.previousUrn })
+            item.children = previousItem.children
+            this.treeItems = findAnd.replaceObject(this.treeItems, { id: element.previousUrn }, item)
+          } else {
+            this.treeItems = findAnd.removeObject(this.treeItems, { id: element.identification.urn })
           }
-          this.treeItems.push(item)
           break
         }
         case 'DATAELEMENT':
+        case 'DATAELEMENTGROUP':
+        case 'RECORD': {
+          if (element.action === 'CREATE') {
+            const parentElement = findAnd.returnFound(this.treeItems, { id: this.dialog.parentUrn })
+            parentElement.children.push(item)
+            this.treeItems = findAnd.replaceObject(this.treeItems, { id: this.dialog.parentUrn }, parentElement)
+          } else if (element.action === 'UPDATE') {
+            this.treeItems = findAnd.replaceObject(this.treeItems, { id: element.previousUrn }, item)
+          } else {
+            this.treeItems = findAnd.removeObject(this.treeItems, { id: element.identification.urn })
+          }
           break
+        }
       }
     },
     async fetchNamespaces () {
@@ -275,7 +295,7 @@ export default {
       await this.$axios.$get(!this.isNamespace(element.id)
         ? this.ajax.elementUrl + element.id +
         '/members'
-        : this.ajax.namespaceUrl + element.id.split(':')[1] +
+        : this.ajax.namespaceUrl + element.id.split(':')[3] +
         '/members', Ajax.header.listView)
         .then(function (res) {
           const members = []
@@ -284,11 +304,11 @@ export default {
             let elementType
             if (!this.isNamespace(element.id)) {
               elementType = member.urn.split(':')[2].toUpperCase()
-              id = member.urn
+              id = member.urn.toLowerCase()
             } else {
               elementType = member.elementType.toUpperCase()
               id = 'urn:' + element.id.split(':')[1] + ':' +
-                member.elementType + ':' + member.identifier + ':' + member.revision
+              member.elementType.toLowerCase() + ':' + member.identifier + ':' + member.revision
             }
             if (member.status !== 'OUTDATED') {
               members.push({
@@ -300,7 +320,7 @@ export default {
               })
             }
           }
-          members.length > 0 ? element.children = members : element.children = undefined
+          element.children = members
           return members
         }.bind(this))
     },
@@ -351,13 +371,14 @@ export default {
           this.$log.debug('Element type could not be determined.')
           break
       }
+      this.dialog.parentUrn = parentId
     },
     getNamespace (id) {
       const namespaceIdentifier = id.split(':')[1]
       return this.isNamespace(id)
         ? this.treeItems.find(elem => elem.id === id)
         : this.treeItems.find(elem => elem.id.split(':')[1] ===
-        namespaceIdentifier).id
+          namespaceIdentifier).id
     }
   }
 }

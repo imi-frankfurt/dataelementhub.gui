@@ -167,7 +167,6 @@
             <v-list-item>
               <Members
                 :namespace-urn="namespaceUrn"
-                :element-urn="urn"
                 @selectedMembers="selectedMembers = $event; element.members =
                   convertMembersFormat($event)"
               />
@@ -298,7 +297,6 @@ export default {
         : Common.defaultGroup()
     },
     hideDialog () {
-      this.clearForm()
       this.dialog = false
       this.$emit('dialogClosed')
     },
@@ -328,8 +326,14 @@ export default {
           await this.$axios.post(this.ajax.elementUrl,
             this.element)
             .then(function (res) {
-              this.hideDialog()
-              this.$emit('save')
+              this.$axios.$get(res.headers.location)
+                .then(function (res1) {
+                  this.element.identification.urn = res1.identification.urn
+                  this.element.parentUrn = ''
+                  this.element.action = 'CREATE'
+                  this.$emit('save', this.element)
+                  this.hideDialog()
+                }.bind(this))
             }.bind(this))
             .catch(function (err) {
               this.$log.debug('Could not save Element: ' + err)
@@ -340,9 +344,15 @@ export default {
           await this.$axios.put(this.ajax.elementUrl + this.element.identification.urn,
             this.element)
             .then(function (res) {
-              this.hideDialog()
+              this.$axios.$get(res.headers.location)
+                .then(function (res1) {
+                  this.element.identification.urn = res1.identification.urn
+                  this.element.previousUrn = this.urn
+                  this.element.action = 'UPDATE'
+                  this.$emit('save', this.element)
+                  this.hideDialog()
+                }.bind(this))
               this.$log.debug(this.element)
-              this.$emit('save')
             }.bind(this))
             .catch(function (err) {
               this.$log.debug('Could not save Element: ' + err)
@@ -362,13 +372,6 @@ export default {
     },
     deleteSlot (index) {
       this.element.slots.splice(index, 1)
-    },
-    clearForm () {
-      this.element.definitions = [
-        ItemDefinition.data().defaultDefinition
-      ]
-      this.element.slots = []
-      this.element.members = []
     }
   }
 }
