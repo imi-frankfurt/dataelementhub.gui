@@ -389,8 +389,14 @@ export default {
           await this.$axios.post(this.ajax.dataElementUrl,
             this.dataElement)
             .then(function (res) {
-              this.hideDialog()
-              this.$emit('save', this.dataElement)
+              this.$axios.$get(res.headers.location)
+                .then(function (res1) {
+                  this.dataElement.identification.urn = res1.identification.urn
+                  this.dataElement.parentUrn = ''
+                  this.dataElement.action = 'CREATE'
+                  this.$emit('save', this.dataElement)
+                  this.hideDialog()
+                }.bind(this))
             }.bind(this))
             .catch(function (err) {
               this.$log.debug('Could not save DataElement: ' + err)
@@ -401,9 +407,14 @@ export default {
           await this.$axios.put(this.ajax.dataElementUrl + this.dataElement.identification.urn,
             this.dataElement)
             .then(function (res) {
-              this.hideDialog()
-              this.$log.debug(this.dataElement)
-              this.$emit('save', this.dataElement)
+              this.$axios.$get(res.headers.location)
+                .then(function (res1) {
+                  this.dataElement.identification.urn = res1.identification.urn
+                  this.dataElement.previousUrn = this.urn
+                  this.dataElement.action = 'UPDATE'
+                  this.$emit('save', this.dataElement)
+                  this.hideDialog()
+                }.bind(this))
             }.bind(this))
             .catch(function (err) {
               this.$log.debug('Could not save DataElement: ' + err)

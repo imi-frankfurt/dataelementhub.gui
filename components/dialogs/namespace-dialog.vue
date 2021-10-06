@@ -241,6 +241,8 @@ export default {
               this.$axios.$get(res.headers.location)
                 .then(function (res1) {
                   this.namespace.identification.urn = res1.identification.urn
+                  this.namespace.parentUrn = ''
+                  this.namespace.action = 'CREATE'
                   this.$emit('save', this.namespace)
                   this.hideDialog()
                 }.bind(this))
@@ -253,8 +255,15 @@ export default {
           await this.$axios.put(this.ajax.namespaceUrl + this.namespace.identification.identifier,
             this.namespace)
             .then(function (res) {
-              this.hideDialog()
-              this.$emit('save', this.namespace)
+              this.$axios.$get(res.headers.location)
+                .then(function (res1) {
+                  this.namespace.previousUrn = this.namespace.identification.urn
+                  this.namespace.identification.urn = res1.identification.urn
+                  this.namespace.parentUrn = ''
+                  this.namespace.action = 'UPDATE'
+                  this.$emit('save', this.namespace)
+                  this.hideDialog()
+                }.bind(this))
             }.bind(this))
             .catch(function (err) {
               this.$log.debug('Could not save Namespace: ' + err)
