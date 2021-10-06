@@ -95,6 +95,8 @@ export default {
     date: 'Date',
     time: 'Time',
     hourFormat: 'Hour Format',
+    frontend: 'Frontend',
+    backend: 'Backend',
     address: {
       name1: 'Universitätsklinikum Frankfurt',
       name2: 'Medical Informatics Group (MIG)',
@@ -170,13 +172,11 @@ export default {
       title: 'Home',
       subtitle: '',
       content: {
-        howdy: 'Howdy stranger!',
-        preAlpha: 'What you see here is a <b>PreAlpha</b> Version of the new DataElement Hub GUI. ' +
-          'So do not expect a fully working bug-free Version. Quite the contrary, expect the worst.',
-        bugReport: 'If you stumble over a bug, feel free to create an Issue in the projects repository, which can be found ' +
-          '<a href="https://github.com/mig-frankfurt/dataelementhub.gui" target="_blank">here</a>.',
+        howdy: 'Welcome to DataelementHub (DEHub)!',
+        preAlpha: 'What you see here is a Alpha Version of the new DataElement Hub GUI. So do not expect a fully working bug-free Version. We are continuously working on improving the software.',
+        bugReport: 'When you come across a bug, feel free to create an Issue in the projects repository, which can be found here (<a href="https://github.com/mig-frankfurt/dataelementhub.gui" target="_blank">https://github.com/mig-frankfurt/dataelementhub.gui</a>) .',
         dockerImage: 'From time to time there will be new a new Release of the corresponding Docker image. So be sure to check that too.',
-        thanks: '<b>Thanks!</b>'
+        thanks: 'For further information please visit <a href="https://dataelementhub.de" target="_blank">https://dataelementhub.de</a><br><br><b>Thanks!</b>'
       }
     },
     namespaces: {
@@ -320,11 +320,11 @@ export default {
       subtitle: ''
     },
     about: {
-      title: 'About the DataElement Hub',
+      title: 'About the DataElementHub',
       subtitle: ''
     },
     help: {
-      title: 'Help?',
+      title: 'Help',
       subtitle: ''
     },
     login: {
