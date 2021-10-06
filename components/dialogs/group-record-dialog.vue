@@ -169,7 +169,7 @@
                 :namespace-urn="namespaceUrn"
                 :element-urn="urn"
                 @selectedMembers="selectedMembers = $event; element.members =
-                      convertMembersFormat($event)"
+                  convertMembersFormat($event)"
               />
             </v-list-item>
             <CheckUnreleasedMembers
@@ -298,26 +298,27 @@ export default {
         : Common.defaultGroup()
     },
     hideDialog () {
+      this.clearForm()
       this.dialog = false
       this.$emit('dialogClosed')
     },
     async fetchNamespaces () {
       this.$log.debug('Fetching Namespaces')
       await this.$axios.$get(this.ajax.namespaceUrl)
-      .then(function (res) {
-        this.namespaces = res.ADMIN
-        this.namespaces.concat(res.WRITE)
-      }.bind(this))
+        .then(function (res) {
+          this.namespaces = res.ADMIN
+          this.namespaces.concat(res.WRITE)
+        }.bind(this))
     },
     async loadElement (urn) {
       this.$log.debug('Loading Element with URN ' + urn)
       await this.$axios.$get(this.ajax.elementUrl + this.urn, Ajax.header.ignoreLanguage)
-      .then(function (res) {
-        this.element = Object.assign({}, res)
-      }.bind(this))
-      .catch(function (err) {
-        this.$log.error('Unable to fetch Element details: ' + err)
-      }.bind(this))
+        .then(function (res) {
+          this.element = Object.assign({}, res)
+        }.bind(this))
+        .catch(function (err) {
+          this.$log.error('Unable to fetch Element details: ' + err)
+        }.bind(this))
     },
     async saveElement () {
       this.$refs.form.validate()
@@ -326,27 +327,27 @@ export default {
         if (this.urn === '') { // If the Element URN is empty we have to save it ...
           await this.$axios.post(this.ajax.elementUrl,
             this.element)
-          .then(function (res) {
-            this.hideDialog()
-            this.$emit('save')
-          }.bind(this))
-          .catch(function (err) {
-            this.$log.debug('Could not save Element: ' + err)
-            this.$emit('saveFailure')
-          }.bind(this))
+            .then(function (res) {
+              this.hideDialog()
+              this.$emit('save')
+            }.bind(this))
+            .catch(function (err) {
+              this.$log.debug('Could not save Element: ' + err)
+              this.$emit('saveFailure')
+            }.bind(this))
         } else { // ... otherwise we update it.
           delete this.element.valueDomainUrn
           await this.$axios.put(this.ajax.elementUrl + this.element.identification.urn,
             this.element)
-          .then(function (res) {
-            this.hideDialog()
-            this.$log.debug(this.element)
-            this.$emit('save')
-          }.bind(this))
-          .catch(function (err) {
-            this.$log.debug('Could not save Element: ' + err)
-            this.$emit('saveFailure')
-          }.bind(this))
+            .then(function (res) {
+              this.hideDialog()
+              this.$log.debug(this.element)
+              this.$emit('save')
+            }.bind(this))
+            .catch(function (err) {
+              this.$log.debug('Could not save Element: ' + err)
+              this.$emit('saveFailure')
+            }.bind(this))
         }
       }
     },
@@ -361,6 +362,13 @@ export default {
     },
     deleteSlot (index) {
       this.element.slots.splice(index, 1)
+    },
+    clearForm () {
+      this.element.definitions = [
+        ItemDefinition.data().defaultDefinition
+      ]
+      this.element.slots = []
+      this.element.members = []
     }
   }
 }
