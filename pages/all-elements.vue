@@ -281,7 +281,7 @@ export default {
               this.treeItems.push({
                 id: namespace.identification.urn,
                 editable: !res.READ.includes(namespace),
-                name: namespace.definition.designation,
+                name: namespace.definitions[0].designation,
                 elementType: 'NAMESPACE',
                 children: []
               })
@@ -314,7 +314,7 @@ export default {
               members.push({
                 id,
                 editable: this.getNamespace(id).editable,
-                name: member.definition.designation,
+                name: member.definitions[0].designation,
                 elementType,
                 children: elementType === 'DATAELEMENT' ? undefined : []
               })
