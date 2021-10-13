@@ -89,6 +89,11 @@
             </v-icon>
           </template>
           <template #append="{ item }">
+            <AlertIcon
+              v-if="!item.isPreferredLanguage"
+              :title="$t('global.alerts.warning')"
+              :alerts="[$t('global.alerts.defineLanguage')]"
+            />
             <v-menu
               bottom
               offset-y
@@ -165,6 +170,7 @@
 
 <script>
 import Ajax from '~/config/ajax'
+import AlertIcon from '~/components/common/alert-icon'
 import NamespaceDialog from '~/components/dialogs/namespace-dialog'
 import DataElementDialog from '~/components/dialogs/data-element-dialog'
 import GroupRecordDialog from '~/components/dialogs/group-record-dialog'
@@ -174,6 +180,7 @@ import NamespaceDetailView from '~/components/views/namespace-detail-view.vue'
 import DefaultSnackbar from '~/components/snackbars/default-snackbar'
 export default {
   components: {
+    AlertIcon,
     NamespaceDialog,
     DataElementDialog,
     GroupRecordDialog,
@@ -186,7 +193,8 @@ export default {
     componentKey: 0,
     ajax: {
       namespaceUrl: process.env.mdrBackendUrl + '/v1/namespaces/',
-      elementUrl: process.env.mdrBackendUrl + '/v1/element/'
+      elementUrl: process.env.mdrBackendUrl + '/v1/element/',
+      preferredLanguage: 'de,en-US;q=0.7,en;q=0.3'
     },
     dialog: {
       urn: '',
@@ -281,6 +289,7 @@ export default {
               this.treeItems.push({
                 id: namespace.identification.urn,
                 editable: !res.READ.includes(namespace),
+                isPreferredLanguage: this.ajax.preferredLanguage.includes(namespace.definitions[0].language),
                 name: namespace.definitions[0].designation,
                 elementType: 'NAMESPACE',
                 children: []
@@ -314,6 +323,7 @@ export default {
               members.push({
                 id,
                 editable: this.getNamespace(id).editable,
+                isPreferredLanguage: this.preferredLanguage.includes(member.definitions[0].language),
                 name: member.definitions[0].designation,
                 elementType,
                 children: elementType === 'DATAELEMENT' ? undefined : []

@@ -33,6 +33,10 @@ export default {
       about: 'About',
       help: 'Help'
     },
+    alerts: {
+      warning: 'WARNING!',
+      defineLanguage: 'Preferred Language is not defined.'
+    },
     button: {
       save: 'Save',
       cancel: 'Cancel',
