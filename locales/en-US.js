@@ -134,6 +134,7 @@ export default {
     form: {
       validation: {
         messages: {
+          requiredField: 'This Field is required',
           definitionRequired: 'Definition is required',
           designationRequired: 'Designation is required',
           languageRequired: 'Language is required',
@@ -324,7 +325,7 @@ export default {
       subtitle: ''
     },
     help: {
-      title: 'Help',
+      title: 'Help?',
       subtitle: ''
     },
     login: {
