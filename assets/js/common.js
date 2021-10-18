@@ -13,6 +13,9 @@ export default {
       return null
     }
   },
+  preferredLanguage () {
+    return 'de,en-US;q=0.7,en;q=0.3'
+  },
   // Return all element types
   elementTypes () {
     return [
