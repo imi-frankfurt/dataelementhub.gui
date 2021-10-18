@@ -47,7 +47,7 @@
                   :items="namespaces"
                   :rules="selectNamespaceRules"
                   item-value="identification.urn"
-                  item-text="definition.designation"
+                  item-text="definitions[0].designation"
                   :label="$t('global.select.namespace')"
                 />
               </v-list-item-action>
