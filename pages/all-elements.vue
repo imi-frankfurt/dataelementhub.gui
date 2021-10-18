@@ -323,7 +323,7 @@ export default {
               members.push({
                 id,
                 editable: this.getNamespace(id).editable,
-                isPreferredLanguage: this.preferredLanguage.includes(member.definitions[0].language),
+                isPreferredLanguage: this.ajax.preferredLanguage.includes(member.definitions[0].language),
                 name: member.definitions[0].designation,
                 elementType,
                 children: elementType === 'DATAELEMENT' ? undefined : []
