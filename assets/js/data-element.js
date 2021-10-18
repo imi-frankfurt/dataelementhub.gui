@@ -17,7 +17,8 @@ export default {
       slots: [],
       valueDomain: {
         type: 'STRING'
-      }
+      },
+      concepts: []
     }
   },
   defaultTextValidation () {

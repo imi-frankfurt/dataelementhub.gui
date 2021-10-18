@@ -165,6 +165,54 @@
               </v-row>
             </v-list-item>
           </v-list>
+          <v-list subheader>
+            <v-subheader>{{ $t('global.conceptAssociations') }}</v-subheader>
+            <v-list-item>
+              <v-list-item-action>
+                <v-btn
+                  color="primary"
+                  rounded
+                  small
+                  @click="addConceptAssociation"
+                >
+                  <v-icon dark>
+                    mdi-plus
+                  </v-icon>
+                  {{ $t('global.button.add') }}
+                </v-btn>
+              </v-list-item-action>
+            </v-list-item>
+            <v-list-item
+              v-for="(concept, index) in dataElement.conceptAssociations"
+              :key="index"
+            >
+              <v-row>
+                <v-col cols="11">
+                  <item-concept-association
+                    :concept-association="concept"
+                    @conceptChanged="concept = $event"
+                  />
+                </v-col>
+                <v-col cols="1">
+                  <v-list-item>
+                    <v-list-item-action>
+                      <v-btn
+                        color="secondary"
+                        rounded
+                        small
+                        @click="deleteConceptAssociation(index)"
+                      >
+                        <v-icon dark>
+                          mdi-delete
+                        </v-icon>
+                        {{ $t('global.button.delete') }}
+                      </v-btn>
+                    </v-list-item-action>
+                  </v-list-item>
+                </v-col>
+              </v-row>
+            </v-list-item>
+          </v-list>
           <template v-if="!released && !edit">
             <v-list subheader>
               <v-subheader>{{ $t('global.valueDomain') }}</v-subheader>
@@ -263,6 +311,7 @@
 import Ajax from '~/config/ajax'
 import Common from '~/assets/js/common'
 import ItemDefinition from '~/components/item/item-definition'
+import ItemConceptAssociation from '~/components/item/item-concept-association'
 import ItemSlot from '~/components/item/item-slot'
 import DataElement from '~/assets/js/data-element'
 import TextValidation from '~/components/validation/text'
@@ -275,6 +324,7 @@ export default {
     ItemSlot,
     TextValidation,
     NumericValidation,
+    ItemConceptAssociation,
     PermittedValuesValidation,
     DatetimeValidation
   },
@@ -428,6 +478,12 @@ export default {
     },
     deleteDefinition (index) {
       this.dataElement.definitions.splice(index, 1)
+    },
+    addConceptAssociation () {
+      this.dataElement.conceptAssociations.push(ItemConceptAssociation.data().defaultConcept)
+    },
+    deleteConceptAssociation (index) {
+      this.dataElement.conceptAssociations.splice(index, 1)
     },
     addSlot () {
       this.dataElement.slots.push({ name: '', value: '', language: 'en' })

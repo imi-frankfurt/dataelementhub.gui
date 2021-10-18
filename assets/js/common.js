@@ -74,7 +74,8 @@ export default {
           useMaximumLength: false
         }
       },
-      slots: []
+      slots: [],
+      conceptAssociations: []
     }
   },
   defaultGroup () {
