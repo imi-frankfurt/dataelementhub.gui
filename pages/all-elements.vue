@@ -59,6 +59,17 @@
           </v-icon>
           {{ $t('pages.namespaces.actions.createNamespace') }}
         </v-btn>
+        <div v-if="treeItems.length === 0" align="middle">
+          <v-icon size="100">
+            mdi-plus
+          </v-icon>
+          <h3 class="text-h2 mb-2">
+            {{ $t('global.noItems') }}
+          </h3>
+          <h3 class="text-h6 mb-2">
+            {{ $t('global.addNamespaces') }}
+          </h3>
+        </div>
         <v-treeview
           :key="componentKey"
           :v-model="treeItems"
@@ -173,6 +184,7 @@ import GroupsRecordsDetailView from '~/components/views/groups-records-detail-vi
 import NamespaceDetailView from '~/components/views/namespace-detail-view.vue'
 import DefaultSnackbar from '~/components/snackbars/default-snackbar'
 export default {
+  auth: false,
   components: {
     NamespaceDialog,
     DataElementDialog,
@@ -276,7 +288,10 @@ export default {
       await this.$axios.$get(this.ajax.namespaceUrl)
         .then(function (res) {
           this.treeItems = []
-          for (const namespace of Array.from(res.ADMIN.concat(res.READ, res.WRITE))) {
+          let namespaces
+          namespaces = Array.from(res.READ)
+          if (res.ADMIN) { namespaces = Array.from(namespaces.concat(res.ADMIN, res.WRITE)) }
+          for (const namespace of namespaces) {
             if (namespace.identification.status !== 'OUTDATED') {
               this.treeItems.push({
                 id: namespace.identification.urn,

@@ -42,8 +42,12 @@ export default {
       delete: 'Delete',
       close: 'Close'
     },
+    addItem: 'ADD ITEM',
+    dragAndDrop: 'simply drag and drop',
     metaData: 'Meta Data',
     status: 'Status',
+    noItems: 'No Items Available',
+    addNamespaces: 'Add New Namespaces by clicking on the CREATE NAMESPACE button',
     type: 'Type',
     namespace: 'Namespace',
     identifier: 'Identifier',
