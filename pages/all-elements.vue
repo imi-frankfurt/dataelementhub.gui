@@ -100,6 +100,11 @@
             </v-icon>
           </template>
           <template #append="{ item }">
+            <AlertIcon
+              v-if="!item.isPreferredLanguage"
+              :title="$t('global.alerts.warning')"
+              :alerts="[$t('global.alerts.defineLanguage')]"
+            />
             <v-menu
               bottom
               offset-y
@@ -176,6 +181,7 @@
 
 <script>
 import Ajax from '~/config/ajax'
+import AlertIcon from '~/components/common/alert-icon'
 import NamespaceDialog from '~/components/dialogs/namespace-dialog'
 import DataElementDialog from '~/components/dialogs/data-element-dialog'
 import GroupRecordDialog from '~/components/dialogs/group-record-dialog'
@@ -186,6 +192,7 @@ import DefaultSnackbar from '~/components/snackbars/default-snackbar'
 export default {
   auth: false,
   components: {
+    AlertIcon,
     NamespaceDialog,
     DataElementDialog,
     GroupRecordDialog,
@@ -252,7 +259,8 @@ export default {
         editable: true,
         name: element.definitions[0].designation,
         elementType: element.identification.elementType,
-        children: element.identification.elementType === 'DATAELEMENT' ? undefined : []
+        children: element.identification.elementType === 'DATAELEMENT' ? undefined : [],
+        isPreferredLanguage: Ajax.preferredLanguage.includes(element.definitions[0].language)
       }
       switch (element.identification.elementType) {
         case 'NAMESPACE': {
@@ -295,8 +303,9 @@ export default {
             if (namespace.identification.status !== 'OUTDATED') {
               this.treeItems.push({
                 id: namespace.identification.urn,
+                isPreferredLanguage: Ajax.preferredLanguage.includes(namespace.definitions[0].language),
                 editable: !res.READ.includes(namespace),
-                name: namespace.definition.designation,
+                name: namespace.definitions[0].designation,
                 elementType: 'NAMESPACE',
                 children: []
               })
@@ -329,7 +338,8 @@ export default {
               members.push({
                 id,
                 editable: this.getNamespace(id).editable,
-                name: member.definition.designation,
+                isPreferredLanguage: Ajax.preferredLanguage.includes(member.definitions[0].language),
+                name: member.definitions[0].designation,
                 elementType,
                 children: elementType === 'DATAELEMENT' ? undefined : []
               })
@@ -393,7 +403,7 @@ export default {
       return this.isNamespace(id)
         ? this.treeItems.find(elem => elem.id === id)
         : this.treeItems.find(elem => elem.id.split(':')[1] ===
-          namespaceIdentifier).id
+          namespaceIdentifier)
     }
   }
 }

@@ -34,7 +34,7 @@ export default {
           {
             text: this.$i18n.t('global.linkType'),
             sortable: false,
-            value: 'linkType'
+            value: 'linktype'
           },
           {
             text: this.$i18n.t('global.version'),

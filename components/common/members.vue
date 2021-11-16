@@ -146,8 +146,8 @@ export default {
             members.push({
               id,
               elementType: member.elementType,
-              designation: member.definition.designation,
-              definition: member.definition.definition,
+              designation: member.definitions[0].designation,
+              definition: member.definitions[0].definition,
               status: member.status
             })
           }
@@ -164,8 +164,8 @@ export default {
             members.push({
               id: member.urn,
               elementType,
-              designation: member.definition.designation,
-              definition: member.definition.definition
+              designation: member.definitions[0].designation,
+              definition: member.definitions[0].definition
             })
           }
           this.selectedMembers = members
