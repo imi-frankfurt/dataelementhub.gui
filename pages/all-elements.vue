@@ -73,15 +73,18 @@
         <v-treeview
           :key="componentKey"
           :v-model="treeItems"
-          :active.sync="activeElements"
+          :active="activeElements"
           :open.sync="openNodes"
           :items="treeItems"
           :load-children="fetchMembers"
+          multiple-active
+          return-object
           activatable
           color="warning"
           rounded
           hoverable
           transition
+          @update:active="setActiveElements"
         >
           <template #prepend="{ item }">
             <v-icon v-if="item.elementType === 'NAMESPACE'">
@@ -124,7 +127,7 @@
                 <v-list-item
                   v-for="(elementType, i) in ['DATAELEMENT', 'DATAELEMENTGROUP', 'RECORD']"
                   :key="i"
-                  @click="() => {elementToBeCreated(elementType, item.id)}"
+                  @click="() => {elementToBeCreated(elementType, item.urn)}"
                 >
                   <v-list-item-title>
                     <v-icon>mdi-plus-box</v-icon>
@@ -203,6 +206,7 @@ export default {
   },
   data: () => ({
     componentKey: 0,
+    itemId: -1,
     ajax: {
       namespaceUrl: process.env.mdrBackendUrl + '/v1/namespaces/',
       elementUrl: process.env.mdrBackendUrl + '/v1/element/'
@@ -237,7 +241,11 @@ export default {
   watch: {
     activeElements () {
       if (typeof this.activeElements[0] !== 'undefined') {
-        this.fetchElement(this.activeElements[0])
+        if (this.selectedElement === null) {
+          this.fetchElement(this.activeElements.slice(-1)[0].urn)
+        } else if (this.selectedElement.identification.urn !== this.activeElements.slice(-1)[0].urn) {
+          this.fetchElement(this.activeElements.slice(-1)[0].urn)
+        }
       }
     },
     'dialog.show' () {
@@ -255,7 +263,8 @@ export default {
       this.$log.debug(element)
       const findAnd = require('find-and')
       const item = {
-        id: element.identification.urn,
+        id: this.generateItemId(),
+        urn: element.identification.urn,
         editable: true,
         name: element.definitions[0].designation,
         elementType: element.identification.elementType,
@@ -268,11 +277,11 @@ export default {
             item.children = []
             this.treeItems.push(item)
           } else if (element.action === 'UPDATE') {
-            const previousItem = findAnd.returnFound(this.treeItems, { id: element.previousUrn })
+            const previousItem = findAnd.returnFound(this.treeItems, { urn: element.previousUrn })
             item.children = previousItem.children
-            this.treeItems = findAnd.replaceObject(this.treeItems, { id: element.previousUrn }, item)
+            this.treeItems = findAnd.replaceObject(this.treeItems, { urn: element.previousUrn }, item)
           } else {
-            this.treeItems = findAnd.removeObject(this.treeItems, { id: element.identification.urn })
+            this.treeItems = findAnd.removeObject(this.treeItems, { urn: element.identification.urn })
           }
           break
         }
@@ -280,13 +289,13 @@ export default {
         case 'DATAELEMENTGROUP':
         case 'RECORD': {
           if (element.action === 'CREATE') {
-            const parentElement = findAnd.returnFound(this.treeItems, { id: this.dialog.parentUrn })
+            const parentElement = findAnd.returnFound(this.treeItems, { urn: this.dialog.parentUrn })
             parentElement.children.push(item)
-            this.treeItems = findAnd.replaceObject(this.treeItems, { id: this.dialog.parentUrn }, parentElement)
+            this.treeItems = findAnd.replaceObject(this.treeItems, { urn: this.dialog.parentUrn }, parentElement)
           } else if (element.action === 'UPDATE') {
-            this.treeItems = findAnd.replaceObject(this.treeItems, { id: element.previousUrn }, item)
+            this.treeItems = findAnd.replaceObject(this.treeItems, { urn: element.previousUrn }, item)
           } else {
-            this.treeItems = findAnd.removeObject(this.treeItems, { id: element.identification.urn })
+            this.treeItems = findAnd.removeObject(this.treeItems, { urn: element.identification.urn })
           }
           break
         }
@@ -302,7 +311,8 @@ export default {
           for (const namespace of namespaces) {
             if (namespace.identification.status !== 'OUTDATED') {
               this.treeItems.push({
-                id: namespace.identification.urn,
+                id: this.generateItemId(),
+                urn: namespace.identification.urn,
                 isPreferredLanguage: Ajax.preferredLanguage.includes(namespace.definitions[0].language),
                 editable: !res.READ.includes(namespace),
                 name: namespace.definitions[0].designation,
@@ -316,28 +326,29 @@ export default {
     async fetchMembers (element) {
       this.$log.debug('Fetching members ...')
       this.$log.debug(element)
-      await this.$axios.$get(!this.isNamespace(element.id)
-        ? this.ajax.elementUrl + element.id +
+      await this.$axios.$get(!this.isNamespace(element.urn)
+        ? this.ajax.elementUrl + element.urn +
         '/members'
-        : this.ajax.namespaceUrl + element.id.split(':')[3] +
+        : this.ajax.namespaceUrl + element.urn.split(':')[3] +
         '/members', Ajax.header.listView)
         .then(function (res) {
           const members = []
           for (const member of Array.from(res)) {
-            let id
+            let urn
             let elementType
-            if (!this.isNamespace(element.id)) {
+            if (!this.isNamespace(element.urn)) {
               elementType = member.urn.split(':')[2].toUpperCase()
-              id = member.urn.toLowerCase()
+              urn = member.urn.toLowerCase()
             } else {
               elementType = member.elementType.toUpperCase()
-              id = 'urn:' + element.id.split(':')[1] + ':' +
+              urn = 'urn:' + element.urn.split(':')[1] + ':' +
               member.elementType.toLowerCase() + ':' + member.identifier + ':' + member.revision
             }
             if (member.status !== 'OUTDATED') {
               members.push({
-                id,
-                editable: this.getNamespace(id).editable,
+                id: this.generateItemId(),
+                urn,
+                editable: this.getNamespace(urn).editable,
                 isPreferredLanguage: Ajax.preferredLanguage.includes(member.definitions[0].language),
                 name: member.definitions[0].designation,
                 elementType,
@@ -346,6 +357,7 @@ export default {
             }
           }
           element.children = members
+          this.setActiveElements(this.activeElements)
           return members
         }.bind(this))
     },
@@ -373,14 +385,14 @@ export default {
           }
         }.bind(this))
     },
-    isNamespace (id) {
-      return id.toUpperCase().includes('NAMESPACE')
+    isNamespace (urn) {
+      return urn.toUpperCase().includes('NAMESPACE')
     },
-    elementToBeCreated (elementType, parentId) {
-      const namespaceUrn = this.getNamespace(parentId).id
+    elementToBeCreated (elementType, parentUrn) {
+      const namespaceUrn = this.getNamespace(parentUrn).urn
       this.dialog.elementType = elementType
       this.dialog.namespaceUrn = namespaceUrn
-      this.dialog.namespaceDesignation = this.treeItems.find(elem => elem.id === namespaceUrn).name
+      this.dialog.namespaceDesignation = this.treeItems.find(elem => elem.urn === namespaceUrn).name
       switch (elementType) {
         case 'NAMESPACE':
           this.dialog.showNamespace = true
@@ -396,14 +408,31 @@ export default {
           this.$log.debug('Element type could not be determined.')
           break
       }
-      this.dialog.parentUrn = parentId
+      this.dialog.parentUrn = parentUrn
     },
-    getNamespace (id) {
-      const namespaceIdentifier = id.split(':')[1]
-      return this.isNamespace(id)
-        ? this.treeItems.find(elem => elem.id === id)
-        : this.treeItems.find(elem => elem.id.split(':')[1] ===
-          namespaceIdentifier)
+    getNamespace (urn) {
+      const namespaceIdentifier = urn.split(':')[1]
+      return this.isNamespace(urn)
+        ? this.treeItems.find(elem => elem.urn === urn)
+        : this.treeItems.find(elem => elem.urn.split(':')[1] ===
+          namespaceIdentifier).urn
+    },
+    generateItemId () {
+      this.itemId = this.itemId + 1
+      return this.itemId
+    },
+    setActiveElements (elements) {
+      const findAnd = require('find-and')
+      if (elements.length < this.activeElements.length) {
+        this.activeElements = []
+        return
+      }
+      if (elements.length > 0) {
+        const activeItems = findAnd.returnFound(this.treeItems, { urn: elements.slice(-1)[0].urn })
+        this.activeElements = Array.isArray(activeItems) ? activeItems : [activeItems]
+      } else {
+        this.activeElements = []
+      }
     }
   }
 }
