@@ -15,17 +15,15 @@
             </v-list-item-icon>
             <v-list-item-title><v-list-item-title v-text="$t('global.mainMenu.home')" /></v-list-item-title>
           </v-list-item>
+          <v-list-item to="/all-elements">
+            <v-list-item-icon>
+              <v-icon>mdi-home</v-icon>
+            </v-list-item-icon>
+            <v-list-item-title><v-list-item-title v-text="$t('global.mainMenu.mainView')" /></v-list-item-title>
+          </v-list-item>
         </v-list-item-group>
         <client-only>
           <div v-if="$auth.loggedIn">
-            <v-list-item-group>
-              <v-list-item to="/all-elements">
-                <v-list-item-icon>
-                  <v-icon>mdi-home</v-icon>
-                </v-list-item-icon>
-                <v-list-item-title><v-list-item-title v-text="$t('global.mainMenu.mainView')" /></v-list-item-title>
-              </v-list-item>
-            </v-list-item-group>
             <!--
             <v-divider />
             <v-subheader>{{ $t('global.mainMenu.workspace.workspace') }}</v-subheader>

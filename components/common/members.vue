@@ -55,10 +55,10 @@
               mdi-hand-pointing-up
             </v-icon>
             <h3 class="text-h2 mb-2">
-              ADD ITEM
+              {{ $t('global.addItem') }}
             </h3>
             <h3 class="text-h6 mb-2">
-              simply drag and drop
+              {{ $t('global.dragAndDrop') }}
             </h3>
           </div>
         </draggable>
