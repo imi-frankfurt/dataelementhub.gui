@@ -72,7 +72,7 @@ export default {
           for (const namespace of Array.from(res.ADMIN.concat(res.READ, res.WRITE))) {
             this.treeItems.push({
               id: namespace.identification.identifier,
-              name: namespace.definition.designation,
+              name: namespace.definitions[0].designation,
               elementType: 'NAMESPACE',
               children: []
             })
@@ -100,7 +100,7 @@ export default {
             }
             members.push({
               id,
-              name: member.definition.designation,
+              name: member.definitions[0].designation,
               elementType,
               children: elementType === 'DATAELEMENT' ? undefined : []
             })

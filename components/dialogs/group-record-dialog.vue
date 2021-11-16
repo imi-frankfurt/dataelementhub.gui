@@ -47,7 +47,7 @@
                   :items="namespaces"
                   :rules="selectNamespaceRules"
                   item-value="identification.urn"
-                  item-text="definition.designation"
+                  item-text="definitions[0].designation"
                   :label="$t('global.select.namespace')"
                 />
               </v-list-item-action>
@@ -297,6 +297,7 @@ export default {
         : Common.defaultGroup()
     },
     hideDialog () {
+      this.clearForm()
       this.dialog = false
       this.$emit('dialogClosed')
     },
@@ -372,6 +373,13 @@ export default {
     },
     deleteSlot (index) {
       this.element.slots.splice(index, 1)
+    },
+    clearForm () {
+      this.element.definitions = [
+        ItemDefinition.data().defaultDefinition
+      ]
+      this.element.slots = []
+      this.element.members = []
     }
   }
 }

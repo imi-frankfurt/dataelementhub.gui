@@ -35,6 +35,14 @@
       </v-toolbar>
     </v-card>
     <meta-data :data="element.identification" />
+    <v-list>
+      <v-subheader>{{ $t('global.definitions') }}</v-subheader>
+      <v-list-item>
+        <v-list-item-content>
+          <definition-table :definitions="element.definitions" />
+        </v-list-item-content>
+      </v-list-item>
+    </v-list>
     <v-list v-if="element.members.length > 0">
       <v-subheader>{{ $t('global.members') }}</v-subheader>
       <v-list-item>
@@ -48,12 +56,14 @@
 <script>
 import Common from '~/assets/js/common'
 import Ajax from '~/config/ajax'
+import DefinitionTable from '~/components/tables/definition-table'
 import MetaData from '~/components/item/meta-data'
 import MembersTable from '~/components/tables/members-table'
 import GroupRecordDialog from '~/components/dialogs/group-record-dialog'
 export default {
   components: {
     MetaData,
+    DefinitionTable,
     MembersTable,
     GroupRecordDialog
   },
