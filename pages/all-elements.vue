@@ -330,7 +330,7 @@ export default {
         ? this.ajax.elementUrl + element.urn +
         '/members'
         : this.ajax.namespaceUrl + element.urn.split(':')[3] +
-        '/members', Ajax.header.listView)
+        '/members?hideSubElements=true', Ajax.header.listView)
         .then(function (res) {
           const members = []
           for (const member of Array.from(res)) {
