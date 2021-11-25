@@ -4,6 +4,7 @@
       v-model="drawer"
       :mini-variant="miniVariant"
       :clipped="clipped"
+      permanent
       fixed
       app
     >
@@ -198,7 +199,7 @@ export default {
       clipped: false,
       drawer: false,
       fixed: false,
-      miniVariant: false,
+      miniVariant: true,
       right: true,
       rightDrawer: false,
       title: 'global.appName'
