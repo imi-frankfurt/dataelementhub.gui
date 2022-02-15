@@ -162,6 +162,7 @@
             :deletable="true"
             @save="snackbar.saveSuccess = true"
             @saveFailure="snackbar.saveFailure = true"
+            @reloadMembers="updateTree($event)"
             @delete="updateTree(selectedElement) ; snackbar.deleteSuccess = true"
             @deleteFailure="snackbar.deleteFailure = true"
           />
@@ -285,14 +286,19 @@ export default {
           }
           break
         }
-        case 'DATAELEMENT':
-        case 'DATAELEMENTGROUP':
-        case 'RECORD': {
+        case 'RECORD':
+        case 'DATAELEMENTGROUP': {
+          this.fetchMembers(item)
+        }
+        // fallthrough
+        case 'DATAELEMENT': {
           if (element.action === 'CREATE') {
             const parentElement = findAnd.returnFound(this.treeItems, { urn: this.dialog.parentUrn })
             parentElement.children.push(item)
             this.treeItems = findAnd.replaceObject(this.treeItems, { urn: this.dialog.parentUrn }, parentElement)
           } else if (element.action === 'UPDATE') {
+            const currentElement = findAnd.returnFound(this.treeItems, { urn: element.previousUrn })
+            item.id = currentElement.id
             this.treeItems = findAnd.replaceObject(this.treeItems, { urn: element.previousUrn }, item)
           } else {
             this.treeItems = findAnd.removeObject(this.treeItems, { urn: element.identification.urn })
@@ -326,6 +332,7 @@ export default {
     async fetchMembers (element) {
       this.$log.debug('Fetching members ...')
       this.$log.debug(element)
+      const findAnd = require('find-and')
       await this.$axios.$get(!this.isNamespace(element.urn)
         ? this.ajax.elementUrl + element.urn +
         '/members'
@@ -356,8 +363,9 @@ export default {
               })
             }
           }
-          element.children = members
           this.setActiveElements(this.activeElements)
+          this.treeItems =
+            findAnd.changeProps(this.treeItems, { urn: element.urn }, { children: members })
           return members
         }.bind(this))
     },

@@ -17,6 +17,21 @@
       <v-toolbar>
         <v-toolbar-title>{{ $t('global.properties') }} {{ $t('global.of') }} <b>{{ urn }}</b></v-toolbar-title>
         <v-spacer />
+        <v-tooltip bottom>
+          <template #activator="{ on, attrs }">
+            <v-btn
+              v-if="editable"
+              icon
+              color="primary"
+              v-bind="attrs"
+              v-on="on"
+              @click="updateMembers"
+            >
+              <v-icon>mdi-arrow-up-box</v-icon>
+            </v-btn>
+          </template>
+          <span>Update Members</span>
+        </v-tooltip>
         <v-btn
           v-if="editable"
           icon
@@ -99,6 +114,21 @@ export default {
       await this.$axios.$get(this.ajax.elementUrl + this.urn, Ajax.header.ignoreLanguage)
         .then(function (res) {
           this.element = res
+        }.bind(this))
+    },
+    async updateMembers () {
+      await this.$axios.post(this.ajax.elementUrl + this.urn + '/updateMembers')
+        .then(function (res) {
+          this.$axios.$get(res.headers.location)
+            .then(function (res1) {
+              this.element = res1
+              this.element.previousUrn = this.urn
+              this.element.action = 'UPDATE'
+              this.$emit('reloadMembers', this.element)
+            }.bind(this))
+        }.bind(this))
+        .catch(function (err) {
+          this.$log.debug('Could not update Members: ' + err)
         }.bind(this))
     },
     editItem () {
