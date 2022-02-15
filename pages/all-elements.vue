@@ -423,7 +423,7 @@ export default {
       return this.isNamespace(urn)
         ? this.treeItems.find(elem => elem.urn === urn)
         : this.treeItems.find(elem => elem.urn.split(':')[1] ===
-          namespaceIdentifier).urn
+          namespaceIdentifier)
     },
     generateItemId () {
       this.itemId = this.itemId + 1
