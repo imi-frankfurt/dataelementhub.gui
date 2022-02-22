@@ -28,6 +28,7 @@
       </v-card>
       <meta-data :data="permittedValue.identification" />
       <v-list>
+        <v-subheader v-if="permittedValue.value">{{ $t('global.value') }}: {{ permittedValue.value }}</v-subheader>
         <v-subheader>{{ $t('global.definitions') }}</v-subheader>
         <v-list-item>
           <v-list-item-content>
@@ -43,12 +44,6 @@
           </v-list-item-content>
         </v-list-item>
       </v-list>
-      <v-subheader>{{ $t('global.valueDomain') }}</v-subheader>
-      <v-list-item>
-        <v-list-item-content>
-          <value-domain :urn="permittedValue.identification.urn" />
-        </v-list-item-content>
-      </v-list-item>
       <v-list v-if="permittedValue.conceptAssociations.length > 0">
         <v-subheader>{{ $t('global.conceptAssociations') }}</v-subheader>
         <v-list-item>
