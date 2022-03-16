@@ -42,6 +42,14 @@
           </v-list-item-content>
         </v-list-item>
       </v-list>
+      <v-list>
+        <v-subheader>{{ $t('global.valueDomain') }}</v-subheader>
+        <v-list-item>
+          <v-list-item-content>
+            <value-domain :urn="dataElement.identification.urn" />
+          </v-list-item-content>
+        </v-list-item>
+      </v-list>
       <v-list v-if="dataElement.slots.length > 0">
         <v-subheader>{{ $t('global.slots') }}</v-subheader>
         <v-list-item>
@@ -50,12 +58,6 @@
           </v-list-item-content>
         </v-list-item>
       </v-list>
-      <v-subheader>{{ $t('global.valueDomain') }}</v-subheader>
-      <v-list-item>
-        <v-list-item-content>
-          <value-domain :urn="dataElement.identification.urn" />
-        </v-list-item-content>
-      </v-list-item>
       <v-list v-if="dataElement.relations.length > 0">
         <v-subheader>{{ $t('global.relations') }}</v-subheader>
         <v-list-item>

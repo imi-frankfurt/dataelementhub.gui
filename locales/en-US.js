@@ -69,6 +69,7 @@ export default {
     slot: 'Slot',
     slots: 'Slots',
     valueDomain: 'Value Domain',
+    permittedValue: 'Permitted Value',
     valueDomains: 'Value Domains',
     valueDomainNotEditable: 'Value Domains can not be edited right now.',
     language: 'Language',
@@ -168,10 +169,10 @@ export default {
         value: 'Enter value'
       },
       label: {
-        useRegEx: 'Use RegEx?',
-        useMaximumLength: 'Use Maximum Length?',
-        useMinimum: 'Use Minimum?',
-        useMaximum: 'Use Maximum?',
+        useRegEx: 'Use RegEx',
+        useMaximumLength: 'Use Maximum Length',
+        useMinimum: 'Use Minimum',
+        useMaximum: 'Use Maximum',
         unitOfMeasure: 'Unit of Measure'
       }
     }
