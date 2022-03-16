@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <v-container>
     <default-snackbar
       :text="$t('global.itemDialog.snackbar.deleteFailure')"
       :show="snackbar.deleteFailure"
@@ -119,7 +119,7 @@
         </v-col>
       </v-row>
     </template>
-  </div>
+  </v-container>
 </template>
 <script>
 import Common from '~/assets/js/common'

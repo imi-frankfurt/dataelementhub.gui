@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <v-container>
     <h1>{{ $t('pages.about.title') }}</h1>
     <template v-if="backendData !== undefined">
       <h2>{{ $t('global.backend') }}</h2>
@@ -29,7 +29,7 @@
         https://github.com/mig-frankfurt/dataelementhub.gui
       </a>
     </p>
-  </div>
+  </v-container>
 </template>
 <script>
 export default {
