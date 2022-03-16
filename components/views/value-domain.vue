@@ -34,8 +34,8 @@
       <v-card>
         <PermittedValueDetailView
           :urn="selectedPermittedValueUrn"
-          :editable="true"
-          :deletable="true"
+          :editable="false"
+          :deletable="false"
           @save="updateTree($event); snackbar.saveSuccess = true"
           @saveFailure="snackbar.saveFailure = true"
           @delete="updateTree(selectedElement) ; snackbar.deleteSuccess = true"
