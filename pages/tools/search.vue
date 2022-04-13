@@ -94,7 +94,7 @@
           <template v-if="showDetails">
             <namespace-detail-view
               v-if="detailItem.type == 'NAMESPACE'"
-              :id="detailItem.id"
+              namespaceIdentifier="detailItem.id"
               :urn="detailItem.urn"
               @delete="executeSearch(); snackbar.deleteSuccess = true"
               @deleteFailure="snackbar.deleteFailure = true"

@@ -147,6 +147,7 @@
           <DataElementDetailView
             v-if="selected && selectedElement.identification.elementType === 'DATAELEMENT'"
             :urn="selectedElement.identification.urn"
+            :parent-urn="activeElements.slice(-1)[0].parentUrn"
             :editable="true"
             :deletable="true"
             @save="updateTree($event); snackbar.saveSuccess = true"
@@ -158,6 +159,7 @@
             v-if="selected && (selectedElement.identification.elementType === 'DATAELEMENTGROUP'
               || selectedElement.identification.elementType === 'RECORD' )"
             :urn="selectedElement.identification.urn"
+            :parent-urn="activeElements.slice(-1)[0].parentUrn"
             :editable="true"
             :deletable="true"
             @save="snackbar.saveSuccess = true"
@@ -168,7 +170,6 @@
           />
           <NamespaceDetailView
             v-if="selected && selectedElement.identification.elementType === 'NAMESPACE'"
-            :id="selectedElement.identification.identifier"
             :urn="selectedElement.identification.urn"
             :editable="true"
             :deletable="true"
@@ -257,6 +258,13 @@ export default {
   },
   mounted () {
     this.fetchNamespaces()
+    const findAnd = require('find-and')
+    this.$root.$on('changeActiveElement', (urn) => {
+      const item = findAnd.returnFound(this.treeItems, { urn })
+      this.activeElements = []
+      this.activeElements.unshift(item)
+      this.setActiveElements(this.activeElements)
+    })
   },
   methods: {
     updateTree (element) {
@@ -354,6 +362,7 @@ export default {
             if (member.status !== 'OUTDATED') {
               members.push({
                 id: this.generateItemId(),
+                parentUrn: element.urn,
                 urn,
                 editable: this.getNamespace(urn).editable,
                 isPreferredLanguage: Ajax.preferredLanguage.includes(member.definitions[0].language),
@@ -436,7 +445,8 @@ export default {
         return
       }
       if (elements.length > 0) {
-        const activeItems = findAnd.returnFound(this.treeItems, { urn: elements.slice(-1)[0].urn })
+        const activeItems =
+          findAnd.returnFound(this.treeItems, { urn: elements.slice(-1)[0].urn })
         this.activeElements = Array.isArray(activeItems) ? activeItems : [activeItems]
       } else {
         this.activeElements = []

@@ -1,5 +1,22 @@
 <template>
-  <div>
+  <div v-if="fetchingDataElement">
+    <v-container fluid>
+      <v-row>
+        <v-col
+          align="center"
+          justify="center"
+        >
+          <v-progress-circular
+            :size="500"
+            color="primary"
+            indeterminate
+          >
+          </v-progress-circular>
+        </v-col>
+      </v-row>
+    </v-container>
+  </div>
+  <div v-else>
     <div v-if="dataElement !== undefined">
       <data-element-dialog
         :urn="urn"
@@ -9,12 +26,44 @@
         @dialogClosed="dialog = false"
       />
       <v-card
+        class="detailViewCard"
         color="grey lighten-4"
         flat
       >
         <!-- Namespace Toolbar TODO: Check of this could be outsourced ...-->
         <v-toolbar>
-          <v-toolbar-title>{{ $t('global.properties') }} {{ $t('global.of') }} <b>{{ urn }}</b></v-toolbar-title>
+          <v-toolbar-title>
+            <v-container class="text-center">
+              <v-row no-gutters>
+                <v-col v-for="item in elementPath" :key="item.urn">
+                  <v-row no-gutters style="width: 100%;">
+                    <v-col v-if="!item.urn.includes('namespace')" cols="3">
+                      <v-icon>
+                        mdi-slash-forward
+                      </v-icon>
+                    </v-col>
+                    <v-col cols="9">
+                      <v-btn
+                        color="grey lighten-4"
+                        rounded
+                        :disabled="!activatePathNavigation"
+                        @click="showDetailViewDialog(item.urn)"
+                      >
+                        <div
+                          v-if="item.urn === urn"
+                        >
+                          {{ item.designation }}
+                        </div>
+                        <a v-if="item.urn !== urn">
+                          {{ item.designation }}
+                        </a>
+                      </v-btn>
+                    </v-col>
+                  </v-row>
+                </v-col>
+              </v-row>
+            </v-container>
+          </v-toolbar-title>
           <v-spacer />
           <v-btn
             v-if="editable"
@@ -34,50 +83,96 @@
         </v-toolbar>
       </v-card>
       <meta-data :data="dataElement.identification" />
-      <v-list>
-        <v-subheader>{{ $t('global.definitions') }}</v-subheader>
-        <v-list-item>
-          <v-list-item-content>
-            <definition-table :definitions="dataElement.definitions" />
-          </v-list-item-content>
-        </v-list-item>
-      </v-list>
-      <v-list>
-        <v-subheader>{{ $t('global.valueDomain') }}</v-subheader>
-        <v-list-item>
-          <v-list-item-content>
-            <value-domain :urn="dataElement.identification.urn" />
-          </v-list-item-content>
-        </v-list-item>
-      </v-list>
-      <v-list v-if="dataElement.slots.length > 0">
-        <v-subheader>{{ $t('global.slots') }}</v-subheader>
-        <v-list-item>
-          <v-list-item-content>
-            <slot-table :slots="dataElement.slots" />
-          </v-list-item-content>
-        </v-list-item>
-      </v-list>
-      <v-list v-if="dataElement.relations.length > 0">
-        <v-subheader>{{ $t('global.relations') }}</v-subheader>
-        <v-list-item>
-          <v-list-item-content>
-            <relation-table
-              :relations="dataElement.relations"
-              :detail-view-available="relationDetailViewAvailable"
-            />
-          </v-list-item-content>
-        </v-list-item>
-      </v-list>
-      <v-list v-if="dataElement.conceptAssociations.length > 0">
-        <v-subheader>{{ $t('global.conceptAssociations') }}</v-subheader>
-        <v-list-item>
-          <v-list-item-content>
-            <concept-association-table :associations="dataElement.conceptAssociations" />
-          </v-list-item-content>
-        </v-list-item>
-      </v-list>
+      <v-card class="detailViewCard">
+        <v-list>
+          <v-subheader>{{ $t('global.definitions') }}</v-subheader>
+          <v-list-item>
+            <v-list-item-content>
+              <definition-table :definitions="dataElement.definitions" />
+            </v-list-item-content>
+          </v-list-item>
+        </v-list>
+      </v-card>
+      <v-card class="detailViewCard">
+        <v-list>
+          <v-subheader>{{ $t('global.valueDomain') }} : {{ dataElement.valueDomainUrn }}</v-subheader>
+          <v-list-item>
+            <v-list-item-content>
+              <value-domain :urn="dataElement.identification.urn" />
+            </v-list-item-content>
+          </v-list-item>
+        </v-list>
+      </v-card>
+      <v-card class="detailViewCard">
+        <v-list v-if="dataElement.slots.length > 0">
+          <v-subheader>{{ $t('global.slots') }}</v-subheader>
+          <v-list-item>
+            <v-list-item-content>
+              <slot-table :slots="dataElement.slots" />
+            </v-list-item-content>
+          </v-list-item>
+        </v-list>
+      </v-card>
+      <v-card class="detailViewCard">
+        <v-list v-if="dataElement.relations.length > 0">
+          <v-subheader>{{ $t('global.relations') }}</v-subheader>
+          <v-list-item>
+            <v-list-item-content>
+              <relation-table
+                :relations="dataElement.relations"
+                :detail-view-available="relationDetailViewAvailable"
+              />
+            </v-list-item-content>
+          </v-list-item>
+        </v-list>
+      </v-card>
+      <v-card class="detailViewCard">
+        <v-list v-if="dataElement.conceptAssociations.length > 0">
+          <v-subheader>{{ $t('global.conceptAssociations') }}</v-subheader>
+          <v-list-item>
+            <v-list-item-content>
+              <concept-association-table :associations="dataElement.conceptAssociations" />
+            </v-list-item-content>
+          </v-list-item>
+        </v-list>
+      </v-card>
+      <v-btn
+        v-if="showJumpToElementButton"
+        class="d-block mr-0 ml-auto"
+        color="primary"
+        rounded
+        @click="dialog.elementType = 'NAMESPACE'; dialog.showNamespace = true"
+      >
+        {{ $t('global.button.showInTreeView') }}
+        <v-icon dark>
+          mdi-arrow-right-circle
+        </v-icon>
+      </v-btn>
     </div>
+    <v-dialog
+      v-model="detailViewDialog.show"
+      width="600"
+    >
+      <v-card class="dialogCard">
+        <GroupsRecordsDetailView
+          v-if="detailViewDialog.urn.toUpperCase().includes('DATAELEMENTGROUP')
+            || detailViewDialog.urn.toUpperCase().includes('RECORD')"
+          :urn="detailViewDialog.urn"
+          :parent-urn="detailViewDialog.parentUrn"
+          :activate-path-navigation="false"
+          :show-jump-to-element-button="true"
+          :editable="false"
+          :deletable="false"
+        />
+        <NamespaceDetailView
+          v-if="detailViewDialog.urn.toUpperCase().includes('NAMESPACE')"
+          :show-jump-to-element-button="true"
+          :urn="detailViewDialog.urn"
+          :editable="false"
+          :deletable="false"
+        />
+      </v-card>
+    </v-dialog>
   </div>
 </template>
 <script>
@@ -89,6 +184,7 @@ import DataElementDialog from '~/components/dialogs/data-element-dialog'
 import RelationTable from '~/components/tables/relation-table'
 import ConceptAssociationTable from '~/components/tables/concept-association-table'
 import ValueDomain from '~/components/views/value-domain'
+import NamespaceDetailView from '~/components/views/namespace-detail-view.vue'
 export default {
   components: {
     DefinitionTable,
@@ -97,31 +193,47 @@ export default {
     DataElementDialog,
     RelationTable,
     ConceptAssociationTable,
-    ValueDomain
+    ValueDomain,
+    GroupsRecordsDetailView: () => import('~/components/views/groups-records-detail-view'),
+    NamespaceDetailView
   },
   props: {
     urn: { required: true, type: String },
+    parentUrn: { required: false, default: '', type: String },
+    activatePathNavigation: { required: false, default: true, type: Boolean },
     editable: { required: false, default: false, type: Boolean },
     deletable: { required: false, default: false, type: Boolean },
-    relationDetailViewAvailable: { required: false, default: false, type: Boolean }
+    relationDetailViewAvailable: { required: false, default: false, type: Boolean },
+    showJumpToElementButton: { required: false, default: false, type: Boolean }
   },
   data () {
     return {
       ajax: {
         dataElementUrl: process.env.mdrBackendUrl + '/v1/element/'
       },
+      detailViewDialog: {
+        urn: '',
+        parentUrn: '',
+        show: false,
+        namespaceIdentifier: -1
+      },
+      fetchingDataElement: true,
       dataElement: undefined,
-      dialog: false
+      dialog: false,
+      elementPath: []
     }
   },
   watch: {
     urn (n) {
+      this.fetchingDataElement = true
       this.fetchDataElementDetails()
+      this.fetchElementPath()
     }
   },
   mounted () {
     this.$log.debug('Mounted DataElement view ...')
     this.fetchDataElementDetails()
+    this.fetchElementPath()
   },
   methods: {
     async fetchDataElementDetails () {
@@ -134,6 +246,7 @@ export default {
           this.$axios.$get(this.ajax.dataElementUrl + this.urn + '/relations', Ajax.header.ignoreLanguage)
             .then(function (res1) {
               this.dataElement.relations = res1
+              this.fetchingDataElement = false
             }.bind(this))
             .catch(function (err) {
               this.$log.error('Could not fetch relations: ' + err)
@@ -161,7 +274,50 @@ export default {
             this.$log.debug('Could not delete this item: ' + err)
           }.bind(this))
       }
+    },
+    async fetchElementPath () {
+      this.$log.debug('DataElement DetailView: Fetching DataElement path ...')
+      await this.$axios.$get(this.ajax.dataElementUrl + this.urn + '/paths',
+        Ajax.header.ignoreLanguage)
+        .then(function (res) {
+          for (let i = 0; i < res.length; i++) {
+            if (res[i][res[i].length - 2].urn === this.parentUrn) {
+              this.elementPath = res[i]
+              break
+            }
+          }
+        }.bind(this))
+        .catch(function (err) {
+          this.$log.error('Unable to fetch DataElement paths: ' + err)
+        }.bind(this))
+    },
+    showDetailViewDialog (urn) {
+      if (urn.toUpperCase().includes('DATAELEMENT:')) {
+        return
+      }
+      this.detailViewDialog.urn = urn
+      if (!urn.toUpperCase().includes('NAMESPACE')) {
+        for (let i = 0; i < this.elementPath.length; i++) {
+          if (this.elementPath[i].urn === urn) {
+            this.detailViewDialog.parentUrn = this.elementPath[i - 1].urn
+            break
+          }
+        }
+      }
+      this.detailViewDialog.show = true
     }
   }
 }
 </script>
+<style>
+.dialogCard {
+  padding-top: 40px;
+  padding-bottom: 25px;
+  padding-left: 20px;
+  padding-right: 20px;
+}
+
+.detailViewCard {
+  margin-bottom: 30px;
+}
+</style>
