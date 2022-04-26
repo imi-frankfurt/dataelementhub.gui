@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <v-container>
     <h1>{{ $t('pages.login.title') }}</h1>
     <v-alert
       border="left"
@@ -24,7 +24,7 @@
     >
       {{ $t('pages.login.loginButton') }}
     </v-btn>
-  </div>
+  </v-container>
 </template>
 
 <script>

@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <v-container fluid class="d-flex flex-column flex-grow-1 fill-parent-height align-start">
     <default-snackbar
       :text="$t('global.itemDialog.snackbar.deleteFailure')"
       :show="snackbar.deleteFailure"
@@ -18,36 +18,8 @@
       :text="$t('global.itemDialog.snackbar.saveSuccess')"
       :show="snackbar.saveSuccess"
     />
-    <NamespaceDialog
-      v-if="dialog.elementType === 'NAMESPACE'"
-      :id="0"
-      :show="dialog.showNamespace"
-      @save="updateTree($event); snackbar.saveSuccess = true"
-      @saveFailure="snackbar.saveFailure = true"
-      @dialogClosed="dialog.showNamespace = false"
-    />
-    <DataElementDialog
-      v-if="dialog.elementType === 'DATAELEMENT'"
-      :show="dialog.showDataElement"
-      :namespace-urn="dialog.namespaceUrn"
-      @save="updateTree($event); snackbar.saveSuccess = true"
-      @saveFailure="snackbar.saveFailure = true"
-      @dialogClosed="dialog.showDataElement = false"
-    />
-    <GroupRecordDialog
-      v-if="(dialog.elementType === 'DATAELEMENTGROUP' || dialog.elementType === 'RECORD')"
-      :show="dialog.showDataElementGroup"
-      :namespace-urn="dialog.namespaceUrn"
-      :element-type="dialog.elementType"
-      @save="updateTree($event); snackbar.saveSuccess = true"
-      @saveFailure="snackbar.saveFailure = true"
-      @dialogClosed="dialog.showDataElementGroup = false"
-    />
-    <v-row
-      class="pa-4"
-      justify="space-between"
-    >
-      <v-col cols="4">
+    <v-row class="top-row flex-grow-0 flex-shrink-0">
+      <v-col class="top-col" cols="4">
         <v-btn
           class="d-block mr-0 ml-auto"
           color="primary"
@@ -59,6 +31,12 @@
           </v-icon>
           {{ $t('pages.namespaces.actions.createNamespace') }}
         </v-btn>
+      </v-col>
+    </v-row>
+    <v-row
+      class="bottom-row flex-grow-1 flex-shrink-1 align-stretch"
+    >
+      <v-col cols="4" class="auto-scroll fill-parent-height">
         <div v-if="treeItems.length === 0" align="middle">
           <v-icon size="100">
             mdi-plus
@@ -140,47 +118,68 @@
         </v-treeview>
       </v-col>
       <v-divider vertical />
-      <v-col
-        fluid
-      >
-        <div>
-          <DataElementDetailView
-            v-if="selected && selectedElement.identification.elementType === 'DATAELEMENT'"
-            :urn="selectedElement.identification.urn"
-            :editable="true"
-            :deletable="true"
-            @save="updateTree($event); snackbar.saveSuccess = true"
-            @saveFailure="snackbar.saveFailure = true"
-            @delete="updateTree(selectedElement) ; snackbar.deleteSuccess = true"
-            @deleteFailure="snackbar.deleteFailure = true"
-          />
-          <GroupsRecordsDetailView
-            v-if="selected && (selectedElement.identification.elementType === 'DATAELEMENTGROUP'
-              || selectedElement.identification.elementType === 'RECORD' )"
-            :urn="selectedElement.identification.urn"
-            :editable="true"
-            :deletable="true"
-            @save="snackbar.saveSuccess = true"
-            @saveFailure="snackbar.saveFailure = true"
-            @reloadMembers="updateTree($event)"
-            @delete="updateTree(selectedElement) ; snackbar.deleteSuccess = true"
-            @deleteFailure="snackbar.deleteFailure = true"
-          />
-          <NamespaceDetailView
-            v-if="selected && selectedElement.identification.elementType === 'NAMESPACE'"
-            :id="selectedElement.identification.identifier"
-            :urn="selectedElement.identification.urn"
-            :editable="true"
-            :deletable="true"
-            @save="updateTree($event); snackbar.saveSuccess = true"
-            @saveFailure="snackbar.saveFailure = true"
-            @delete="updateTree(selectedElement) ; snackbar.deleteSuccess = true"
-            @deleteFailure="snackbar.deleteFailure = true"
-          />
-        </div>
+      <v-col cols="8" class="auto-scroll fill-parent-height" style="padding-top: 30px;">
+        <DataElementDetailView
+          v-if="selected && selectedElement.identification.elementType === 'DATAELEMENT'"
+          :urn="selectedElement.identification.urn"
+          :editable="true"
+          :deletable="true"
+          @save="updateTree($event); showSaveSuccessSnackbar()"
+          @saveFailure="showSaveFailureSnackbar()"
+          @delete="updateTree(selectedElement) ; showDeleteSuccessSnackbar()"
+          @deleteFailure="showDeleteFailureSnackbar()"
+        />
+        <GroupsRecordsDetailView
+          v-if="selected && (selectedElement.identification.elementType === 'DATAELEMENTGROUP'
+            || selectedElement.identification.elementType === 'RECORD' )"
+          :urn="selectedElement.identification.urn"
+          :editable="true"
+          :deletable="true"
+          @save="showSaveSuccessSnackbar()"
+          @saveFailure="showSaveFailureSnackbar()"
+          @reloadMembers="updateTree($event)"
+          @delete="updateTree(selectedElement) ; showDeleteSuccessSnackbar()"
+          @deleteFailure="showDeleteFailureSnackbar()"
+        />
+        <NamespaceDetailView
+          v-if="selected && selectedElement.identification.elementType === 'NAMESPACE'"
+          :id="selectedElement.identification.identifier"
+          :urn="selectedElement.identification.urn"
+          :editable="true"
+          :deletable="true"
+          @save="updateTree($event); showSaveSuccessSnackbar()"
+          @saveFailure="showSaveFailureSnackbar()"
+          @delete="updateTree(selectedElement) ; showDeleteSuccessSnackbar()"
+          @deleteFailure="showDeleteFailureSnackbar()"
+        />
       </v-col>
     </v-row>
-  </div>
+    <NamespaceDialog
+      v-if="dialog.elementType === 'NAMESPACE'"
+      :id="0"
+      :show="dialog.showNamespace"
+      @save="updateTree($event); showSaveSuccessSnackbar()"
+      @saveFailure="showSaveFailureSnackbar()"
+      @dialogClosed="dialog.showNamespace = false"
+    />
+    <DataElementDialog
+      v-if="dialog.elementType === 'DATAELEMENT'"
+      :show="dialog.showDataElement"
+      :namespace-urn="dialog.namespaceUrn"
+      @save="updateTree($event); showSaveSuccessSnackbar()"
+      @saveFailure="showSaveFailureSnackbar()"
+      @dialogClosed="dialog.showDataElement = false"
+    />
+    <GroupRecordDialog
+      v-if="(dialog.elementType === 'DATAELEMENTGROUP' || dialog.elementType === 'RECORD')"
+      :show="dialog.showDataElementGroup"
+      :namespace-urn="dialog.namespaceUrn"
+      :element-type="dialog.elementType"
+      @save="updateTree($event); showSaveSuccessSnackbar()"
+      @saveFailure="showSaveFailureSnackbar()"
+      @dialogClosed="dialog.showDataElementGroup = false"
+    />
+  </v-container>
 </template>
 
 <script>
@@ -441,7 +440,55 @@ export default {
       } else {
         this.activeElements = []
       }
+    },
+    async showSaveSuccessSnackbar () {
+      this.snackbar.saveSuccess = true
+      await new Promise(resolve => setTimeout(resolve, 1500))
+      this.snackbar.saveSuccess = false
+    },
+    async showDeleteSuccessSnackbar () {
+      this.snackbar.deleteSuccess = true
+      await new Promise(resolve => setTimeout(resolve, 1500))
+      this.snackbar.deleteSuccess = false
+    },
+    async showSaveFailureSnackbar () {
+      this.snackbar.saveFailure = true
+      await new Promise(resolve => setTimeout(resolve, 1500))
+      this.snackbar.saveFailure = false
+    },
+    async showDeleteFailureSnackbar () {
+      this.snackbar.deleteFailure = true
+      await new Promise(resolve => setTimeout(resolve, 1500))
+      this.snackbar.deleteFailure = false
     }
   }
 }
 </script>
+
+<style>
+.fill-parent-height {
+  height: 100%;
+}
+
+.auto-scroll {
+  overflow-y: auto;
+}
+
+.auto-scroll > p {
+  height: 9000px;
+}
+
+.bottom-row {
+  width: 100%;
+  min-height: 0;
+}
+
+.top-row {
+  width: 100%;
+}
+
+.top-col {
+  height: 60px;
+}
+
+</style>
