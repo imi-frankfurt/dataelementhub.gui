@@ -178,13 +178,11 @@
         </v-menu>
       </client-only>
     </v-app-bar>
-    <v-main>
-      <v-container>
-        <nuxt />
-      </v-container>
+    <v-main style="height: 100vh;">
+      <nuxt />
     </v-main>
     <v-footer
-      :absolute="!fixed"
+      fixed
       app
     >
       <span>&copy; 2021 Medical Informatics Group</span>
