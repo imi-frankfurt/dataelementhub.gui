@@ -43,10 +43,6 @@
       @saveFailure="snackbar.saveFailure = true"
       @dialogClosed="dialog.showDataElementGroup = false"
     />
-    <v-row
-      class="pa-4"
-      justify="space-between"
-    >
     <v-row class="top-row flex-grow-0 flex-shrink-0">
       <v-col class="top-col" cols="4">
         <v-btn
