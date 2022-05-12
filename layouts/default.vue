@@ -3,134 +3,53 @@
     <v-navigation-drawer
       v-model="drawer"
       :mini-variant="miniVariant"
-      :clipped="clipped"
+      color="navigation_drawer"
+      :expand-on-hover="$vuetify.breakpoint.mdAndUp"
       permanent
-      fixed
       app
     >
+      <div class="text-center">
+        <img src="@/assets/images/logo/1.png" height="60"/>
+      </div>
       <v-list>
         <v-list-item-group>
           <v-list-item to="/">
             <v-list-item-icon>
-              <v-icon>mdi-view-dashboard</v-icon>
+              <v-icon color="white">mdi-view-dashboard</v-icon>
             </v-list-item-icon>
             <v-list-item-title><v-list-item-title v-text="$t('global.mainMenu.home')" /></v-list-item-title>
           </v-list-item>
           <v-list-item to="/all-elements">
             <v-list-item-icon>
-              <v-icon>mdi-home</v-icon>
+              <v-icon color="white">mdi-home</v-icon>
             </v-list-item-icon>
             <v-list-item-title><v-list-item-title v-text="$t('global.mainMenu.mainView')" /></v-list-item-title>
           </v-list-item>
         </v-list-item-group>
         <client-only>
           <div v-if="$auth.loggedIn">
-            <!--
-            <v-divider />
-            <v-subheader>{{ $t('global.mainMenu.workspace.workspace') }}</v-subheader>
-            <v-list-item-group>
-              <v-list-item to="/workspace/staging">
-                <v-list-item-icon>
-                  <v-icon>mdi-arrow-right-bold-box</v-icon>
-                </v-list-item-icon>
-                <v-list-item-title><v-list-item-title v-text="$t('global.mainMenu.workspace.staging')" /></v-list-item-title>
-              </v-list-item>
-              <v-list-item to="/workspace/drafts">
-                <v-list-item-icon>
-                  <v-icon>mdi-pencil</v-icon>
-                </v-list-item-icon>
-                <v-list-item-title><v-list-item-title v-text="$t('global.mainMenu.workspace.drafts')" /></v-list-item-title>
-              </v-list-item>
-              <v-list-item to="/workspace/validate">
-                <v-list-item-icon>
-                  <v-icon>mdi-check-all</v-icon>
-                </v-list-item-icon>
-                <v-list-item-title><v-list-item-title v-text="$t('global.mainMenu.workspace.validate')" /></v-list-item-title>
-              </v-list-item>
-            </v-list-item-group>
-            -->
-            <!--
-            <v-subheader>{{ $t('global.mainMenu.view.view') }}</v-subheader>
-            <v-list-item-group>
-              <v-list-item to="/view/my-data">
-                <v-list-item-icon>
-                  <v-icon>mdi-account</v-icon>
-                </v-list-item-icon>
-                <v-list-item-title><v-list-item-title v-text="$t('global.mainMenu.view.myData')" /></v-list-item-title>
-              </v-list-item>
-              <v-list-item to="/view/public-data">
-                <v-list-item-icon>
-                  <v-icon>mdi-account-multiple</v-icon>
-                </v-list-item-icon>
-                <v-list-item-title><v-list-item-title v-text="$t('global.mainMenu.view.public')" /></v-list-item-title>
-              </v-list-item>
-              <v-list-item to="/view/value-sets">
-                <v-list-item-icon>
-                  <v-icon>mdi-view-headline</v-icon>
-                </v-list-item-icon>
-                <v-list-item-title><v-list-item-title v-text="$t('global.mainMenu.view.valueSets')" /></v-list-item-title>
-              </v-list-item>
-            </v-list-item-group>
-            -->
             <v-subheader>{{ $t('global.mainMenu.tools.tools') }}</v-subheader>
             <v-list-item-group>
-              <!--
-              <v-list-item to="/tools/namespace-comparison">
-                <v-list-item-icon>
-                  <v-icon>mdi-ab-testing</v-icon>
-                </v-list-item-icon>
-                <v-list-item-title><v-list-item-title v-text="$t('global.mainMenu.tools.namespaceComparison')" /></v-list-item-title>
-              </v-list-item>
-              <v-list-item to="/tools/mapping">
-                <v-list-item-icon>
-                  <v-icon>mdi-arrow-decision</v-icon>
-                </v-list-item-icon>
-                <v-list-item-title><v-list-item-title v-text="$t('global.mainMenu.tools.mapping')" /></v-list-item-title>
-              </v-list-item>
-              <v-list-item to="/tools/visualizer">
-                <v-list-item-icon>
-                  <v-icon>mdi-eye</v-icon>
-                </v-list-item-icon>
-                <v-list-item-title><v-list-item-title v-text="$t('global.mainMenu.tools.visualizer')" /></v-list-item-title>
-              </v-list-item>
-              <v-list-item to="/tools/import-export">
-                <v-list-item-icon>
-                  <v-icon>mdi-swap-horizontal</v-icon>
-                </v-list-item-icon>
-                <v-list-item-title><v-list-item-title v-text="$t('global.mainMenu.tools.importExport')" /></v-list-item-title>
-              </v-list-item>
-              -->
               <v-list-item to="/tools/search">
                 <v-list-item-icon>
-                  <v-icon>mdi-magnify</v-icon>
+                  <v-icon color="white">mdi-magnify</v-icon>
                 </v-list-item-icon>
                 <v-list-item-title><v-list-item-title v-text="$t('global.mainMenu.tools.search')" /></v-list-item-title>
               </v-list-item>
             </v-list-item-group>
-            <!--
-            <v-list-item-group>
-              <v-divider />
-              <v-list-item to="/settings">
-                <v-list-item-icon>
-                  <v-icon>mdi-cog</v-icon>
-                </v-list-item-icon>
-                <v-list-item-title><v-list-item-title v-text="$t('global.mainMenu.settings')" /></v-list-item-title>
-              </v-list-item>
-            </v-list-item-group>
-            -->
           </div>
         </client-only>
-        <v-list-item-group>
+        <v-list-item-group class="fixedBottom">
           <v-divider />
           <v-list-item to="/about">
             <v-list-item-icon>
-              <v-icon>mdi-information</v-icon>
+              <v-icon color="white">mdi-information</v-icon>
             </v-list-item-icon>
             <v-list-item-title><v-list-item-title v-text="$t('global.mainMenu.about')" /></v-list-item-title>
           </v-list-item>
           <v-list-item to="/help">
             <v-list-item-icon>
-              <v-icon>mdi-help-circle</v-icon>
+              <v-icon color="white">mdi-help-circle</v-icon>
             </v-list-item-icon>
             <v-list-item-title><v-list-item-title v-text="$t('global.mainMenu.help')" /></v-list-item-title>
           </v-list-item>
@@ -139,17 +58,27 @@
     </v-navigation-drawer>
     <v-app-bar
       :clipped-left="clipped"
+      color="header"
       fixed
       app
     >
-      <v-btn
-        icon
-        @click.stop="miniVariant = !miniVariant"
-      >
-        <v-icon>mdi-{{ `chevron-${miniVariant ? 'right' : 'left'}` }}</v-icon>
-      </v-btn>
-      <v-toolbar-title v-text="$t(title)" />
+<!--      <v-btn-->
+<!--        icon-->
+<!--        @click.stop="miniVariant = !miniVariant"-->
+<!--      >-->
+<!--        <v-icon>mdi-{{ `chevron-${miniVariant ? 'right' : 'left'}` }}</v-icon>-->
+<!--      </v-btn>-->
+      <div class="dehubText">
+        <img src="@/assets/images/logo/3.png" height="60"/>
+      </div>
       <v-spacer />
+      <v-btn
+        v-if="!$auth.loggedIn"
+        color="primary"
+        @click="loginWithKeycloak"
+      >
+        <v-icon>mdi-login</v-icon> {{ $t('global.login') }}
+      </v-btn>
       <client-only>
         <v-menu v-if="$auth.loggedIn" offset-y>
           <template #activator="{ on, attrs }">
@@ -181,12 +110,6 @@
     <v-main style="height: 100vh;">
       <nuxt />
     </v-main>
-    <v-footer
-      fixed
-      app
-    >
-      <span>&copy; 2021 Medical Informatics Group</span>
-    </v-footer>
   </v-app>
 </template>
 
@@ -210,7 +133,31 @@ export default {
       } catch (err) {
 
       }
+    },
+    async loginWithKeycloak () {
+      try {
+        await this.$auth.loginWith('keycloak')
+      } catch (err) {
+      }
     }
   }
 }
 </script>
+
+<style>
+
+.dehubText {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  margin-top: -25px;
+  margin-left: -25px;
+}
+
+.fixedBottom {
+  position: fixed !important;
+  bottom: 0 !important;
+  width: 100%;
+}
+
+</style>

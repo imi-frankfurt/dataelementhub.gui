@@ -49,6 +49,8 @@ export default {
     },
     public: 'PUBLIC',
     hidden: 'HIDDEN',
+    imi: 'Institute for Medical Informatics',
+    login: 'LOG IN',
     addItem: 'ADD ITEM',
     dragAndDrop: 'simply drag and drop',
     metaData: 'Meta Data',

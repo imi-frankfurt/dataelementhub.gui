@@ -19,7 +19,7 @@ export default {
       { hid: 'description', name: 'description', content: '' }
     ],
     link: [
-      { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' }
+      { rel: 'icon', type: 'image/png', href: 'src/assets/images/logo/1.png' }
     ]
   },
 
@@ -131,15 +131,55 @@ export default {
     customVariables: ['~/assets/variables.scss'],
     theme: {
       dark: false,
+      options: { customProperties: true },
       themes: {
         dark: {
-          primary: colors.blue.darken2,
-          accent: colors.grey.darken3,
-          secondary: colors.amber.darken3,
-          info: colors.teal.lighten1,
+          primary: {
+            base: '#099b63',
+            darken1: '#04c279'
+          },
+          accent: '#8f7d91',
+          secondary: '#97812F',
+          info: {
+            base: '#1FFFF1',
+            darken1: '#450b5a',
+            darken2: '#1125c0',
+            darken3: '#40bfa4'
+          },
           warning: colors.amber.base,
           error: colors.deepOrange.accent4,
-          success: colors.green.accent3
+          success: colors.green.accent3,
+          anchor: '#1FFFF1'
+        },
+        light: {
+          primary: {
+            base: '#022844',
+            darken1: '#d6eec5'
+          },
+          header: {
+            base: '#21587f'
+          },
+          footer: {
+            base: '#edfceb'
+          },
+          background: {
+            base: '#fcfffc'
+          },
+          navigation_drawer: {
+            base: '#21587f'
+          },
+          accent: '#8f7d91',
+          secondary: '#97812F',
+          info: {
+            base: '#4caff5',
+            darken1: '#450b5a',
+            darken2: '#1125c0',
+            darken3: '#40bfa4'
+          },
+          warning: '#4caff5',
+          error: colors.deepOrange.accent4,
+          success: colors.green.accent3,
+          anchor: '#4caff5'
         }
       }
     }
