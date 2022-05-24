@@ -29,7 +29,7 @@
       <meta-data :data="permittedValue.identification" />
       <v-list>
         <v-subheader v-if="permittedValue.value">{{ $t('global.value') }}: {{ permittedValue.value }}</v-subheader>
-        <v-subheader>{{ $t('global.definitions') }}</v-subheader>
+        <v-subheader> {{ $t('global.definitions') }} </v-subheader>
         <v-list-item>
           <v-list-item-content>
             <definition-table :definitions="permittedValue.definitions" />

@@ -9,6 +9,10 @@
           sm="4"
         >
           <v-card
+            v-if="valueDomainMetaData.values[n-1] !== false &&
+              valueDomainMetaData.values[n-1] !== true &&
+              valueDomainMetaData.values[n-1] !== null &&
+              valueDomainMetaData.values[n-1] !== ''"
             class="pa-2"
             outlined
             tile
@@ -26,7 +30,10 @@
       class="elevation-1"
       @click:row="handlePermittedValueClicked"
     />
-    <concept-association-table v-if="valueDomain.conceptAssociations.length > 0" :associations="valueDomain.conceptAssociations" />
+    <concept-association-table
+      v-if="valueDomain.conceptAssociations.length > 0"
+      :associations="valueDomain.conceptAssociations"
+    />
     <v-dialog
       v-model="showPermittedValueDetailView"
       width="600"
@@ -122,29 +129,46 @@ export default {
       this.valueDomainMetaData.values = []
       this.valueDomainMetaData.keys.push('Type')
       this.valueDomainMetaData.values.push(this.valueDomain.type)
+      let range = ''
       switch (this.valueDomain.type) {
         case 'STRING':
-          this.valueDomainMetaData.keys.push(this.$i18n.t('global.form.label.useRegEx'), this.$i18n.t('global.regEx'), this.$i18n.t('global.form.label.useMaximumLength'), this.$i18n.t('global.maximumLength'))
-          this.valueDomainMetaData.values.push(this.valueDomain.text.useRegEx, this.valueDomain.text.regEx, this.valueDomain.text.useMaximumLength, this.valueDomain.text.maximumLength)
+          this.valueDomainMetaData.keys.push(this.$i18n.t('global.regEx'),
+            this.$i18n.t('global.maximumLength'))
+          this.valueDomainMetaData.values.push(this.valueDomain.text.regEx,
+            this.valueDomain.text.maximumLength)
           break
         case 'NUMERIC':
           this.valueDomainMetaData.values[0] = this.valueDomain.numeric.type
-          this.valueDomainMetaData.keys.push(this.$i18n.t('global.form.label.useMinimum'), this.$i18n.t('global.form.label.useMaximum'), this.$i18n.t('global.minimum'), this.$i18n.t('global.maximum'), this.$i18n.t('global.form.label.unitOfMeasure'))
-          this.valueDomainMetaData.values.push(this.valueDomain.numeric.useMinimum, this.valueDomain.numeric.useMaximum, this.valueDomain.numeric.minimum, this.valueDomain.numeric.maximum, this.valueDomain.numeric.unitOfMeasure)
+          if (this.valueDomain.numeric.minimum || this.valueDomain.numeric.maximum) {
+            range = 'x'
+          }
+          if (this.valueDomain.numeric.minimum) {
+            range = this.valueDomain.numeric.minimum + ' <= ' + range
+          }
+          if (this.valueDomain.numeric.maximum) {
+            range = range + ' <= ' + this.valueDomain.numeric.maximum
+          }
+          this.valueDomainMetaData.keys.push(this.$i18n.t('global.range'),
+            this.$i18n.t('global.form.label.unitOfMeasure'))
+          this.valueDomainMetaData.values.push(range, this.valueDomain.numeric.unitOfMeasure)
           break
         case 'ENUMERATED':
           break
         case 'TIME':
-          this.valueDomainMetaData.keys.push(this.$i18n.t('global.time'), this.$i18n.t('global.hourFormat'))
-          this.valueDomainMetaData.values.push(this.valueDomain.datetime.time, this.valueDomain.datetime.hourFormat)
+          this.valueDomainMetaData.keys.push(this.$i18n.t('global.time'),
+            this.$i18n.t('global.hourFormat'))
+          this.valueDomainMetaData.values.push(this.valueDomain.datetime.time,
+            this.valueDomain.datetime.hourFormat)
           break
         case 'DATE':
           this.valueDomainMetaData.keys.push(this.$i18n.t('global.date'))
           this.valueDomainMetaData.values.push(this.valueDomain.datetime.date)
           break
         case 'DATETIME':
-          this.valueDomainMetaData.keys.push(this.$i18n.t('global.time'), this.$i18n.t('global.hourFormat'), this.$i18n.t('global.date'))
-          this.valueDomainMetaData.values.push(this.valueDomain.datetime.time, this.valueDomain.datetime.hourFormat, this.valueDomain.datetime.date)
+          this.valueDomainMetaData.keys.push(this.$i18n.t('global.time'),
+            this.$i18n.t('global.hourFormat'), this.$i18n.t('global.date'))
+          this.valueDomainMetaData.values.push(this.valueDomain.datetime.time,
+            this.valueDomain.datetime.hourFormat, this.valueDomain.datetime.date)
           break
         default:
           break
@@ -152,7 +176,8 @@ export default {
     },
     async fetchValueDomain () {
       this.$log.debug('Fetching Value Domain of URN: ' + this.urn)
-      await this.$axios.$get(this.ajax.dataElementUrl + this.urn + '/valuedomain', Ajax.header.preferredLanguage)
+      await this.$axios.$get(this.ajax.dataElementUrl + this.urn + '/valuedomain',
+        Ajax.header.preferredLanguage)
         .then(function (res) {
           this.valueDomain = res
         }.bind(this))

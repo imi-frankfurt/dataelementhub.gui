@@ -18,6 +18,31 @@
       :text="$t('global.itemDialog.snackbar.saveSuccess')"
       :show="snackbar.saveSuccess"
     />
+    <NamespaceDialog
+      v-if="dialog.elementType === 'NAMESPACE'"
+      :id="0"
+      :show="dialog.showNamespace"
+      @save="updateTree($event); snackbar.saveSuccess = true"
+      @saveFailure="snackbar.saveFailure = true"
+      @dialogClosed="dialog.showNamespace = false"
+    />
+    <DataElementDialog
+      v-if="dialog.elementType === 'DATAELEMENT'"
+      :show="dialog.showDataElement"
+      :namespace-urn="dialog.namespaceUrn"
+      @save="updateTree($event); snackbar.saveSuccess = true"
+      @saveFailure="snackbar.saveFailure = true"
+      @dialogClosed="dialog.showDataElement = false"
+    />
+    <GroupRecordDialog
+      v-if="(dialog.elementType === 'DATAELEMENTGROUP' || dialog.elementType === 'RECORD')"
+      :show="dialog.showDataElementGroup"
+      :namespace-urn="dialog.namespaceUrn"
+      :element-type="dialog.elementType"
+      @save="updateTree($event); snackbar.saveSuccess = true"
+      @saveFailure="snackbar.saveFailure = true"
+      @dialogClosed="dialog.showDataElementGroup = false"
+    />
     <v-row class="top-row flex-grow-0 flex-shrink-0">
       <v-col class="top-col" cols="4">
         <v-btn
@@ -119,39 +144,42 @@
       </v-col>
       <v-divider vertical />
       <v-col cols="8" class="auto-scroll fill-parent-height" style="padding-top: 30px;">
-        <DataElementDetailView
-          v-if="selected && selectedElement.identification.elementType === 'DATAELEMENT'"
-          :urn="selectedElement.identification.urn"
-          :editable="true"
-          :deletable="true"
-          @save="updateTree($event); showSaveSuccessSnackbar()"
-          @saveFailure="showSaveFailureSnackbar()"
-          @delete="updateTree(selectedElement) ; showDeleteSuccessSnackbar()"
-          @deleteFailure="showDeleteFailureSnackbar()"
-        />
-        <GroupsRecordsDetailView
-          v-if="selected && (selectedElement.identification.elementType === 'DATAELEMENTGROUP'
-            || selectedElement.identification.elementType === 'RECORD' )"
-          :urn="selectedElement.identification.urn"
-          :editable="true"
-          :deletable="true"
-          @save="showSaveSuccessSnackbar()"
-          @saveFailure="showSaveFailureSnackbar()"
-          @reloadMembers="updateTree($event)"
-          @delete="updateTree(selectedElement) ; showDeleteSuccessSnackbar()"
-          @deleteFailure="showDeleteFailureSnackbar()"
-        />
-        <NamespaceDetailView
-          v-if="selected && selectedElement.identification.elementType === 'NAMESPACE'"
-          :id="selectedElement.identification.identifier"
-          :urn="selectedElement.identification.urn"
-          :editable="true"
-          :deletable="true"
-          @save="updateTree($event); showSaveSuccessSnackbar()"
-          @saveFailure="showSaveFailureSnackbar()"
-          @delete="updateTree(selectedElement) ; showDeleteSuccessSnackbar()"
-          @deleteFailure="showDeleteFailureSnackbar()"
-        />
+        <div>
+          <DataElementDetailView
+            v-if="selected && selectedElement.identification.elementType === 'DATAELEMENT'"
+            :urn="selectedElement.identification.urn"
+            :parent-urn="activeElements.slice(-1)[0].parentUrn"
+            :editable="true"
+            :deletable="true"
+            @save="updateTree($event); snackbar.saveSuccess = true"
+            @saveFailure="snackbar.saveFailure = true"
+            @delete="updateTree(selectedElement) ; snackbar.deleteSuccess = true"
+            @deleteFailure="snackbar.deleteFailure = true"
+          />
+          <GroupsRecordsDetailView
+            v-if="selected && (selectedElement.identification.elementType === 'DATAELEMENTGROUP'
+              || selectedElement.identification.elementType === 'RECORD' )"
+            :urn="selectedElement.identification.urn"
+            :parent-urn="activeElements.slice(-1)[0].parentUrn"
+            :editable="true"
+            :deletable="true"
+            @save="snackbar.saveSuccess = true"
+            @saveFailure="snackbar.saveFailure = true"
+            @reloadMembers="updateTree($event)"
+            @delete="updateTree(selectedElement) ; snackbar.deleteSuccess = true"
+            @deleteFailure="snackbar.deleteFailure = true"
+          />
+          <NamespaceDetailView
+            v-if="selected && selectedElement.identification.elementType === 'NAMESPACE'"
+            :urn="selectedElement.identification.urn"
+            :editable="true"
+            :deletable="true"
+            @save="updateTree($event); snackbar.saveSuccess = true"
+            @saveFailure="snackbar.saveFailure = true"
+            @delete="updateTree(selectedElement) ; snackbar.deleteSuccess = true"
+            @deleteFailure="snackbar.deleteFailure = true"
+          />
+        </div>
       </v-col>
     </v-row>
     <NamespaceDialog
@@ -256,6 +284,13 @@ export default {
   },
   mounted () {
     this.fetchNamespaces()
+    const findAnd = require('find-and')
+    this.$root.$on('changeActiveElement', (urn) => {
+      const item = findAnd.returnFound(this.treeItems, { urn })
+      this.activeElements = []
+      this.activeElements.unshift(item)
+      this.setActiveElements(this.activeElements)
+    })
   },
   methods: {
     updateTree (element) {
@@ -353,6 +388,7 @@ export default {
             if (member.status !== 'OUTDATED') {
               members.push({
                 id: this.generateItemId(),
+                parentUrn: element.urn,
                 urn,
                 editable: this.getNamespace(urn).editable,
                 isPreferredLanguage: Ajax.preferredLanguage.includes(member.definitions[0].language),
@@ -435,7 +471,8 @@ export default {
         return
       }
       if (elements.length > 0) {
-        const activeItems = findAnd.returnFound(this.treeItems, { urn: elements.slice(-1)[0].urn })
+        const activeItems =
+          findAnd.returnFound(this.treeItems, { urn: elements.slice(-1)[0].urn })
         this.activeElements = Array.isArray(activeItems) ? activeItems : [activeItems]
       } else {
         this.activeElements = []

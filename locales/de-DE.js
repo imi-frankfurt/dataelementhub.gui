@@ -44,7 +44,8 @@ export default {
       create: 'Erstellen',
       edit: 'Editieren',
       delete: 'Löschen',
-      close: 'Schließen'
+      close: 'Schließen',
+      showInTreeView: 'IM TREEVIEW ZEIGEN'
     },
     addItem: 'ARTIKEL HINZUFÜGEN',
     dragAndDrop: 'einfach ziehen und ablegen',
@@ -57,6 +58,10 @@ export default {
     identifier: 'Identifier',
     revision: 'Revision',
     urn: 'URN',
+    namespaceIdentifier: 'NAMESPACE IDENTIFIER',
+    elementIdentifier: 'ELEMENT IDENTIFIER',
+    elementVersion: 'ELEMENT VERSION',
+    elementType: 'ELEMENT TYPE',
     hidden: 'Hidden',
     property: 'Property',
     properties: 'Eigenschaften',
@@ -99,6 +104,7 @@ export default {
     regEx: 'RegEx',
     minimum: 'Minimum',
     maximum: 'Maximum',
+    range: 'Bereich',
     maximumLength: 'Maximale Länge',
     date: 'Datum',
     time: 'Zeit',
