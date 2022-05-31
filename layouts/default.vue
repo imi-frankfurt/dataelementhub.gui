@@ -9,19 +9,23 @@
       app
     >
       <div class="text-center">
-        <img src="@/assets/images/logo/1.png" height="60"/>
+        <img src="@/assets/images/logo/1.png" height="60">
       </div>
       <v-list>
         <v-list-item-group>
           <v-list-item to="/">
             <v-list-item-icon>
-              <v-icon color="white">mdi-view-dashboard</v-icon>
+              <v-icon color="white">
+                mdi-view-dashboard
+              </v-icon>
             </v-list-item-icon>
             <v-list-item-title><v-list-item-title v-text="$t('global.mainMenu.home')" /></v-list-item-title>
           </v-list-item>
           <v-list-item to="/all-elements">
             <v-list-item-icon>
-              <v-icon color="white">mdi-home</v-icon>
+              <v-icon color="white">
+                mdi-home
+              </v-icon>
             </v-list-item-icon>
             <v-list-item-title><v-list-item-title v-text="$t('global.mainMenu.mainView')" /></v-list-item-title>
           </v-list-item>
@@ -32,7 +36,9 @@
             <v-list-item-group>
               <v-list-item to="/tools/search">
                 <v-list-item-icon>
-                  <v-icon color="white">mdi-magnify</v-icon>
+                  <v-icon color="white">
+                    mdi-magnify
+                  </v-icon>
                 </v-list-item-icon>
                 <v-list-item-title><v-list-item-title v-text="$t('global.mainMenu.tools.search')" /></v-list-item-title>
               </v-list-item>
@@ -43,15 +49,32 @@
           <v-divider />
           <v-list-item to="/about">
             <v-list-item-icon>
-              <v-icon color="white">mdi-information</v-icon>
+              <v-icon color="white">
+                mdi-information
+              </v-icon>
             </v-list-item-icon>
             <v-list-item-title><v-list-item-title v-text="$t('global.mainMenu.about')" /></v-list-item-title>
           </v-list-item>
           <v-list-item to="/help">
             <v-list-item-icon>
-              <v-icon color="white">mdi-help-circle</v-icon>
+              <v-icon color="white">
+                mdi-help-circle
+              </v-icon>
             </v-list-item-icon>
             <v-list-item-title><v-list-item-title v-text="$t('global.mainMenu.help')" /></v-list-item-title>
+          </v-list-item>
+          <v-list-item inactive>
+            <v-list-item-icon>
+              <v-icon color="white">
+                &copy;
+              </v-icon>
+            </v-list-item-icon>
+            <v-list-item-content>
+              <span>&copy; 2022 {{ $t('global.imi') }}</span>
+            </v-list-item-content>
+<!--            <v-footer inset color="navigation_drawer">-->
+<!--              -->
+<!--            </v-footer>-->
           </v-list-item>
         </v-list-item-group>
       </v-list>
@@ -62,14 +85,8 @@
       fixed
       app
     >
-<!--      <v-btn-->
-<!--        icon-->
-<!--        @click.stop="miniVariant = !miniVariant"-->
-<!--      >-->
-<!--        <v-icon>mdi-{{ `chevron-${miniVariant ? 'right' : 'left'}` }}</v-icon>-->
-<!--      </v-btn>-->
       <div class="dehubText">
-        <img src="@/assets/images/logo/3.png" height="60"/>
+        <img src="@/assets/images/logo/3.png" height="60">
       </div>
       <v-spacer />
       <v-btn
@@ -124,6 +141,13 @@ export default {
       right: true,
       rightDrawer: false,
       title: 'global.appName'
+    }
+  },
+  watch: {
+    '$auth.loggedIn' () {
+      if (!this.$auth.loggedIn) {
+        this.logout()
+      }
     }
   },
   methods: {

@@ -176,10 +176,10 @@ export default {
             darken2: '#1125c0',
             darken3: '#40bfa4'
           },
-          warning: '#4caff5',
+          warning: '#499ab0',
           error: colors.deepOrange.accent4,
           success: colors.green.accent3,
-          anchor: '#4caff5'
+          anchor: '#52b7f6'
         }
       }
     }

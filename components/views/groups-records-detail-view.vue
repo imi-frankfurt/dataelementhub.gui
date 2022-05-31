@@ -7,7 +7,7 @@
           justify="center"
         >
           <v-progress-circular
-            :size="500"
+            :size="400"
             color="primary"
             indeterminate
           >
@@ -37,26 +37,30 @@
           <v-container class="text-center">
             <v-row no-gutters>
               <v-col v-for="item in elementPath" :key="item.urn">
-                <v-row no-gutters style="width: 100%;">
-                  <v-col v-if="!item.urn.includes('namespace')" cols="3">
-                    <v-icon>
-                      mdi-slash-forward
-                    </v-icon>
-                  </v-col>
-                  <v-col cols="9">
-                    <v-btn
-                      color="grey lighten-4"
-                      rounded
-                      :disabled="!activatePathNavigation"
-                      @click="showDetailViewDialog(item.urn)"
-                    >
-                      <div v-if="item.urn === urn">
-                        {{ item.designation }}
-                      </div>
-                      <a v-if="item.urn !== urn">{{ item.designation }}</a>
-                    </v-btn>
-                  </v-col>
-                </v-row>
+                <v-icon v-if="!item.urn.includes('namespace')">
+                  mdi-slash-forward
+                </v-icon>
+                <v-btn
+                  width="130"
+                  class="designationButton"
+                  color="grey lighten-4"
+                  rounded
+                  :disabled="!activatePathNavigation"
+                  @click="showDetailViewDialog(item.urn)"
+                >
+                  <div
+                    v-if="item.urn === urn"
+                    style="text-align: center; width: 100%; white-space: normal;"
+                  >
+                    {{ item.designation }}
+                  </div>
+                  <a
+                    v-if="item.urn !== urn"
+                    style="text-align: center; width: 100%; white-space: normal;"
+                  >
+                    {{ item.designation }}
+                  </a>
+                </v-btn>
               </v-col>
             </v-row>
           </v-container>
@@ -296,5 +300,14 @@ export default {
 
 .detailViewCard {
   margin-bottom: 30px;
+}
+
+.designationButton {
+  min-width: 50px;
+  width: 40px;
+  display: inline-block;
+  overflow-wrap: break-word;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 </style>

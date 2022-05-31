@@ -19,7 +19,13 @@
       :show="snackbar.saveSuccess"
     />
     <v-row no-gutters class="top-row flex-grow-0 flex-shrink-0">
-      <v-col cols="4" class="create-namespace-col pa-3">
+      <v-col cols="2" class="create-namespace-col pa-3">
+        <h4 class="text-h4 mb-2">
+          {{ $t('global.mainMenu.namespaces') }}:
+        </h4>
+        <v-divider />
+      </v-col>
+      <v-col cols="2" class="create-namespace-col pa-3">
         <v-btn
           class="d-block mr-0 ml-auto"
           color="primary"
@@ -29,11 +35,10 @@
           <v-icon dark>
             mdi-plus
           </v-icon>
-          {{ $t('pages.namespaces.actions.createNamespace') }}
+          {{ $t('global.button.create') }}
         </v-btn>
       </v-col>
-      <v-col cols="8" class="detail-view-col">
-      </v-col>
+      <v-col cols="8" class="detail-view-col" />
     </v-row>
     <v-row
       no-gutters
@@ -68,18 +73,28 @@
           @update:active="setActiveElements"
         >
           <template #prepend="{ item }">
-            <v-icon v-if="item.elementType === 'NAMESPACE'">
+            <v-icon
+              v-if="item.elementType === 'NAMESPACE'"
+              color="white"
+            >
               mdi-garage-variant
             </v-icon>
-            <v-icon v-else-if="item.elementType === 'DATAELEMENT'">
+            <v-icon
+              v-else-if="item.elementType === 'DATAELEMENT'"
+              color="white"
+            >
               mdi-vector-arrange-below
             </v-icon>
             <v-icon
               v-else-if="item.elementType === 'DATAELEMENTGROUP'"
+              color="white"
             >
               mdi-group
             </v-icon>
-            <v-icon v-else-if="item.elementType === 'RECORD'">
+            <v-icon
+              v-else-if="item.elementType === 'RECORD'"
+              color="white"
+            >
               mdi-group
             </v-icon>
           </template>
@@ -96,12 +111,13 @@
               <template #activator="{ on, attrs }">
                 <v-btn
                   v-if="item.elementType !== 'DATAELEMENT' && item.editable"
-                  fab
-                  x-small
+                  class="d-block mr-0 ml-auto"
+                  rounded
                   v-bind="attrs"
                   v-on="on"
                 >
                   <v-icon>mdi-plus</v-icon>
+                  {{ $t('global.button.create') }}
                 </v-btn>
               </template>
               <v-list>
@@ -159,31 +175,35 @@
         </div>
       </v-col>
     </v-row>
-    <NamespaceDialog
-      v-if="dialog.elementType === 'NAMESPACE'"
-      :id="0"
-      :show="dialog.showNamespace"
-      @save="updateTree($event); showSaveSuccessSnackbar()"
-      @saveFailure="showSaveFailureSnackbar()"
-      @dialogClosed="dialog.showNamespace = false"
-    />
-    <DataElementDialog
-      v-if="dialog.elementType === 'DATAELEMENT'"
-      :show="dialog.showDataElement"
-      :namespace-urn="dialog.namespaceUrn"
-      @save="updateTree($event); showSaveSuccessSnackbar()"
-      @saveFailure="showSaveFailureSnackbar()"
-      @dialogClosed="dialog.showDataElement = false"
-    />
-    <GroupRecordDialog
-      v-if="(dialog.elementType === 'DATAELEMENTGROUP' || dialog.elementType === 'RECORD')"
-      :show="dialog.showDataElementGroup"
-      :namespace-urn="dialog.namespaceUrn"
-      :element-type="dialog.elementType"
-      @save="updateTree($event); showSaveSuccessSnackbar()"
-      @saveFailure="showSaveFailureSnackbar()"
-      @dialogClosed="dialog.showDataElementGroup = false"
-    />
+    <v-row v-if="dialog.showDataElement || dialog.showDataElementGroup || dialog.showNamespace">
+      <v-col>
+        <NamespaceDialog
+          v-if="dialog.elementType === 'NAMESPACE'"
+          :id="0"
+          :show="dialog.showNamespace"
+          @save="updateTree($event); showSaveSuccessSnackbar()"
+          @saveFailure="showSaveFailureSnackbar()"
+          @dialogClosed="dialog.showNamespace = false"
+        />
+        <DataElementDialog
+          v-if="dialog.elementType === 'DATAELEMENT'"
+          :show="dialog.showDataElement"
+          :namespace-urn="dialog.namespaceUrn"
+          @save="updateTree($event); showSaveSuccessSnackbar()"
+          @saveFailure="showSaveFailureSnackbar()"
+          @dialogClosed="dialog.showDataElement = false"
+        />
+        <GroupRecordDialog
+          v-if="(dialog.elementType === 'DATAELEMENTGROUP' || dialog.elementType === 'RECORD')"
+          :show="dialog.showDataElementGroup"
+          :namespace-urn="dialog.namespaceUrn"
+          :element-type="dialog.elementType"
+          @save="updateTree($event); showSaveSuccessSnackbar()"
+          @saveFailure="showSaveFailureSnackbar()"
+          @dialogClosed="dialog.showDataElementGroup = false"
+        />
+      </v-col>
+    </v-row>
   </v-container>
 </template>
 
