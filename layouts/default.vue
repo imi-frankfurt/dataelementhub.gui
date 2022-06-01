@@ -72,9 +72,6 @@
             <v-list-item-content>
               <span>&copy; 2022 {{ $t('global.imi') }}</span>
             </v-list-item-content>
-<!--            <v-footer inset color="navigation_drawer">-->
-<!--              -->
-<!--            </v-footer>-->
           </v-list-item>
         </v-list-item-group>
       </v-list>
@@ -86,11 +83,11 @@
       app
     >
       <div class="dehubText">
-        <img src="@/assets/images/logo/3.png" height="60">
+        <img src="@/assets/images/logo/5.png" height="60">
       </div>
       <v-spacer />
       <v-btn
-        v-if="!$auth.loggedIn"
+        v-if="!$auth.loggedIn && $route.path !== '/login'"
         color="primary"
         @click="loginWithKeycloak"
       >
@@ -141,13 +138,6 @@ export default {
       right: true,
       rightDrawer: false,
       title: 'global.appName'
-    }
-  },
-  watch: {
-    '$auth.loggedIn' () {
-      if (!this.$auth.loggedIn) {
-        this.logout()
-      }
     }
   },
   methods: {

@@ -5,13 +5,11 @@
         <v-row no-gutters>
           <v-col md="4" offset="2" offset-md="0" class="bg-symbol-1 mt-12">
             <h4
-              v-scroll-reveal.reset="revealFromBottom"
               class="overline mb-4 mb-5"
             >
               {{ $t('pages.home.introduction') }}
             </h4>
             <h1
-              v-scroll-reveal.reset="revealFromBottom"
               class="display-1 font-weight-medium"
             >
               {{ $t('pages.home.dehub') }}
@@ -27,10 +25,6 @@
           </v-col>
         </v-row>
       </v-container>
-      <div
-        v-scroll-reveal.reset="revealFromRight"
-        class="d-none d-md-block dots-map"
-      />
     </section>
 
     <section class="py-12 mt-12">
