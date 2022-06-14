@@ -2,7 +2,7 @@ FROM node:lts-alpine3.14
 ENV DIR=/usr/src/dehub-gui
 RUN mkdir -p $DIR
 WORKDIR $DIR
-RUN apk update && apk upgrade && apk add git
+RUN apk update && apk upgrade && apk add git python3 build-base
 COPY . $DIR
 RUN npm install && npm audit fix && npm run build
 EXPOSE 3000
