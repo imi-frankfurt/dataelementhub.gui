@@ -20,7 +20,7 @@
       <data-element-dialog
         :urn="urn"
         :show="dialog"
-        @save="$emit('save', $event); fetchDataElementDetails()"
+        @save="$emit('saveSuccess', $event); fetchDataElementDetails(); fetchElementPath()"
         @saveFailure="$emit('saveFailure', $event)"
         @dialogClosed="dialog = false"
       />
@@ -81,7 +81,12 @@
           </v-btn>
         </v-toolbar>
       </v-card>
-      <meta-data :data="dataElement.identification" />
+      <v-card outlined color="transparent" class="ma-0 pa-0">
+        <MetaData
+          :type="DATAELEMENT"
+          :data="dataElement.identification"
+        />
+      </v-card>
       <v-card class="detailViewCard">
         <v-list>
           <v-subheader>{{ $t('global.definitions') }}</v-subheader>
@@ -198,7 +203,7 @@ export default {
   },
   props: {
     urn: { required: true, type: String },
-    parentUrn: { required: false, default: '', type: String },
+    parentUrn: { required: true, type: String },
     activatePathNavigation: { required: false, default: true, type: Boolean },
     editable: { required: false, default: false, type: Boolean },
     deletable: { required: false, default: false, type: Boolean },
@@ -287,6 +292,7 @@ export default {
           }
         }.bind(this))
         .catch(function (err) {
+          this.elementPath = []
           this.$log.error('Unable to fetch DataElement paths: ' + err)
         }.bind(this))
     },

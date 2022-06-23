@@ -332,7 +332,8 @@ export default {
                   this.element.identification.urn = res1.identification.urn
                   this.element.parentUrn = ''
                   this.element.action = 'CREATE'
-                  this.$emit('save', this.element)
+                  this.$root.$emit('updateTreeView', this.element)
+                  this.$emit('saveSuccess', this.element)
                   this.hideDialog()
                 }.bind(this))
             }.bind(this))
@@ -341,7 +342,6 @@ export default {
               this.$emit('saveFailure')
             }.bind(this))
         } else { // ... otherwise we update it.
-          delete this.element.valueDomainUrn
           await this.$axios.put(this.ajax.elementUrl + this.element.identification.urn,
             this.element)
             .then(function (res) {
@@ -350,10 +350,10 @@ export default {
                   this.element.identification.urn = res1.identification.urn
                   this.element.previousUrn = this.urn
                   this.element.action = 'UPDATE'
-                  this.$emit('save', this.element)
+                  this.$root.$emit('updateTreeView', this.element)
+                  this.$emit('saveSuccess', this.element)
                   this.hideDialog()
                 }.bind(this))
-              this.$log.debug(this.element)
             }.bind(this))
             .catch(function (err) {
               this.$log.debug('Could not save Element: ' + err)
