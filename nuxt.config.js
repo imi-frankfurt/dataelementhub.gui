@@ -85,6 +85,12 @@ export default {
     // retry: { retries: 3 }
   },
   auth: {
+    cookie: {
+      options: {
+        httpOnly: true,
+        secure: true
+      }
+    },
     strategies: {
       local: false,
       keycloak: {
