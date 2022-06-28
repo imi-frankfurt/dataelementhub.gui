@@ -46,6 +46,7 @@
     <v-row class="top-row flex-grow-0 flex-shrink-0">
       <v-col class="top-col" cols="4">
         <v-btn
+          v-if="loggedIn"
           class="d-block mr-0 ml-auto"
           color="primary"
           rounded
@@ -117,7 +118,7 @@
             >
               <template #activator="{ on, attrs }">
                 <v-btn
-                  v-if="item.elementType !== 'DATAELEMENT' && item.editable"
+                  v-if="item.elementType !== 'DATAELEMENT' && item.editable && loggedIn"
                   fab
                   x-small
                   v-bind="attrs"
@@ -149,8 +150,8 @@
             v-if="selected && selectedElement.identification.elementType === 'DATAELEMENT'"
             :urn="selectedElement.identification.urn"
             :parent-urn="activeElements.slice(-1)[0].parentUrn"
-            :editable="true"
-            :deletable="true"
+            :editable="loggedIn"
+            :deletable="loggedIn"
             @save="updateTree($event); snackbar.saveSuccess = true"
             @saveFailure="snackbar.saveFailure = true"
             @delete="updateTree(selectedElement) ; snackbar.deleteSuccess = true"
@@ -161,8 +162,8 @@
               || selectedElement.identification.elementType === 'RECORD' )"
             :urn="selectedElement.identification.urn"
             :parent-urn="activeElements.slice(-1)[0].parentUrn"
-            :editable="true"
-            :deletable="true"
+            :editable="loggedIn"
+            :deletable="loggedIn"
             @save="snackbar.saveSuccess = true"
             @saveFailure="snackbar.saveFailure = true"
             @reloadMembers="updateTree($event)"
@@ -172,8 +173,8 @@
           <NamespaceDetailView
             v-if="selected && selectedElement.identification.elementType === 'NAMESPACE'"
             :urn="selectedElement.identification.urn"
-            :editable="true"
-            :deletable="true"
+            :editable="loggedIn"
+            :deletable="loggedIn"
             @save="updateTree($event); snackbar.saveSuccess = true"
             @saveFailure="snackbar.saveFailure = true"
             @delete="updateTree(selectedElement) ; snackbar.deleteSuccess = true"
@@ -264,6 +265,9 @@ export default {
     selected () {
       if (!this.activeElements.length) { return undefined }
       return this.selectedElement
+    },
+    loggedIn () {
+      return this.$auth.loggedIn
     }
   },
   watch: {
