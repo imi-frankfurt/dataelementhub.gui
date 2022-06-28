@@ -130,6 +130,8 @@ export default {
       }
     },
     selectedMembers () {
+      this.membersToChooseFrom = this.membersToChooseFrom
+        .filter(ar => !this.selectedMembers.find(rm => rm.id.toUpperCase() === ar.id.toUpperCase()))
       this.$emit('selectedMembers', this.selectedMembers)
     }
   },
@@ -143,13 +145,15 @@ export default {
           for (const member of Array.from(res)) {
             const id = 'urn:' + namespaceIdentifier + ':' +
             member.elementType + ':' + member.identifier + ':' + member.revision
-            members.push({
-              id,
-              elementType: member.elementType,
-              designation: member.definitions[0].designation,
-              definition: member.definitions[0].definition,
-              status: member.status
-            })
+            if (member.status.toUpperCase() !== 'OUTDATED' && id.toUpperCase() !== this.elementUrn.toUpperCase()) { // OUTDATED elements are not allowed to be added as members
+              members.push({
+                id,
+                elementType: member.elementType,
+                designation: member.definitions[0].designation,
+                definition: member.definitions[0].definition,
+                status: member.status
+              })
+            }
           }
           this.namespaceMembers = members
         }.bind(this))
