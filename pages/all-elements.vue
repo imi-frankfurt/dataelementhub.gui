@@ -282,8 +282,7 @@ export default {
   },
   methods: {
     changeActiveElement (urn) {
-      const findAnd = require('find-and')
-      const item = findAnd.returnFound(this.treeItems, { urn })
+      const item = this.getJsonObjects(this.treeItems, 'urn', urn)[0]
       this.activeElements = []
       this.selectedElement = null
       this.activeElements.unshift(item)
@@ -308,7 +307,7 @@ export default {
             this.treeItems.push(item)
           } else if (element.action === 'UPDATE') {
             const previousItem =
-              findAnd.returnFound(this.treeItems, { urn: element.previousUrn })
+              this.getJsonObjects(this.treeItems, 'urn', element.previousUrn)[0]
             item.children = previousItem.children
             this.treeItems =
               findAnd.replaceObject(this.treeItems, { urn: element.previousUrn }, item)
@@ -325,7 +324,7 @@ export default {
           item.parentUrn = this.dialog.parentUrn
           if (element.action === 'UPDATE') {
             const currentElement =
-              findAnd.returnFound(this.treeItems, { urn: element.previousUrn })
+              this.getJsonObjects(this.treeItems, 'urn', element.previousUrn)[0]
             item.id = currentElement.id
             item.parentUrn = currentElement.parentUrn
             this.treeItems =
@@ -337,8 +336,7 @@ export default {
             this.changeActiveElement(item.urn)
           }
           if (element.action === 'CREATE') {
-            const parentElement =
-              findAnd.returnFound(this.treeItems, { urn: this.dialog.parentUrn })
+            const parentElement = this.getJsonObjects(this.treeItems, 'urn', this.dialog.parentUrn)[0]
             parentElement.children.push(item)
             this.treeItems =
               findAnd.changeProps(this.treeItems,
@@ -349,6 +347,19 @@ export default {
         }
       }
       this.UpdateAllOpenNodes()
+    },
+    getJsonObjects (obj, key, val) {
+      let objects = []
+      for (const i in obj) {
+        // eslint-disable-next-line no-prototype-builtins
+        if (!obj.hasOwnProperty(i)) { continue }
+        if (typeof obj[i] === 'object') {
+          objects = objects.concat(this.getJsonObjects(obj[i], key, val))
+        } else if (i === key && obj[key] === val) {
+          objects.push(obj)
+        }
+      }
+      return objects
     },
     async fetchNamespaces () {
       await this.$axios.$get(this.ajax.namespaceUrl)
@@ -421,7 +432,7 @@ export default {
       this.$log.debug('Fetching members ...')
       this.$log.debug(element)
       const findAnd = require('find-and')
-      const elementInTree = findAnd.returnFound(this.treeItems, { id: element.id })
+      const elementInTree = this.getJsonObjects(this.treeItems, 'id', element.id)[0]
       const parentElementIsNamespace = this.isNamespace(element.urn)
       const members = []
       await this.$axios.$get(!parentElementIsNamespace
@@ -430,9 +441,11 @@ export default {
         : this.ajax.namespaceUrl + element.urn.split(':')[3] +
         '/members?hideSubElements=true', Ajax.header.listView)
         .then(function (res) {
-          for (const member of Array.from(res)) {
+          const fetchedMembers = Array.from(res)
+          for (let i = 0; i < fetchedMembers.length; i++) {
             let urn
             let elementType
+            const member = fetchedMembers[i]
             if (!parentElementIsNamespace) {
               elementType = member.urn.split(':')[2].toUpperCase()
               urn = member.urn.toLowerCase()
@@ -455,9 +468,12 @@ export default {
               children: elementType === 'DATAELEMENT' ? undefined : []
             })
           }
-          elementInTree.children = this.removeDuplicates(members, elementInTree.children)
+          const updatedMembers = this.removeDuplicates(members, elementInTree.children)
+          updatedMembers.sort((a, b) => a.id - b.id)
           this.treeItems =
-            findAnd.replaceObject(this.treeItems, { urn: element.urn }, elementInTree)
+            findAnd.changeProps(this.treeItems,
+              { urn: element.urn },
+              { children: updatedMembers })
         }.bind(this))
     },
     removeDuplicates (fetchedMembers, currentMembers) {
@@ -473,9 +489,9 @@ export default {
             newMember.id = filteredArray[0].id
             newMember.children = filteredArray[0].children
             updatedMembers.push(newMember)
-            continue
+          } else {
+            updatedMembers.push(member)
           }
-          updatedMembers.push(member)
         } else {
           const newMember = member
           newMember.id = filteredArray[0].id
@@ -559,7 +575,6 @@ export default {
       return this.itemId
     },
     setActiveElements (elements) {
-      const findAnd = require('find-and')
       if (elements.length < this.activeElements.length) {
         this.activeElements = []
         return
@@ -567,12 +582,12 @@ export default {
       if (elements.length > 0) {
         const itemUrn = elements.slice(-1)[0].urn
         let activeItems =
-          findAnd.returnFound(this.treeItems, { urn: itemUrn })
+          this.getJsonObjects(this.treeItems, 'urn', itemUrn)[0]
         if (activeItems === undefined) {
           const itemVersion = itemUrn.slice(itemUrn.lastIndexOf(':') + 1, -1)
           const nextVersion = parseInt(itemVersion) + 1
           const nextVersionUrn = itemUrn.slice(0, itemUrn.lastIndexOf(':')) + nextVersion
-          activeItems = findAnd.returnFound(this.treeItems, { urn: nextVersionUrn })
+          activeItems = this.getJsonObjects(this.treeItems, 'urn', nextVersionUrn)[0]
         }
         this.activeElements = Array.isArray(activeItems) ? activeItems : [activeItems]
       } else {
