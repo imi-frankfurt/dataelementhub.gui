@@ -56,7 +56,8 @@ export default {
         detectBrowserLanguage: {
           useCookie: true,
           cookieKey: 'i18n_current',
-          onlyOnRoot: true
+          onlyOnRoot: true,
+          cookieSecure: true
         },
         locales: [
           {
