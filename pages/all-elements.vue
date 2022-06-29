@@ -218,6 +218,7 @@ import DataElementDetailView from '~/components/views/data-element-detail-view.v
 import GroupsRecordsDetailView from '~/components/views/groups-records-detail-view'
 import NamespaceDetailView from '~/components/views/namespace-detail-view.vue'
 import DefaultSnackbar from '~/components/snackbars/default-snackbar'
+
 export default {
   auth: false,
   components: {
@@ -260,7 +261,9 @@ export default {
   }),
   computed: {
     selected () {
-      if (!this.activeElements.length) { return undefined }
+      if (!this.activeElements.length) {
+        return undefined
+      }
       return this.selectedElement
     },
     loggedIn () {
@@ -348,7 +351,9 @@ export default {
           this.treeItems = []
           let namespaces
           namespaces = Array.from(res.READ)
-          if (res.ADMIN) { namespaces = Array.from(namespaces.concat(res.ADMIN, res.WRITE)) }
+          if (res.ADMIN) {
+            namespaces = Array.from(namespaces.concat(res.ADMIN, res.WRITE))
+          }
           for (const namespace of namespaces) {
             if (namespace.identification.status !== 'OUTDATED') {
               this.treeItems.push({
@@ -384,7 +389,7 @@ export default {
             } else {
               elementType = member.elementType.toUpperCase()
               urn = 'urn:' + element.urn.split(':')[1] + ':' +
-              member.elementType.toLowerCase() + ':' + member.identifier + ':' + member.revision
+                member.elementType.toLowerCase() + ':' + member.identifier + ':' + member.revision
             }
             if (member.status !== 'OUTDATED') {
               members.push({
