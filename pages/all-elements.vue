@@ -27,6 +27,7 @@
       </v-col>
       <v-col cols="2" class="create-namespace-col pa-3">
         <v-btn
+          v-if="loggedIn"
           class="d-block mr-0 ml-auto"
           color="primary"
           rounded
@@ -110,7 +111,7 @@
             >
               <template #activator="{ on, attrs }">
                 <v-btn
-                  v-if="item.elementType !== 'DATAELEMENT' && item.editable"
+                  v-if="item.elementType !== 'DATAELEMENT' && item.editable && loggedIn"
                   class="d-block mr-0 ml-auto"
                   rounded
                   v-bind="attrs"
@@ -142,8 +143,8 @@
             v-if="selected && selectedElement.identification.elementType === 'DATAELEMENT'"
             :urn="selectedElement.identification.urn"
             :parent-urn="activeElements.slice(-1)[0].parentUrn"
-            :editable="true"
-            :deletable="true"
+            :editable="loggedIn && selectedElement.editable"
+            :deletable="loggedIn && selectedElement.editable"
             @save="updateTree($event); snackbar.saveSuccess = true"
             @saveFailure="snackbar.saveFailure = true"
             @delete="updateTree(selectedElement) ; snackbar.deleteSuccess = true"
@@ -154,8 +155,8 @@
               || selectedElement.identification.elementType === 'RECORD' )"
             :urn="selectedElement.identification.urn"
             :parent-urn="activeElements.slice(-1)[0].parentUrn"
-            :editable="true"
-            :deletable="true"
+            :editable="loggedIn && selectedElement.editable"
+            :deletable="loggedIn && selectedElement.editable"
             @save="snackbar.saveSuccess = true"
             @saveFailure="snackbar.saveFailure = true"
             @reloadMembers="updateTree($event)"
@@ -165,8 +166,8 @@
           <NamespaceDetailView
             v-if="selected && selectedElement.identification.elementType === 'NAMESPACE'"
             :urn="selectedElement.identification.urn"
-            :editable="true"
-            :deletable="true"
+            :editable="loggedIn && selectedElement.editable"
+            :deletable="loggedIn && selectedElement.editable"
             @save="updateTree($event); snackbar.saveSuccess = true"
             @saveFailure="snackbar.saveFailure = true"
             @delete="updateTree(selectedElement) ; snackbar.deleteSuccess = true"
@@ -261,6 +262,9 @@ export default {
     selected () {
       if (!this.activeElements.length) { return undefined }
       return this.selectedElement
+    },
+    loggedIn () {
+      return this.$auth.loggedIn
     }
   },
   watch: {
@@ -414,6 +418,7 @@ export default {
           if
           (!['ENUMERATED_VALUE_DOMAIN', 'DESCRIBED_VALUE_DOMAIN']
             .includes(res.identification.elementType)) {
+            res.editable = this.getNamespace(urn).editable
             this.selectedElement = res
             if (this.selectedElement.identification.elementType === 'DATAELEMENT') {
               this.valueDomainIsFetching = true
