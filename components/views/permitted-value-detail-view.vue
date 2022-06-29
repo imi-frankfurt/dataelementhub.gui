@@ -5,9 +5,14 @@
         color="grey lighten-4"
         flat
       >
-        <!-- Namespace Toolbar TODO: Check of this could be outsourced ...-->
         <v-toolbar>
-          <v-toolbar-title>{{ $t('global.properties') }} {{ $t('global.of') }} <b>{{ urn }}</b></v-toolbar-title>
+          <v-btn
+            class="designationButton"
+            color="grey lighten-4"
+            rounded
+          >
+            {{ permittedValue.definitions[0].designation }}
+          </v-btn>
           <v-spacer />
           <v-btn
             v-if="editable"
@@ -124,3 +129,13 @@ export default {
   }
 }
 </script>
+<style>
+.designationButton {
+  min-width: 50px;
+  width: 40px;
+  display: inline-block;
+  overflow-wrap: break-word;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+</style>

@@ -48,12 +48,14 @@ export default {
       showInTreeView: 'IM TREEVIEW ZEIGEN'
     },
     addItem: 'ARTIKEL HINZUFÜGEN',
+    imi: 'Institut für Medizininformatik',
     dragAndDrop: 'einfach ziehen und ablegen',
     metaData: 'Meta Daten',
     status: 'Status',
     noItems: 'Keine Artikel verfügbar',
     addNamespaces: 'Fügen Sie neue Namespaces hinzu, indem Sie auf die Schaltfläche NAMESPACE ERSTELLEN klicken',
     type: 'Typ',
+    login: 'EINLOGGEN',
     namespace: 'Namespace',
     identifier: 'Identifier',
     revision: 'Revision',
@@ -184,15 +186,12 @@ export default {
   },
   pages: {
     home: {
-      title: 'Home',
-      subtitle: '',
-      content: {
-        howdy: 'Willkommen beim Data Element Hub (DEHub)!',
-        preAlpha: 'Was Sie hier sehen, ist eine Alpha-Version der neuen Data Element Hub GUI. Erwarten Sie also keine voll funktionsfähige fehlerfreie Version. Wir arbeiten kontinuierlich an der Verbesserung der Software.',
-        bugReport: 'Wenn Sie auf einen Fehler stoßen, können Sie gerne ein Issue im Projekt-Repository erstellen, das Sie hier finden (<a href="https://github.com/mig-frankfurt/dataelementhub.gui" target="_blank">https://github.com/mig-frankfurt/dataelementhub.gui</a>) .',
-        dockerImage: 'Von Zeit zu Zeit wird es ein neues Release des entsprechenden Docker-Images geben. Überprüfen Sie das also unbedingt auch.',
-        thanks: 'Weitere Informationen finden Sie unter <a href="https://dataelementhub.de" target="_blank">https://dataelementhub.de</a><br><br><b>Danke!</b>'
-      }
+      introduction: 'Das DataElementHub',
+      dehub: 'Der zentrale Einstiegspunkt für menschliche Benutzer und Maschinen zum Speichern, Verwalten und Abrufen von Datenelement-Spezifikationen.',
+      1: 'Syntaktische und semantische Interoperabilität zwischen Datenquellen mit unterschiedlicher Struktur und Formalisierung.',
+      2: 'Teilweise Implementierung von ISO 11179-3 und ISO 21526 mit Schwerpunkt auf Anwendungsfällen im Gesundheitswesen und in der medizinischen Forschung.',
+      3: 'Die in DEHub gespeicherten Metadaten tragen dazu bei, dass die Spezifikationen der Datenelemente und damit die jeweiligen Datensammlungen auch für Dritte langfristig zugänglich sind.',
+      4: 'Das DEHub soll eine zentrale Komponente sein, die flexibel für unterschiedliche Anwendungsszenarien eingesetzt werden kann, aber dennoch die Anforderungen an eine strukturierte und qualitätsgesicherte Sammlung von Metadaten erfüllt.'
     },
     namespaces: {
       title: 'Namespaces',
@@ -344,7 +343,12 @@ export default {
     },
     login: {
       title: 'Anmeldung',
-      subtitle: '',
+      introduction: 'Das DataElementHub',
+      dehub: 'Der zentrale Einstiegspunkt für menschliche Benutzer und Maschinen zum Speichern, Verwalten und Abrufen von Datenelement-Spezifikationen.',
+      1: 'Syntaktische und semantische Interoperabilität zwischen Datenquellen mit unterschiedlicher Struktur und Formalisierung.',
+      2: 'Teilweise Implementierung von ISO 11179-3 und ISO 21526 mit Schwerpunkt auf Anwendungsfällen im Gesundheitswesen und in der medizinischen Forschung.',
+      3: 'Die in DEHub gespeicherten Metadaten tragen dazu bei, dass die Spezifikationen der Datenelemente und damit die jeweiligen Datensammlungen auch für Dritte langfristig zugänglich sind.',
+      4: 'Das DEHub soll eine zentrale Komponente sein, die flexibel für unterschiedliche Anwendungsszenarien eingesetzt werden kann, aber dennoch die Anforderungen an eine strukturierte und qualitätsgesicherte Sammlung von Metadaten erfüllt.',
       infoAlert: {
         text: 'Um das DEHub nutzen zu können, müssen Sie sich gegen eine <abbr title="Single Sign On">SSO Server</abbr> authentifizieren. Die aktuelle <abbr title="Single Sign On">SSO Server</abbr> wird von der Medical Informatics Group (MIG) betrieben.'
       },
