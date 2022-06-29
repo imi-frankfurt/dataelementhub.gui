@@ -418,6 +418,7 @@ export default {
           if
           (!['ENUMERATED_VALUE_DOMAIN', 'DESCRIBED_VALUE_DOMAIN']
             .includes(res.identification.elementType)) {
+            res.editable = this.getNamespace(urn).editable
             this.selectedElement = res
             if (this.selectedElement.identification.elementType === 'DATAELEMENT') {
               this.valueDomainIsFetching = true
