@@ -49,6 +49,8 @@ export default {
     },
     public: 'PUBLIC',
     hidden: 'HIDDEN',
+    imi: 'Institute for Medical Informatics',
+    login: 'LOG IN',
     addItem: 'ADD ITEM',
     dragAndDrop: 'simply drag and drop',
     metaData: 'Meta Data',
@@ -186,15 +188,12 @@ export default {
   },
   pages: {
     home: {
-      title: 'Home',
-      subtitle: '',
-      content: {
-        howdy: 'Welcome to DataelementHub (DEHub)!',
-        preAlpha: 'What you see here is a Alpha Version of the new DataElement Hub GUI. So do not expect a fully working bug-free Version. We are continuously working on improving the software.',
-        bugReport: 'When you come across a bug, feel free to create an Issue in the projects repository, which can be found here (<a href="https://github.com/mig-frankfurt/dataelementhub.gui" target="_blank">https://github.com/mig-frankfurt/dataelementhub.gui</a>) .',
-        dockerImage: 'From time to time there will be new a new Release of the corresponding Docker image. So be sure to check that too.',
-        thanks: 'For further information please visit <a href="https://dataelementhub.de" target="_blank">https://dataelementhub.de</a><br><br><b>Thanks!</b>'
-      }
+      introduction: 'Introducing DataElementHub',
+      dehub: 'The central entry point for human users as well as machines for storing, managing and retrieving data element specifications.',
+      1: 'Syntactic and semantic interoperability between data sources of different structure and formalization.',
+      2: 'Partial implementation of ISO 11179-3 and ISO 21526 focusing on use cases on healthcare and medical research.',
+      3: 'The metadata stored in DEHub helps to ensure, that data element specifications and thereby the respective data collections are accessible in a long-term manner, even for third parties.',
+      4: 'The DEHub is intended to be a central component that can be used flexibly for different application scenarios, but still fulfills the requirements for structured and quality-controlled collection of metadata.'
     },
     namespaces: {
       title: 'Namespaces',
@@ -346,7 +345,12 @@ export default {
     },
     login: {
       title: 'Login',
-      subtitle: '',
+      introduction: 'Introducing DataElementHub',
+      dehub: 'The central entry point for human users as well as machines for storing, managing and retrieving data element specifications.',
+      1: 'Syntactic and semantic interoperability between data sources of different structure and formalization.',
+      2: 'Partial implementation of ISO 11179-3 and ISO 21526 focusing on use cases on healthcare and medical research.',
+      3: 'The metadata stored in DEHub helps to ensure, that data element specifications and thereby the respective data collections are accessible in a long-term manner, even for third parties.',
+      4: 'The DEHub is intended to be a central component that can be used flexibly for different application scenarios, but still fulfills the requirements for structured and quality-controlled collection of metadata.',
       infoAlert: {
         text: 'In order to use this DEHub you have to authenticate against a <abbr title="Single Sign On">SSO Server</abbr>. The current <abbr title="Single Sign On">SSO Server</abbr> is operated by Medical Informatics Group (MIG).'
       },

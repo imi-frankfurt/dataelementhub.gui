@@ -7,7 +7,7 @@
           justify="center"
         >
           <v-progress-circular
-            :size="500"
+            :size="400"
             color="primary"
             indeterminate
           >
@@ -31,10 +31,16 @@
       <!-- Namespace Toolbar TODO: Check of this could be outsourced ...-->
       <v-toolbar>
         <v-btn
+          width="140"
+          class="designationButton"
           color="grey lighten-4"
           rounded
         >
-          {{ namespace.definitions[0].designation }}
+          <div
+            style="text-align: center; width: 100%; white-space: normal;"
+          >
+            {{ namespace.definitions[0].designation }}
+          </div>
         </v-btn>
         <v-spacer />
         <v-btn
@@ -184,3 +190,13 @@ export default {
   }
 }
 </script>
+<style>
+.designationButton {
+  min-width: 50px;
+  width: 40px;
+  display: inline-block;
+  overflow-wrap: break-word;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+</style>
