@@ -27,6 +27,7 @@
       </v-col>
       <v-col cols="2" class="create-namespace-col pa-3">
         <v-btn
+          v-if="loggedIn"
           class="d-block mr-0 ml-auto"
           color="primary"
           rounded
@@ -110,7 +111,7 @@
             >
               <template #activator="{ on, attrs }">
                 <v-btn
-                  v-if="item.elementType !== 'DATAELEMENT' && item.editable"
+                  v-if="item.elementType !== 'DATAELEMENT' && item.editable && loggedIn"
                   class="d-block mr-0 ml-auto"
                   rounded
                   v-bind="attrs"
@@ -141,9 +142,9 @@
           <DataElementDetailView
             v-if="selected && selectedElement.identification.elementType === 'DATAELEMENT'"
             :urn="selectedElement.identification.urn"
-            :parent-urn="selectedElement.parentUrn"
-            :editable="true"
-            :deletable="true"
+            :parent-urn="activeElements.slice(-1)[0].parentUrn"
+            :editable="loggedIn && selectedElement.editable"
+            :deletable="loggedIn && selectedElement.editable"
             @save="snackbar.saveSuccess = true"
             @saveFailure="snackbar.saveFailure = true"
             @delete="updateTree(selectedElement) ; snackbar.deleteSuccess = true"
@@ -153,20 +154,20 @@
             v-if="selected && (selectedElement.identification.elementType === 'DATAELEMENTGROUP'
               || selectedElement.identification.elementType === 'RECORD' )"
             :urn="selectedElement.identification.urn"
-            :parent-urn="selectedElement.parentUrn"
-            :editable="true"
-            :deletable="true"
+            :parent-urn="activeElements.slice(-1)[0].parentUrn"
+            :editable="loggedIn && selectedElement.editable"
+            :deletable="loggedIn && selectedElement.editable"
             @save="snackbar.saveSuccess = true"
             @saveFailure="snackbar.saveFailure = true"
             @reloadMembers="updateTree($event)"
-            @delete="updateTree(selectedElement) ; snackbar.deleteSuccess = true"
+            @delete="snackbar.deleteSuccess = true"
             @deleteFailure="snackbar.deleteFailure = true"
           />
           <NamespaceDetailView
             v-if="selected && selectedElement.identification.elementType === 'NAMESPACE'"
             :urn="selectedElement.identification.urn"
-            :editable="true"
-            :deletable="true"
+            :editable="loggedIn && selectedElement.editable"
+            :deletable="loggedIn && selectedElement.editable"
             @save="snackbar.saveSuccess = true"
             @saveFailure="snackbar.saveFailure = true"
             @delete="updateTree(selectedElement) ; snackbar.deleteSuccess = true"
@@ -217,6 +218,7 @@ import DataElementDetailView from '~/components/views/data-element-detail-view.v
 import GroupsRecordsDetailView from '~/components/views/groups-records-detail-view'
 import NamespaceDetailView from '~/components/views/namespace-detail-view.vue'
 import DefaultSnackbar from '~/components/snackbars/default-snackbar'
+
 export default {
   auth: false,
   components: {
@@ -259,8 +261,13 @@ export default {
   }),
   computed: {
     selected () {
-      if (!this.activeElements.length) { return undefined }
+      if (!this.activeElements.length) {
+        return undefined
+      }
       return this.selectedElement
+    },
+    loggedIn () {
+      return this.$auth.loggedIn
     }
   },
   watch: {
@@ -367,7 +374,9 @@ export default {
           this.treeItems = []
           let namespaces
           namespaces = Array.from(res.READ)
-          if (res.ADMIN) { namespaces = Array.from(namespaces.concat(res.ADMIN, res.WRITE)) }
+          if (res.ADMIN) {
+            namespaces = Array.from(namespaces.concat(res.ADMIN, res.WRITE))
+          }
           for (const namespace of namespaces) {
             if (namespace.identification.status !== 'OUTDATED') {
               this.treeItems.push({
@@ -404,7 +413,7 @@ export default {
             } else {
               elementType = member.elementType.toUpperCase()
               urn = 'urn:' + element.urn.split(':')[1] + ':' +
-              member.elementType.toLowerCase() + ':' + member.identifier + ':' + member.revision
+                member.elementType.toLowerCase() + ':' + member.identifier + ':' + member.revision
             }
             if (member.status === 'OUTDATED' && this.isNamespace(element.urn)) {
               continue
@@ -526,6 +535,7 @@ export default {
           if
           (!['ENUMERATED_VALUE_DOMAIN', 'DESCRIBED_VALUE_DOMAIN']
             .includes(res.identification.elementType)) {
+            res.editable = this.getNamespace(urn).editable
             this.selectedElement = res
             this.selectedElement.parentUrn = parentUrn
             if (this.selectedElement.identification.elementType === 'DATAELEMENT') {

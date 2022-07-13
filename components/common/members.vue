@@ -115,8 +115,10 @@ export default {
       handler () {
         if (this.search.query) {
           this.membersToChooseFrom = this.search.filteredMembers
+            .filter(ar => !this.selectedMembers.find(rm => rm.id.toUpperCase() === ar.id.toUpperCase()))
         } else {
           this.membersToChooseFrom = this.excludeSelectedMembers
+            .filter(ar => !this.selectedMembers.find(rm => rm.id.toUpperCase() === ar.id.toUpperCase()))
         }
       },
       deep: true,
@@ -125,11 +127,15 @@ export default {
     namespaceMembers () {
       if (this.search.query) {
         this.membersToChooseFrom = this.search.filteredMembers
+          .filter(ar => !this.selectedMembers.find(rm => rm.id.toUpperCase() === ar.id.toUpperCase()))
       } else {
         this.membersToChooseFrom = this.excludeSelectedMembers
+          .filter(ar => !this.selectedMembers.find(rm => rm.id.toUpperCase() === ar.id.toUpperCase()))
       }
     },
     selectedMembers () {
+      this.membersToChooseFrom = this.membersToChooseFrom
+        .filter(ar => !this.selectedMembers.find(rm => rm.id.toUpperCase() === ar.id.toUpperCase()))
       this.$emit('selectedMembers', this.selectedMembers)
     }
   },
@@ -143,13 +149,17 @@ export default {
           for (const member of Array.from(res)) {
             const id = 'urn:' + namespaceIdentifier + ':' +
             member.elementType + ':' + member.identifier + ':' + member.revision
-            members.push({
-              id,
-              elementType: member.elementType,
-              designation: member.definitions[0].designation,
-              definition: member.definitions[0].definition,
-              status: member.status
-            })
+            if (member.status.toUpperCase() !== 'OUTDATED' && // OUTDATED elements are not allowed to be added as members
+              id.toUpperCase() !== this.elementUrn.toUpperCase()
+            ) {
+              members.push({
+                id,
+                elementType: member.elementType,
+                designation: member.definitions[0].designation,
+                definition: member.definitions[0].definition,
+                status: member.status
+              })
+            }
           }
           this.namespaceMembers = members
         }.bind(this))
@@ -165,7 +175,8 @@ export default {
               id: member.urn,
               elementType,
               designation: member.definitions[0].designation,
-              definition: member.definitions[0].definition
+              definition: member.definitions[0].definition,
+              status: member.status
             })
           }
           this.selectedMembers = members

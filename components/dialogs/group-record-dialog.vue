@@ -167,6 +167,7 @@
             <v-list-item>
               <Members
                 :namespace-urn="namespaceUrn"
+                :element-urn="urn"
                 @selectedMembers="selectedMembers = $event; element.members =
                   convertMembersFormat($event)"
               />
