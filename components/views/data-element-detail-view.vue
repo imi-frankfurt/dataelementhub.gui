@@ -281,8 +281,7 @@ export default {
     },
     async fetchElementPath () {
       this.$log.debug('DataElement DetailView: Fetching DataElement path ...')
-      await this.$axios.$get(this.ajax.dataElementUrl + this.urn + '/paths',
-        Ajax.header.ignoreLanguage)
+      await this.$axios.$get(this.ajax.dataElementUrl + this.urn + '/paths', Ajax.header.ignoreLanguage)
         .then(function (res) {
           for (let i = 0; i < res.length; i++) {
             if (res[i][res[i].length - 2].urn === this.parentUrn) {

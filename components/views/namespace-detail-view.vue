@@ -165,12 +165,12 @@ export default {
         await this.$axios.$delete(this.ajax.namespaceUrl + this.namespaceIdentifier)
           .then(function (res) {
             this.$emit('delete', {
-              id: this.id
+              urn: this.urn
             })
           }.bind(this))
           .catch(function (err) {
             this.$emit('deleteFailure', {
-              id: this.id
+              urn: this.urn
             })
             this.$log.debug('Could not delete this item: ' + err)
           }.bind(this))

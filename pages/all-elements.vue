@@ -147,7 +147,7 @@
             :deletable="loggedIn && selectedElement.editable"
             @save="snackbar.saveSuccess = true"
             @saveFailure="snackbar.saveFailure = true"
-            @delete="updateTree(selectedElement) ; snackbar.deleteSuccess = true"
+            @delete="updateTree($event) ; snackbar.deleteSuccess = true"
             @deleteFailure="snackbar.deleteFailure = true"
           />
           <GroupsRecordsDetailView
@@ -160,7 +160,7 @@
             @save="snackbar.saveSuccess = true"
             @saveFailure="snackbar.saveFailure = true"
             @reloadMembers="updateTree($event)"
-            @delete="snackbar.deleteSuccess = true"
+            @delete="updateTree($event); snackbar.deleteSuccess = true"
             @deleteFailure="snackbar.deleteFailure = true"
           />
           <NamespaceDetailView
@@ -170,7 +170,7 @@
             :deletable="loggedIn && selectedElement.editable"
             @save="snackbar.saveSuccess = true"
             @saveFailure="snackbar.saveFailure = true"
-            @delete="updateTree(selectedElement) ; snackbar.deleteSuccess = true"
+            @delete="updateTree($event) ; snackbar.deleteSuccess = true"
             @deleteFailure="snackbar.deleteFailure = true"
           />
         </div>
@@ -299,6 +299,14 @@ export default {
       this.$log.debug('Element saved now update the Tree ...')
       this.$log.debug(element)
       const findAnd = require('find-and')
+      if (element.identification === undefined) {
+        this.treeItems =
+          findAnd.removeObject(this.treeItems, { urn: element.urn })
+        this.UpdateAllOpenNodes()
+        return this.treeItems
+      }
+      const currentElement = this.getJsonObjects(this.treeItems, 'urn', element.previousUrn)[0]
+      const parentElement = this.getJsonObjects(this.treeItems, 'urn', this.dialog.parentUrn)[0]
       const item = {
         id: this.generateItemId(),
         urn: element.identification.urn,
@@ -316,6 +324,7 @@ export default {
             const previousItem =
               this.getJsonObjects(this.treeItems, 'urn', element.previousUrn)[0]
             item.children = previousItem.children
+            item.id = previousItem.id
             this.treeItems =
               findAnd.replaceObject(this.treeItems, { urn: element.previousUrn }, item)
             this.changeActiveElement(item.urn)
@@ -330,21 +339,25 @@ export default {
         case 'DATAELEMENT': {
           item.parentUrn = this.dialog.parentUrn
           if (element.action === 'UPDATE') {
-            const currentElement =
-              this.getJsonObjects(this.treeItems, 'urn', element.previousUrn)[0]
-            item.id = currentElement.id
+            const parentElement = this.getJsonObjects(this.treeItems, 'urn', currentElement.parentUrn)[0]
             item.parentUrn = currentElement.parentUrn
+            item.id = currentElement.id
+            parentElement.children =
+              findAnd.replaceObject(parentElement.children, { urn: element.previousUrn }, item)
             this.treeItems =
-              findAnd.replaceObject(this.treeItems, { urn: element.previousUrn }, item)
+              findAnd.changeProps(this.treeItems, { urn: parentElement.urn }, parentElement.children)
             if (element.identification.elementType === 'DATAELEMENTGROUP' ||
               element.identification.elementType === 'RECORD') {
               this.fetchAndReplaceMembers(item)
+              this.openNodes = findAnd.replaceObject(this.openNodes, { urn: element.previousUrn }, item)
             }
             this.changeActiveElement(item.urn)
           }
           if (element.action === 'CREATE') {
-            const parentElement = this.getJsonObjects(this.treeItems, 'urn', this.dialog.parentUrn)[0]
             parentElement.children.push(item)
+            if (parentElement.children.length === 1) {
+              this.fetchAndReplaceMembers(parentElement)
+            }
             this.treeItems =
               findAnd.changeProps(this.treeItems,
                 { urn: this.dialog.parentUrn },
@@ -377,7 +390,8 @@ export default {
           if (res.ADMIN) {
             namespaces = Array.from(namespaces.concat(res.ADMIN, res.WRITE))
           }
-          for (const namespace of namespaces) {
+          for (let i = 0; i < namespaces.length; i++) {
+            const namespace = namespaces[i]
             if (namespace.identification.status !== 'OUTDATED') {
               this.treeItems.push({
                 id: this.generateItemId(),
@@ -404,9 +418,11 @@ export default {
         '/members?hideSubElements=true', Ajax.header.listView)
         .then(function (res) {
           const members = []
-          for (const member of Array.from(res)) {
+          const resMembers = Array.from(res)
+          for (let i = 0; i < resMembers.length; i++) {
             let urn
             let elementType
+            const member = resMembers[i]
             if (!this.isNamespace(element.urn)) {
               elementType = member.urn.split(':')[2].toUpperCase()
               urn = member.urn.toLowerCase()
@@ -428,11 +444,10 @@ export default {
               elementType,
               children: elementType === 'DATAELEMENT' ? undefined : []
             })
-            // this.setActiveElements(this.activeElements)
             this.treeItems =
-            findAnd.changeProps(this.treeItems,
-              { urn: element.urn },
-              { children: members })
+              findAnd.changeProps(this.treeItems,
+                { urn: element.urn },
+                { children: members })
           }
           return members
         }.bind(this))
@@ -441,7 +456,7 @@ export default {
       this.$log.debug('Fetching members ...')
       this.$log.debug(element)
       const findAnd = require('find-and')
-      const elementInTree = this.getJsonObjects(this.treeItems, 'id', element.id)[0]
+      const elementInTree = this.getJsonObjects(this.treeItems, 'urn', element.urn)[0]
       const parentElementIsNamespace = this.isNamespace(element.urn)
       const members = []
       await this.$axios.$get(!parentElementIsNamespace
@@ -461,7 +476,7 @@ export default {
             } else {
               elementType = member.elementType.toUpperCase()
               urn = 'urn:' + element.urn.split(':')[1] + ':' +
-              member.elementType.toLowerCase() + ':' + member.identifier + ':' + member.revision
+                member.elementType.toLowerCase() + ':' + member.identifier + ':' + member.revision
             }
             if (member.status === 'OUTDATED' && parentElementIsNamespace) {
               continue
@@ -487,7 +502,8 @@ export default {
     },
     removeDuplicates (fetchedMembers, currentMembers) {
       let updatedMembers = []
-      for (const member of fetchedMembers) {
+      for (let i = 0; i < fetchedMembers.length; i++) {
+        const member = fetchedMembers[i]
         let filteredArray = currentMembers.filter(e => e.urn === member.urn)
         if (filteredArray.length === 0) { // is not a current member
           filteredArray =
@@ -497,7 +513,7 @@ export default {
             const newMember = member
             newMember.id = filteredArray[0].id
             newMember.children = filteredArray[0].children
-            updatedMembers.push(newMember)
+            updatedMembers.push(member)
           } else {
             updatedMembers.push(member)
           }
@@ -508,7 +524,8 @@ export default {
           updatedMembers.push(newMember)
         }
       }
-      for (const member of currentMembers) {
+      for (let i = 0; i < currentMembers.length; i++) {
+        const member = currentMembers[i]
         const filteredArray = fetchedMembers.filter(e => e.urn === member.urn)
         if (filteredArray.length === 0) {
           updatedMembers = updatedMembers.filter(e => e.urn !== member.urn)
@@ -518,7 +535,8 @@ export default {
     },
     UpdateAllOpenNodes () {
       const nodesToUpdate = this.openNodes.reverse()
-      for (const element of nodesToUpdate) {
+      for (let i = 0; i < nodesToUpdate.length; i++) {
+        const element = nodesToUpdate[i]
         this.fetchAndUpdateMembers(element)
       }
     },
