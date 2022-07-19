@@ -450,7 +450,7 @@ export default {
             }.bind(this))
             .catch(function (err) {
               this.$log.debug('Could not save DataElement: ' + err)
-              this.$emit('saveFailure', this.dataElement)
+              this.$emit('saveFailure', err.response)
             }.bind(this))
         } else { // ... otherwise we update it.
           delete this.dataElement.valueDomain // Remove this for current release
@@ -468,7 +468,7 @@ export default {
             }.bind(this))
             .catch(function (err) {
               this.$log.debug('Could not save DataElement: ' + err)
-              this.$emit('saveFailure', this.dataElement)
+              this.$emit('saveFailure', err.response)
             }.bind(this))
         }
       }

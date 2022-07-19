@@ -139,9 +139,9 @@ export default {
     itemDialog: {
       deleteItemTitle: 'Are you sure you want to delete this item?',
       snackbar: {
-        deleteFailure: 'Could not delete this item!',
+        deleteFailure: 'Could not delete this item',
         deleteSuccess: 'Item deleted!',
-        saveFailure: 'Could not save this item!',
+        saveFailure: 'Could not save this item',
         saveSuccess: 'Item saved!'
       }
     },
