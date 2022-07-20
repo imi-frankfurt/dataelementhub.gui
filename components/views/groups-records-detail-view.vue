@@ -110,6 +110,16 @@
       </v-list>
     </v-card>
     <v-card class="detailViewCard">
+      <v-list v-if="element.slots.length > 0">
+        <v-subheader>{{ $t('global.slots') }}</v-subheader>
+        <v-list-item>
+          <v-list-item-content>
+            <slot-table :slots="element.slots" />
+          </v-list-item-content>
+        </v-list-item>
+      </v-list>
+    </v-card>
+    <v-card class="detailViewCard">
       <v-list v-if="element.members.length > 0">
         <v-subheader>{{ $t('global.members') }}</v-subheader>
         <v-list-item>
@@ -159,6 +169,7 @@
 <script>
 import Common from '~/assets/js/common'
 import Ajax from '~/config/ajax'
+import SlotTable from '~/components/tables/slot-table'
 import DefinitionTable from '~/components/tables/definition-table'
 import MetaData from '~/components/item/meta-data'
 import MembersTable from '~/components/tables/members-table'
@@ -167,6 +178,7 @@ import NamespaceDetailView from '~/components/views/namespace-detail-view.vue'
 export default {
   components: {
     MetaData,
+    SlotTable,
     DefinitionTable,
     MembersTable,
     GroupRecordDialog,
