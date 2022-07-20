@@ -203,7 +203,7 @@ export default {
         },
         form: {
           publicNamespace: 'Öffentlicher Namespace',
-          hiddenNamespace: 'Namespace ausblenden'
+          hiddenNamespace: 'Privater Namespace'
         }
       },
       actions: {
