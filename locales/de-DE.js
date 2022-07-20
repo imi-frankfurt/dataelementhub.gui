@@ -137,9 +137,9 @@ export default {
     itemDialog: {
       deleteItemTitle: 'Sind Sie sicher, dass Sie diesen Artikel Element möchten?',
       snackbar: {
-        deleteFailure: 'Dieses Element konnte nicht gelöscht werden!',
+        deleteFailure: 'Dieses Element konnte nicht gelöscht werden',
         deleteSuccess: 'Element gelöscht!',
-        saveFailure: 'Dieses Element konnte nicht gespeichert werden!',
+        saveFailure: 'Dieses Element konnte nicht gespeichert werden',
         saveSuccess: 'Element gespeichert!'
       }
     },

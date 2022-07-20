@@ -339,7 +339,7 @@ export default {
             }.bind(this))
             .catch(function (err) {
               this.$log.debug('Could not save Element: ' + err)
-              this.$emit('saveFailure')
+              this.$emit('saveFailure', err.response)
             }.bind(this))
         } else { // ... otherwise we update it.
           delete this.element.valueDomainUrn
@@ -358,7 +358,7 @@ export default {
             }.bind(this))
             .catch(function (err) {
               this.$log.debug('Could not save Element: ' + err)
-              this.$emit('saveFailure')
+              this.$emit('saveFailure', err.response)
             }.bind(this))
         }
       }

@@ -165,9 +165,7 @@ export default {
             })
           }.bind(this))
           .catch(function (err) {
-            this.$emit('deleteFailure', {
-              id: this.id
-            })
+            this.$emit('deleteFailure', err.response)
             this.$log.debug('Could not delete this item: ' + err)
           }.bind(this))
       }
