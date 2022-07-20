@@ -90,10 +90,10 @@ export default {
       keycloak: {
         scheme: 'oauth2',
         endpoints: {
-          authorization: process.env.KEYCLOAK_URL + '/auth/realms/' + process.env.KEYCLOAK_REALM + '/protocol/openid-connect/auth',
-          userInfo: process.env.KEYCLOAK_URL + '/auth/realms/' + process.env.KEYCLOAK_REALM + '/protocol/openid-connect/userinfo',
-          token: process.env.KEYCLOAK_URL + '/auth/realms/' + process.env.KEYCLOAK_REALM + '/protocol/openid-connect/token',
-          logout: process.env.KEYCLOAK_URL + '/auth/realms/' + process.env.KEYCLOAK_REALM + '/protocol/openid-connect/logout?redirect_uri=' + encodeURIComponent(process.env.BASE_URL)
+          authorization: process.env.KEYCLOAK_URL + '/realms/' + process.env.KEYCLOAK_REALM + '/protocol/openid-connect/auth',
+          userInfo: process.env.KEYCLOAK_URL + '/realms/' + process.env.KEYCLOAK_REALM + '/protocol/openid-connect/userinfo',
+          token: process.env.KEYCLOAK_URL + '/realms/' + process.env.KEYCLOAK_REALM + '/protocol/openid-connect/token',
+          logout: process.env.KEYCLOAK_URL + '/realms/' + process.env.KEYCLOAK_REALM + '/protocol/openid-connect/logout?redirect_uri=' + encodeURIComponent(process.env.BASE_URL)
         },
         token: {
           property: 'access_token',
