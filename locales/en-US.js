@@ -204,7 +204,8 @@ export default {
           update: 'Update Namespace'
         },
         form: {
-          publicNamespace: 'Public Namespace?'
+          publicNamespace: 'Public Namespace',
+          hiddenNamespace: 'Hide Namespace'
         }
       },
       actions: {

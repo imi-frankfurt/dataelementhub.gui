@@ -44,7 +44,7 @@
               <v-list-item-action>
                 <v-checkbox
                   v-model="namespace.identification.hideNamespace"
-                  :label="$t('pages.namespaces.itemDialog.form.publicNamespace')"
+                  :label="$t('pages.namespaces.itemDialog.form.hiddenNamespace')"
                   :disabled="released"
                 />
               </v-list-item-action>
