@@ -69,6 +69,7 @@ export default {
       definitions: [
         ItemDefinition.data().defaultDefinition
       ],
+      valueDomainUrn: '',
       valueDomain: {
         type: 'STRING',
         text: {
