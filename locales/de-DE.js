@@ -202,7 +202,8 @@ export default {
           update: 'Namespace updaten'
         },
         form: {
-          publicNamespace: 'Öffentlicher Namespace'
+          publicNamespace: 'Öffentlicher Namespace',
+          hiddenNamespace: 'Namespace ausblenden'
         }
       },
       actions: {

@@ -51,7 +51,7 @@ export default {
       identification: {
         elementType: 'NAMESPACE',
         status: 'DRAFT',
-        hideNamespace: true
+        hideNamespace: false
       },
       definitions: [
         ItemDefinition.data().defaultDefinition
