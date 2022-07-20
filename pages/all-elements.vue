@@ -304,7 +304,7 @@ export default {
       const item = {
         id: this.generateItemId(),
         urn: element.identification.urn,
-        editable: true,
+        editable: element.identification.status.toUpperCase() !== 'OUTDATED',
         name: element.definitions[0].designation,
         elementType: element.identification.elementType,
         children: element.identification.elementType === 'DATAELEMENT' ? undefined : [],
@@ -423,7 +423,7 @@ export default {
           if
           (!['ENUMERATED_VALUE_DOMAIN', 'DESCRIBED_VALUE_DOMAIN']
             .includes(res.identification.elementType)) {
-            res.editable = this.getNamespace(urn).editable
+            res.editable = this.getNamespace(urn).editable && res.identification.status.toUpperCase() !== 'OUTDATED'
             this.selectedElement = res
             if (this.selectedElement.identification.elementType === 'DATAELEMENT') {
               this.valueDomainIsFetching = true
