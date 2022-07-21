@@ -25,6 +25,118 @@
         @dialogClosed="dialog = false"
       />
       <v-card
+        v-if="hidePath"
+      >
+        <!-- Namespace Toolbar TODO: Check of this could be outsourced ...-->
+        <v-container>
+          <v-row>
+            <v-col
+              v-if="select.abbr === 'DE'"
+              sm="10"
+            >
+              <v-list>
+                <v-list-item-group>
+                  <v-list-item>
+                    <v-list-item-content>
+                      <v-list-item-title>
+                        <b>
+                          {{ dataElement.definitions[0].designation }}
+                        </b>
+                      </v-list-item-title>
+                    </v-list-item-content>
+                  </v-list-item>
+                </v-list-item-group>
+              </v-list>
+            </v-col>
+            <v-col
+              v-else-if="select.abbr === 'PUR'"
+              sm="10"
+            >
+              <v-list>
+                <v-list-item-group
+                  color="indigo"
+                >
+                  <v-list-item
+                    v-for="(item, i) in getElementPathsAsStrings('urn')"
+                    :key="i"
+                  >
+                    <v-list-item-content>
+                      <v-list-item-title v-text="item.toLowerCase()" />
+                    </v-list-item-content>
+                  </v-list-item>
+                </v-list-item-group>
+              </v-list>
+            </v-col>
+            <v-col
+              v-else-if="select.abbr === 'PDE'"
+              sm="10"
+            >
+              <v-list>
+                <v-list-item-group
+                  color="indigo"
+                >
+                  <v-list-item
+                    v-for="(item, i) in getElementPathsAsStrings('de')"
+                    :key="i"
+                  >
+                    <v-list-item-content>
+                      <v-list-item-title v-text="item.toLowerCase()" />
+                    </v-list-item-content>
+                  </v-list-item>
+                </v-list-item-group>
+              </v-list>
+            </v-col>
+            <div v-else>
+              <v-col
+                v-for="item in elementPathInTree"
+                :key="item.urn"
+                sm="10"
+              >
+                <v-icon v-if="!item.urn.includes('namespace')">
+                  mdi-slash-forward
+                </v-icon>
+                <v-btn
+                  width="130"
+                  class="designationButton"
+                  color="grey lighten-4"
+                  rounded
+                  :disabled="!activatePathNavigation"
+                  @click="showDetailViewDialog(item.urn)"
+                >
+                  <div
+                    v-if="item.urn === urn"
+                    style="text-align: center; width: 100%; white-space: normal;"
+                  >
+                    {{ item.designation }}
+                  </div>
+                  <a
+                    v-if="item.urn !== urn"
+                    style="text-align: center; width: 100%; white-space: normal;"
+                  >
+                    {{ item.designation }}
+                  </a>
+                </v-btn>
+              </v-col>
+            </div>
+            <v-col sm="2">
+              <div class="detailViewCard1">
+                <v-select
+                  v-model="select"
+                  :items="items"
+                  item-text="state"
+                  item-value="abbr"
+                  label="Select"
+                  persistent-hint
+                  return-object
+                  single-line
+                />
+              </div>
+            </v-col>
+          </v-row>
+        </v-container>
+      </v-card>
+      <v-card
+        v-else
         class="detailViewCard"
         color="grey lighten-4"
         flat
@@ -34,7 +146,7 @@
           <v-toolbar-title>
             <v-container class="text-center">
               <v-row no-gutters>
-                <v-col v-for="item in elementPath" :key="item.urn">
+                <v-col v-for="item in elementPathInTree" :key="item.urn">
                   <v-icon v-if="!item.urn.includes('namespace')">
                     mdi-slash-forward
                   </v-icon>
@@ -198,6 +310,7 @@ export default {
   },
   props: {
     urn: { required: true, type: String },
+    hidePath: { required: false, default: false, type: Boolean },
     parentUrn: { required: false, default: '', type: String },
     activatePathNavigation: { required: false, default: true, type: Boolean },
     editable: { required: false, default: false, type: Boolean },
@@ -216,10 +329,18 @@ export default {
         show: false,
         namespaceIdentifier: -1
       },
+      showAllPaths: false,
       fetchingDataElement: true,
       dataElement: undefined,
       dialog: false,
-      elementPath: []
+      elementPathInTree: [],
+      allElementPaths: [],
+      select: { state: 'DESIGNATION', abbr: 'DE' },
+      items: [
+        { state: 'DESIGNATION', abbr: 'DE' },
+        { state: 'PATHS [URN]', abbr: 'PUR' },
+        { state: 'PATHS [DESIGNATIONS]', abbr: 'PDE' }
+      ]
     }
   },
   watch: {
@@ -277,9 +398,10 @@ export default {
       await this.$axios.$get(this.ajax.dataElementUrl + this.urn + '/paths',
         Ajax.header.ignoreLanguage)
         .then(function (res) {
+          this.allElementPaths = res
           for (let i = 0; i < res.length; i++) {
             if (res[i][res[i].length - 2].urn === this.parentUrn) {
-              this.elementPath = res[i]
+              this.elementPathInTree = res[i]
               break
             }
           }
@@ -288,15 +410,33 @@ export default {
           this.$log.error('Unable to fetch DataElement paths: ' + err)
         }.bind(this))
     },
+    getElementPathsAsStrings (type) {
+      const pathsAsStrings = []
+      for (let i = 0; i < this.allElementPaths.length; i++) {
+        let path = i + 1 + '.   '
+        for (let j = 0; j < this.allElementPaths[i].length; j++) {
+          if (type.toUpperCase() === 'URN') {
+            path = path + this.allElementPaths[i][j].urn
+          } else {
+            path = path + this.allElementPaths[i][j].designation
+          }
+          if (j !== this.allElementPaths[i].length - 1) {
+            path = path + ' / '
+          }
+        }
+        pathsAsStrings.push(path)
+      }
+      return pathsAsStrings
+    },
     showDetailViewDialog (urn) {
       if (urn.toUpperCase().includes('DATAELEMENT:')) {
         return
       }
       this.detailViewDialog.urn = urn
       if (!urn.toUpperCase().includes('NAMESPACE')) {
-        for (let i = 0; i < this.elementPath.length; i++) {
-          if (this.elementPath[i].urn === urn) {
-            this.detailViewDialog.parentUrn = this.elementPath[i - 1].urn
+        for (let i = 0; i < this.elementPathInTree.length; i++) {
+          if (this.elementPathInTree[i].urn === urn) {
+            this.detailViewDialog.parentUrn = this.elementPathInTree[i - 1].urn
             break
           }
         }
