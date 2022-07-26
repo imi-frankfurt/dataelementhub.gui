@@ -10,8 +10,7 @@
             :size="400"
             color="primary"
             indeterminate
-          >
-          </v-progress-circular>
+          />
         </v-col>
       </v-row>
     </v-container>
@@ -27,6 +26,118 @@
       @dialogClosed="dialog = false"
     />
     <v-card
+      v-if="hidePath"
+    >
+      <!-- Namespace Toolbar TODO: Check of this could be outsourced ...-->
+      <v-container>
+        <v-row>
+          <v-col
+            v-if="select.abbr === 'DE'"
+            sm="10"
+          >
+            <v-list>
+              <v-list-item-group>
+                <v-list-item>
+                  <v-list-item-content>
+                    <v-list-item-title>
+                      <b>
+                        {{ element.definitions[0].designation }}
+                      </b>
+                    </v-list-item-title>
+                  </v-list-item-content>
+                </v-list-item>
+              </v-list-item-group>
+            </v-list>
+          </v-col>
+          <v-col
+            v-else-if="select.abbr === 'PUR'"
+            sm="10"
+          >
+            <v-list>
+              <v-list-item-group
+                color="indigo"
+              >
+                <v-list-item
+                  v-for="(item, i) in getElementPathsAsStrings('urn')"
+                  :key="i"
+                >
+                  <v-list-item-content>
+                    <v-list-item-title v-text="item.toLowerCase()" />
+                  </v-list-item-content>
+                </v-list-item>
+              </v-list-item-group>
+            </v-list>
+          </v-col>
+          <v-col
+            v-else-if="select.abbr === 'PDE'"
+            sm="10"
+          >
+            <v-list>
+              <v-list-item-group
+                color="indigo"
+              >
+                <v-list-item
+                  v-for="(item, i) in getElementPathsAsStrings('de')"
+                  :key="i"
+                >
+                  <v-list-item-content>
+                    <v-list-item-title v-text="item.toLowerCase()" />
+                  </v-list-item-content>
+                </v-list-item>
+              </v-list-item-group>
+            </v-list>
+          </v-col>
+          <div v-else>
+            <v-col
+              v-for="item in elementPath"
+              :key="item.urn"
+              sm="10"
+            >
+              <v-icon v-if="!item.urn.includes('namespace')">
+                mdi-slash-forward
+              </v-icon>
+              <v-btn
+                width="130"
+                class="designationButton"
+                color="grey lighten-4"
+                rounded
+                :disabled="!activatePathNavigation"
+                @click="showDetailViewDialog(item.urn)"
+              >
+                <div
+                  v-if="item.urn === urn"
+                  style="text-align: center; width: 100%; white-space: normal;"
+                >
+                  {{ item.designation }}
+                </div>
+                <a
+                  v-if="item.urn !== urn"
+                  style="text-align: center; width: 100%; white-space: normal;"
+                >
+                  {{ item.designation }}
+                </a>
+              </v-btn>
+            </v-col>
+          </div>
+          <v-col sm="2">
+            <div class="detailViewCard1">
+              <v-select
+                v-model="select"
+                :items="items"
+                item-text="state"
+                item-value="abbr"
+                label="Select"
+                persistent-hint
+                return-object
+                single-line
+              />
+            </div>
+          </v-col>
+        </v-row>
+      </v-container>
+    </v-card>
+    <v-card
+      v-else
       class="detailViewCard"
       color="grey lighten-4"
       flat
@@ -190,6 +301,7 @@ export default {
     parentUrn: { required: false, default: '', type: String },
     editable: { required: false, default: false, type: Boolean },
     deletable: { required: false, default: false, type: Boolean },
+    hidePath: { required: false, default: false, type: Boolean },
     activatePathNavigation: { required: false, default: true, type: Boolean },
     showJumpToElementButton: { required: false, default: false, type: Boolean }
   },
@@ -207,7 +319,14 @@ export default {
       fetchingElement: true,
       elementPath: [],
       element: undefined,
-      dialog: false
+      dialog: false,
+      allElementPaths: [],
+      select: { state: 'DESIGNATION', abbr: 'DE' },
+      items: [
+        { state: 'DESIGNATION', abbr: 'DE' },
+        { state: 'PATHS [URN]', abbr: 'PUR' },
+        { state: 'PATHS [DESIGNATION]', abbr: 'PDE' }
+      ]
     }
   },
   computed: {
@@ -233,6 +352,24 @@ export default {
           this.fetchingElement = false
           this.element = res
         }.bind(this))
+    },
+    getElementPathsAsStrings (type) {
+      const pathsAsStrings = []
+      for (let i = 0; i < this.allElementPaths.length; i++) {
+        let path = i + 1 + '.   '
+        for (let j = 0; j < this.allElementPaths[i].length; j++) {
+          if (type.toUpperCase() === 'URN') {
+            path = path + this.allElementPaths[i][j].urn
+          } else {
+            path = path + this.allElementPaths[i][j].designation
+          }
+          if (j !== this.allElementPaths[i].length - 1) {
+            path = path + ' / '
+          }
+        }
+        pathsAsStrings.push(path)
+      }
+      return pathsAsStrings
     },
     async updateMembers () {
       await this.$axios.post(this.ajax.elementUrl + this.urn + '/updateMembers')
@@ -267,10 +404,11 @@ export default {
       }
     },
     async fetchElementPath () {
-      this.$log.debug('DataElement DetailView: Fetching DataElement path ...')
+      this.$log.debug('Group/Record DetailView: Fetching Group/Record path ...')
       await this.$axios.$get(this.ajax.elementUrl + this.urn + '/paths',
         Ajax.header.ignoreLanguage)
         .then(function (res) {
+          this.allElementPaths = res
           for (let i = 0; i < res.length; i++) {
             if (res[i][res[i].length - 2].urn === this.parentUrn) {
               this.elementPath = res[i]
@@ -279,7 +417,7 @@ export default {
           }
         }.bind(this))
         .catch(function (err) {
-          this.$log.error('Unable to fetch DataElement paths: ' + err)
+          this.$log.error('Unable to fetch Group/Record paths: ' + err)
         }.bind(this))
     },
     showDetailViewDialog (urn) {

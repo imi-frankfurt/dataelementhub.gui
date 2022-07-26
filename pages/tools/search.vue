@@ -120,6 +120,7 @@
               :urn="detailItem.urn"
               :editable="false"
               :deletable="false"
+              :hide-path="true"
             />
           </template>
         </v-col>

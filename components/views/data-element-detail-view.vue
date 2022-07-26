@@ -339,7 +339,7 @@ export default {
       items: [
         { state: 'DESIGNATION', abbr: 'DE' },
         { state: 'PATHS [URN]', abbr: 'PUR' },
-        { state: 'PATHS [DESIGNATIONS]', abbr: 'PDE' }
+        { state: 'PATHS [DESIGNATION]', abbr: 'PDE' }
       ]
     }
   },
