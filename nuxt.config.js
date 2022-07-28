@@ -56,7 +56,8 @@ export default {
         detectBrowserLanguage: {
           useCookie: true,
           cookieKey: 'i18n_current',
-          onlyOnRoot: true
+          onlyOnRoot: true,
+          cookieSecure: true
         },
         locales: [
           {
@@ -88,6 +89,12 @@ export default {
     plugins: [
       '~/plugins/axios.js'
     ],
+    cookie: {
+      options: {
+        httpOnly: true,
+        secure: true
+      }
+    },
     strategies: {
       local: false,
       keycloak: {
