@@ -434,6 +434,17 @@ export default {
     async saveDataElement () {
       this.$refs.form.validate()
       if (this.form.valid) {
+        this.$log.debug('Releasing ValueDomain ...')
+        if (this.dataElement.identification.status.toUpperCase() === 'RELEASED' &&
+          this.dataElement.valueDomainUrn !== '') {
+          await this.$axios.patch(this.ajax.dataElementUrl + this.dataElement.valueDomainUrn + '/release')
+            .then(function (res) {
+              this.$log.debug('ValueDomain ' + this.dataElement.valueDomainUrn + ' released successfully')
+            }.bind(this))
+            .catch(function () {
+              this.$log.debug('Could not release valueDomain' + this.dataElement.valueDomainUrn)
+            }.bind(this))
+        }
         this.$log.debug('Saving DataElement ...')
         if (this.urn === '') { // If the DataElement URN is empty we have to save it ...
           await this.$axios.post(this.ajax.dataElementUrl,
@@ -451,7 +462,7 @@ export default {
             }.bind(this))
             .catch(function (err) {
               this.$log.debug('Could not save DataElement: ' + err)
-              this.$emit('saveFailure', this.dataElement)
+              this.$emit('saveFailure', err.response)
             }.bind(this))
         } else { // ... otherwise we update it.
           delete this.dataElement.valueDomain // Remove this for current release
@@ -470,7 +481,7 @@ export default {
             }.bind(this))
             .catch(function (err) {
               this.$log.debug('Could not save DataElement: ' + err)
-              this.$emit('saveFailure', this.dataElement)
+              this.$emit('saveFailure', err.response)
             }.bind(this))
         }
       }

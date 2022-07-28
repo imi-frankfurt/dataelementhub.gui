@@ -1,7 +1,7 @@
 <template>
   <v-container fluid class="py-0 px-0 d-flex flex-column flex-grow-1 fill-parent-height align-start">
     <default-snackbar
-      :text="$t('global.itemDialog.snackbar.deleteFailure')"
+      :text="$t('global.itemDialog.snackbar.deleteFailure') + ': ' + dialog.response.data"
       :show="snackbar.deleteFailure"
       color="error"
     />
@@ -10,7 +10,7 @@
       :show="snackbar.deleteSuccess"
     />
     <default-snackbar
-      :text="$t('global.itemDialog.snackbar.saveFailure')"
+      :text="$t('global.itemDialog.snackbar.saveFailure') + ': ' + dialog.response.data"
       :show="snackbar.saveFailure"
       color="error"
     />
@@ -145,10 +145,10 @@
             :parent-urn="activeElements.slice(-1)[0].parentUrn"
             :editable="loggedIn && selectedElement.editable"
             :deletable="loggedIn && selectedElement.editable"
-            @save="snackbar.saveSuccess = true"
-            @saveFailure="snackbar.saveFailure = true"
-            @delete="updateTree($event) ; snackbar.deleteSuccess = true"
-            @deleteFailure="snackbar.deleteFailure = true"
+            @save="updateTree($event); snackbar.saveSuccess = true"
+            @saveFailure="handleSaveFailure($event)"
+            @delete="updateTree(selectedElement) ; snackbar.deleteSuccess = true"
+            @deleteFailure="handleDeleteFailure ($event)"
           />
           <GroupsRecordsDetailView
             v-if="selected && (selectedElement.identification.elementType === 'DATAELEMENTGROUP'
@@ -158,20 +158,20 @@
             :editable="loggedIn && selectedElement.editable"
             :deletable="loggedIn && selectedElement.editable"
             @save="snackbar.saveSuccess = true"
-            @saveFailure="snackbar.saveFailure = true"
+            @saveFailure="handleSaveFailure($event)"
             @reloadMembers="updateTree($event)"
-            @delete="updateTree($event); snackbar.deleteSuccess = true"
-            @deleteFailure="snackbar.deleteFailure = true"
+            @delete="updateTree(selectedElement) ; snackbar.deleteSuccess = true"
+            @deleteFailure="handleDeleteFailure ($event)"
           />
           <NamespaceDetailView
             v-if="selected && selectedElement.identification.elementType === 'NAMESPACE'"
             :urn="selectedElement.identification.urn"
             :editable="loggedIn && selectedElement.editable"
             :deletable="loggedIn && selectedElement.editable"
-            @save="snackbar.saveSuccess = true"
-            @saveFailure="snackbar.saveFailure = true"
-            @delete="updateTree($event) ; snackbar.deleteSuccess = true"
-            @deleteFailure="snackbar.deleteFailure = true"
+            @save="updateTree($event); snackbar.saveSuccess = true"
+            @saveFailure="handleSaveFailure($event)"
+            @delete="updateTree(selectedElement) ; snackbar.deleteSuccess = true"
+            @deleteFailure="handleDeleteFailure ($event)"
           />
         </div>
       </v-col>
@@ -182,16 +182,16 @@
           v-if="dialog.elementType === 'NAMESPACE'"
           :id="0"
           :show="dialog.showNamespace"
-          @save="showSaveSuccessSnackbar()"
-          @saveFailure="showSaveFailureSnackbar()"
+          @save="updateTree($event); showSaveSuccessSnackbar()"
+          @saveFailure="handleSaveFailure($event)"
           @dialogClosed="dialog.showNamespace = false"
         />
         <DataElementDialog
           v-if="dialog.elementType === 'DATAELEMENT'"
           :show="dialog.showDataElement"
           :namespace-urn="dialog.namespaceUrn"
-          @save="showSaveSuccessSnackbar()"
-          @saveFailure="showSaveFailureSnackbar()"
+          @save="updateTree($event); showSaveSuccessSnackbar()"
+          @saveFailure="handleSaveFailure($event)"
           @dialogClosed="dialog.showDataElement = false"
         />
         <GroupRecordDialog
@@ -199,8 +199,8 @@
           :show="dialog.showDataElementGroup"
           :namespace-urn="dialog.namespaceUrn"
           :element-type="dialog.elementType"
-          @save="showSaveSuccessSnackbar()"
-          @saveFailure="showSaveFailureSnackbar()"
+          @save="updateTree($event); showSaveSuccessSnackbar()"
+          @saveFailure="handleSaveFailure($event)"
           @dialogClosed="dialog.showDataElementGroup = false"
         />
       </v-col>
@@ -245,7 +245,8 @@ export default {
       showDataElementGroup: false,
       elementType: 'None',
       namespaceUrn: '',
-      parentUrn: ''
+      parentUrn: '',
+      response: {}
     },
     snackbar: {
       deleteFailure: false,
@@ -319,6 +320,7 @@ export default {
       switch (element.identification.elementType) {
         case 'NAMESPACE': {
           if (element.action === 'CREATE') {
+            item.children = []
             this.treeItems.push(item)
           } else if (element.action === 'UPDATE') {
             const previousItem =
@@ -590,6 +592,7 @@ export default {
           this.$log.debug('Element type could not be determined.')
           break
       }
+      this.dialog.parentUrn = parentUrn
     },
     getNamespace (urn) {
       const namespaceIdentifier = urn.split(':')[1]
@@ -624,22 +627,24 @@ export default {
     },
     async showSaveSuccessSnackbar () {
       this.snackbar.saveSuccess = true
-      await new Promise(resolve => setTimeout(resolve, 1500))
+      await new Promise(resolve => setTimeout(resolve, 2000))
       this.snackbar.saveSuccess = false
     },
     async showDeleteSuccessSnackbar () {
       this.snackbar.deleteSuccess = true
-      await new Promise(resolve => setTimeout(resolve, 1500))
+      await new Promise(resolve => setTimeout(resolve, 2000))
       this.snackbar.deleteSuccess = false
     },
-    async showSaveFailureSnackbar () {
+    async handleSaveFailure (response) {
+      this.dialog.response = response
       this.snackbar.saveFailure = true
-      await new Promise(resolve => setTimeout(resolve, 1500))
+      await new Promise(resolve => setTimeout(resolve, 3500))
       this.snackbar.saveFailure = false
     },
-    async showDeleteFailureSnackbar () {
+    async handleDeleteFailure (response) {
+      this.dialog.response = response
       this.snackbar.deleteFailure = true
-      await new Promise(resolve => setTimeout(resolve, 1500))
+      await new Promise(resolve => setTimeout(resolve, 3500))
       this.snackbar.deleteFailure = false
     }
   }

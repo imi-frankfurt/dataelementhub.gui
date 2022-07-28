@@ -51,7 +51,7 @@ export default {
       identification: {
         elementType: 'NAMESPACE',
         status: 'DRAFT',
-        hideNamespace: true
+        hideNamespace: false
       },
       definitions: [
         ItemDefinition.data().defaultDefinition
@@ -69,6 +69,7 @@ export default {
       definitions: [
         ItemDefinition.data().defaultDefinition
       ],
+      valueDomainUrn: '',
       valueDomain: {
         type: 'STRING',
         text: {
