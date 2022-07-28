@@ -56,7 +56,8 @@ export default {
         detectBrowserLanguage: {
           useCookie: true,
           cookieKey: 'i18n_current',
-          onlyOnRoot: true
+          onlyOnRoot: true,
+          cookieSecure: true
         },
         locales: [
           {
@@ -85,6 +86,12 @@ export default {
     // retry: { retries: 3 }
   },
   auth: {
+    cookie: {
+      options: {
+        httpOnly: true,
+        secure: true
+      }
+    },
     strategies: {
       local: false,
       keycloak: {
