@@ -86,6 +86,9 @@ export default {
     // retry: { retries: 3 }
   },
   auth: {
+    plugins: [
+      '~/plugins/axios.js'
+    ],
     cookie: {
       options: {
         httpOnly: true,
@@ -110,7 +113,7 @@ export default {
         },
         refreshToken: {
           property: 'refresh_token',
-          maxAge: 60 * 60 * 24 * 30
+          maxAge: 60 * 3
         },
         redirect: {
           login: '/',

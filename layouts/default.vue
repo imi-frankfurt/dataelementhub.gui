@@ -140,6 +140,13 @@ export default {
       title: 'global.appName'
     }
   },
+  mounted () {
+    window.addEventListener('storage', function (event) {
+      if (event.key === 'auth._token.keycloak' && event.oldValue !== event.newValue && event.newValue === 'false') {
+        location.reload()
+      }
+    })
+  },
   methods: {
     async logout () {
       try {
