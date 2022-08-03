@@ -375,7 +375,7 @@ export default {
       for (const i in obj) {
         // eslint-disable-next-line no-prototype-builtins
         if (!obj.hasOwnProperty(i)) { continue }
-        if (typeof obj[i] === 'object') {
+        if (obj[i] !== null && typeof obj[i] === 'object') {
           objects = objects.concat(this.getJsonObjects(obj[i], key, val))
         } else if (i === key && obj[key] === val) {
           objects.push(obj)

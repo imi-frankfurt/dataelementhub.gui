@@ -61,7 +61,7 @@
     </v-card>
     <v-card outlined color="transparent" class="ma-0 pa-0">
       <meta-data
-        :type="NAMESPACE"
+        :type="'NAMESPACE'"
         :data="namespace.identification"
       />
     </v-card>
