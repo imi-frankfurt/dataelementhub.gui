@@ -235,12 +235,12 @@ export default {
   computed: {
     dialogTitle () {
       if (this.urn === '') {
-        if (this.elementType === 'RECORD') {
+        if (this.elementType.toUpperCase() === 'RECORD') {
           return this.$i18n.t('pages.records.itemDialog.title.create')
         } else {
           return this.$i18n.t('pages.groups.itemDialog.title.create')
         }
-      } else if (this.elementType === 'RECORD') {
+      } else if (this.elementType.toUpperCase() === 'RECORD') {
         return this.$i18n.t('pages.records.itemDialog.title.update')
       } else {
         return this.$i18n.t('pages.groups.itemDialog.title.update')
