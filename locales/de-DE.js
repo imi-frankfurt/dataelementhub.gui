@@ -48,6 +48,8 @@ export default {
       showInTreeView: 'IM TREEVIEW ZEIGEN'
     },
     addItem: 'ARTIKEL HINZUFÜGEN',
+    path: 'Pfad',
+    paths: 'Pfade',
     imi: 'Institut für Medizininformatik',
     dragAndDrop: 'einfach ziehen und ablegen',
     metaData: 'Meta Daten',

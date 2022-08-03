@@ -26,123 +26,11 @@
       @dialogClosed="dialog = false"
     />
     <v-card
-      v-if="hidePath"
-    >
-      <!-- Namespace Toolbar TODO: Check of this could be outsourced ...-->
-      <v-container>
-        <v-row>
-          <v-col
-            v-if="select.abbr === 'DE'"
-            sm="10"
-          >
-            <v-list>
-              <v-list-item-group>
-                <v-list-item>
-                  <v-list-item-content>
-                    <v-list-item-title>
-                      <b>
-                        {{ element.definitions[0].designation }}
-                      </b>
-                    </v-list-item-title>
-                  </v-list-item-content>
-                </v-list-item>
-              </v-list-item-group>
-            </v-list>
-          </v-col>
-          <v-col
-            v-else-if="select.abbr === 'PUR'"
-            sm="10"
-          >
-            <v-list>
-              <v-list-item-group
-                color="indigo"
-              >
-                <v-list-item
-                  v-for="(item, i) in getElementPathsAsStrings('urn')"
-                  :key="i"
-                >
-                  <v-list-item-content>
-                    <v-list-item-title v-text="item.toLowerCase()" />
-                  </v-list-item-content>
-                </v-list-item>
-              </v-list-item-group>
-            </v-list>
-          </v-col>
-          <v-col
-            v-else-if="select.abbr === 'PDE'"
-            sm="10"
-          >
-            <v-list>
-              <v-list-item-group
-                color="indigo"
-              >
-                <v-list-item
-                  v-for="(item, i) in getElementPathsAsStrings('de')"
-                  :key="i"
-                >
-                  <v-list-item-content>
-                    <v-list-item-title v-text="item.toLowerCase()" />
-                  </v-list-item-content>
-                </v-list-item>
-              </v-list-item-group>
-            </v-list>
-          </v-col>
-          <div v-else>
-            <v-col
-              v-for="item in elementPath"
-              :key="item.urn"
-              sm="10"
-            >
-              <v-icon v-if="!item.urn.includes('namespace')">
-                mdi-slash-forward
-              </v-icon>
-              <v-btn
-                width="130"
-                class="designationButton"
-                color="grey lighten-4"
-                rounded
-                :disabled="!activatePathNavigation"
-                @click="showDetailViewDialog(item.urn)"
-              >
-                <div
-                  v-if="item.urn === urn"
-                  style="text-align: center; width: 100%; white-space: normal;"
-                >
-                  {{ item.designation }}
-                </div>
-                <a
-                  v-if="item.urn !== urn"
-                  style="text-align: center; width: 100%; white-space: normal;"
-                >
-                  {{ item.designation }}
-                </a>
-              </v-btn>
-            </v-col>
-          </div>
-          <v-col sm="2">
-            <div class="detailViewCard1">
-              <v-select
-                v-model="select"
-                :items="items"
-                item-text="state"
-                item-value="abbr"
-                label="Select"
-                persistent-hint
-                return-object
-                single-line
-              />
-            </div>
-          </v-col>
-        </v-row>
-      </v-container>
-    </v-card>
-    <v-card
-      v-else
+      v-if="!hidePath"
       class="detailViewCard"
       color="grey lighten-4"
       flat
     >
-      <!-- Namespace Toolbar TODO: Check of this could be outsourced ...-->
       <v-toolbar>
         <v-toolbar-title>
           <v-container class="text-center">
@@ -210,6 +98,32 @@
       </v-toolbar>
     </v-card>
     <meta-data :data="element.identification" />
+    <v-card v-if="hidePath" class="detailViewCard">
+      <v-list>
+        <v-subheader>
+          {{ $t('global.paths') }}
+          <div class="choose-button-wrapper">
+            <button
+              :class="getLeftButtonClass()"
+              @click="selectedElementPathType = 'DESIGNATION'"
+            >
+              {{ $t('global.designation') }}
+            </button>
+            <button
+              :class="getRightButtonClass()"
+              @click="selectedElementPathType = 'URN'"
+            >
+              {{ $t('global.urn') }}
+            </button>
+          </div>
+        </v-subheader>
+        <v-list-item>
+          <v-list-item-content>
+            <paths-table :paths="allElementPathsAsString" />
+          </v-list-item-content>
+        </v-list-item>
+      </v-list>
+    </v-card>
     <v-card class="detailViewCard">
       <v-list>
         <v-subheader>{{ $t('global.definitions') }}</v-subheader>
@@ -286,9 +200,11 @@ import MetaData from '~/components/item/meta-data'
 import MembersTable from '~/components/tables/members-table'
 import GroupRecordDialog from '~/components/dialogs/group-record-dialog'
 import NamespaceDetailView from '~/components/views/namespace-detail-view.vue'
+import PathsTable from '~/components/tables/paths-table'
 export default {
   components: {
     MetaData,
+    PathsTable,
     SlotTable,
     DefinitionTable,
     MembersTable,
@@ -321,12 +237,8 @@ export default {
       element: undefined,
       dialog: false,
       allElementPaths: [],
-      select: { state: 'DESIGNATION', abbr: 'DE' },
-      items: [
-        { state: 'DESIGNATION', abbr: 'DE' },
-        { state: 'PATHS [URN]', abbr: 'PUR' },
-        { state: 'PATHS [DESIGNATION]', abbr: 'PDE' }
-      ]
+      allElementPathsAsString: [],
+      selectedElementPathType: 'DESIGNATION'
     }
   },
   computed: {
@@ -339,6 +251,12 @@ export default {
       this.fetchingElement = true
       this.loadDetails()
       this.fetchElementPath()
+    },
+    allElementPaths () {
+      this.allElementPathsAsString = this.getElementPathsAsStrings(this.selectedElementPathType)
+    },
+    selectedElementPathType () {
+      this.allElementPathsAsString = this.getElementPathsAsStrings(this.selectedElementPathType)
     }
   },
   mounted () {
@@ -346,6 +264,18 @@ export default {
     this.fetchElementPath()
   },
   methods: {
+    getLeftButtonClass () {
+      return {
+        'left-button-marked': this.selectedElementPathType === 'DESIGNATION',
+        'left-button': this.selectedElementPathType !== 'DESIGNATION'
+      }
+    },
+    getRightButtonClass () {
+      return {
+        'right-button-marked': this.selectedElementPathType === 'URN',
+        'right-button': this.selectedElementPathType !== 'URN'
+      }
+    },
     async loadDetails () {
       await this.$axios.$get(this.ajax.elementUrl + this.urn, Ajax.header.ignoreLanguage)
         .then(function (res) {
@@ -354,9 +284,9 @@ export default {
         }.bind(this))
     },
     getElementPathsAsStrings (type) {
-      const pathsAsStrings = []
+      let pathsAsStrings = []
       for (let i = 0; i < this.allElementPaths.length; i++) {
-        let path = i + 1 + '.   '
+        let path = ''
         for (let j = 0; j < this.allElementPaths[i].length; j++) {
           if (type.toUpperCase() === 'URN') {
             path = path + this.allElementPaths[i][j].urn
@@ -369,6 +299,11 @@ export default {
         }
         pathsAsStrings.push(path)
       }
+      pathsAsStrings = pathsAsStrings.map(function (item) {
+        return {
+          item
+        }
+      })
       return pathsAsStrings
     },
     async updateMembers () {
@@ -457,5 +392,54 @@ export default {
   overflow-wrap: break-word;
   overflow: hidden;
   text-overflow: ellipsis;
+}
+
+.left-button {
+  background-color: white;
+  color: #21587f;
+  border-radius: 6.5rem 0 0 6.5rem;
+  border: solid 0.1rem #21587f;
+  width: 110px;
+  height: 35px;
+  font-size: 1rem;
+  cursor: pointer;
+}
+
+.left-button-marked {
+  background-color: #21587f;
+  color: white;
+  border-radius: 6.5rem 0 0 6.5rem;
+  border: none;
+  width: 110px;
+  height: 35px;
+  font-size: 1rem;
+  cursor: pointer;
+}
+
+.right-button {
+  background-color: white;
+  color: #21587f;
+  border-radius: 0 6.5rem 6.5rem 0;
+  border: solid 0.1rem #21587f;
+  width: 110px;
+  height: 35px;
+  font-size: 1rem;
+  cursor: pointer;
+}
+
+.right-button-marked {
+  background-color: #21587f;
+  color: white;
+  border-radius: 0 6.5rem 6.5rem 0;
+  border: none;
+  width: 110px;
+  height: 35px;
+  font-size: 1rem;
+  cursor: pointer;
+}
+
+.choose-button-wrapper {
+  position: absolute;
+  right: 20px;
 }
 </style>
