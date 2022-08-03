@@ -165,7 +165,11 @@
           <v-list subheader>
             <v-subheader>{{ $t('global.members') }}</v-subheader>
             <v-list-item>
+              <v-list-item-content v-if="element.identification.status === 'RELEASED'">
+                <members-table :members="element.members" />
+              </v-list-item-content>
               <Members
+                v-else
                 :namespace-urn="namespaceUrn"
                 :element-urn="urn"
                 @selectedMembers="selectedMembers = $event; element.members =
@@ -192,10 +196,12 @@ import ItemDefinition from '~/components/item/item-definition'
 import ItemSlot from '~/components/item/item-slot'
 import Members from '~/components/common/members'
 import CheckUnreleasedMembers from '~/components/dialogs/check-unreleased-members'
+import MembersTable from '~/components/tables/members-table'
 export default {
   components: {
     CheckUnreleasedMembers,
     ItemDefinition,
+    MembersTable,
     ItemSlot,
     Members
   },
