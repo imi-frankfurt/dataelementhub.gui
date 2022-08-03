@@ -165,7 +165,10 @@
           <v-list subheader>
             <v-subheader>{{ $t('global.members') }}</v-subheader>
             <v-list-item>
-              <v-list-item-content v-if="element.identification.status === 'RELEASED'">
+              <v-list-item-content
+                v-if="element.identification.status === 'RELEASED'
+                  && element.identification.elementType.toUpperCase().includes('RECORD')"
+              >
                 <members-table :members="element.members" />
               </v-list-item-content>
               <Members
