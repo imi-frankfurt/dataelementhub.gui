@@ -44,7 +44,7 @@
               <v-list-item-action>
                 <v-checkbox
                   v-model="namespace.identification.hideNamespace"
-                  :label="$t('pages.namespaces.itemDialog.form.publicNamespace')"
+                  :label="$t('pages.namespaces.itemDialog.form.hiddenNamespace')"
                   :disabled="released"
                 />
               </v-list-item-action>
@@ -243,13 +243,14 @@ export default {
                   this.namespace.identification.urn = res1.identification.urn
                   this.namespace.parentUrn = ''
                   this.namespace.action = 'CREATE'
-                  this.$emit('save', this.namespace)
+                  this.$root.$emit('updateTreeView', this.namespace)
+                  this.$emit('saveSuccess', this.namespace)
                   this.hideDialog()
                 }.bind(this))
             }.bind(this))
             .catch(function (err) {
               this.$log.debug('Could not save Namespace: ' + err)
-              this.$emit('saveFailure')
+              this.$emit('saveFailure', err.response)
             }.bind(this))
         } else { // ... otherwise we update it.
           await this.$axios.put(this.ajax.namespaceUrl + this.namespace.identification.identifier,
@@ -261,13 +262,14 @@ export default {
                   this.namespace.identification.urn = res1.identification.urn
                   this.namespace.parentUrn = ''
                   this.namespace.action = 'UPDATE'
-                  this.$emit('save', this.namespace)
+                  this.$root.$emit('updateTreeView', this.namespace)
+                  this.$emit('saveSuccess', this.namespace)
                   this.hideDialog()
                 }.bind(this))
             }.bind(this))
             .catch(function (err) {
               this.$log.debug('Could not save Namespace: ' + err)
-              this.$emit('saveFailure', this.namespace)
+              this.$emit('saveFailure', err.response)
             }.bind(this))
         }
       }

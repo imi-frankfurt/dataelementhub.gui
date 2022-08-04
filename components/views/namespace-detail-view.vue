@@ -10,8 +10,7 @@
             :size="400"
             color="primary"
             indeterminate
-          >
-          </v-progress-circular>
+          />
         </v-col>
       </v-row>
     </v-container>
@@ -25,6 +24,7 @@
       @dialogClosed="dialog = false"
     />
     <v-card
+      v-if="!hideToolbar"
       color="grey lighten-4"
       flat
     >
@@ -60,7 +60,12 @@
         </v-btn>
       </v-toolbar>
     </v-card>
-    <meta-data type="NAMESPACE" :data="namespace.identification" />
+    <v-card outlined color="transparent" class="ma-0 pa-0">
+      <meta-data
+        :type="'NAMESPACE'"
+        :data="namespace.identification"
+      />
+    </v-card>
     <v-list>
       <v-subheader>{{ $t('global.definitions') }}</v-subheader>
       <v-list-item>
@@ -110,7 +115,8 @@ export default {
     urn: { required: true, type: String },
     editable: { required: false, default: false, type: Boolean },
     deletable: { required: false, default: false, type: Boolean },
-    showJumpToElementButton: { required: false, default: false, type: Boolean }
+    showJumpToElementButton: { required: false, default: false, type: Boolean },
+    hideToolbar: { required: false, default: false, type: Boolean }
   },
   data () {
     return {
@@ -161,12 +167,12 @@ export default {
         await this.$axios.$delete(this.ajax.namespaceUrl + this.namespaceIdentifier)
           .then(function (res) {
             this.$emit('delete', {
-              id: this.id
+              urn: this.urn
             })
           }.bind(this))
           .catch(function (err) {
             this.$emit('deleteFailure', {
-              id: this.id
+              urn: this.urn
             })
             this.$log.debug('Could not delete this item: ' + err)
           }.bind(this))

@@ -94,8 +94,9 @@
           <template v-if="showDetails">
             <namespace-detail-view
               v-if="detailItem.type == 'NAMESPACE'"
-              namespaceIdentifier="detailItem.id"
+              namespace-identifier="detailItem.id"
               :urn="detailItem.urn"
+              :hide-toolbar="true"
               @delete="executeSearch(); snackbar.deleteSuccess = true"
               @deleteFailure="snackbar.deleteFailure = true"
               @save="snackbar.saveSuccess = true"
@@ -105,7 +106,9 @@
               v-else-if="detailItem.type == 'DATAELEMENT'"
               :urn="detailItem.urn"
               :relation-detail-view-available="true"
-              :editable="true"
+              :editable="false"
+              :deletable="false"
+              :hide-path="true"
               @delete="executeSearch(); snackbar.deleteSuccess = true"
               @deleteFailure="snackbar.deleteFailure = true"
               @save="snackbar.saveSuccess = true"
@@ -114,6 +117,9 @@
             <groups-records-detail-view
               v-else-if="detailItem.type == 'DATAELEMENTGROUP' || detailItem.type == 'RECORD'"
               :urn="detailItem.urn"
+              :editable="false"
+              :deletable="false"
+              :hide-path="true"
             />
           </template>
         </v-col>

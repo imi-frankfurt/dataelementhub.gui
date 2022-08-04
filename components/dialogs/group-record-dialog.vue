@@ -165,7 +165,14 @@
           <v-list subheader>
             <v-subheader>{{ $t('global.members') }}</v-subheader>
             <v-list-item>
+              <v-list-item-content
+                v-if="element.identification.status === 'RELEASED'
+                  && element.identification.elementType.toUpperCase().includes('RECORD')"
+              >
+                <members-table :members="element.members" />
+              </v-list-item-content>
               <Members
+                v-else
                 :namespace-urn="namespaceUrn"
                 :element-urn="urn"
                 @selectedMembers="selectedMembers = $event; element.members =
@@ -192,10 +199,12 @@ import ItemDefinition from '~/components/item/item-definition'
 import ItemSlot from '~/components/item/item-slot'
 import Members from '~/components/common/members'
 import CheckUnreleasedMembers from '~/components/dialogs/check-unreleased-members'
+import MembersTable from '~/components/tables/members-table'
 export default {
   components: {
     CheckUnreleasedMembers,
     ItemDefinition,
+    MembersTable,
     ItemSlot,
     Members
   },
@@ -229,12 +238,12 @@ export default {
   computed: {
     dialogTitle () {
       if (this.urn === '') {
-        if (this.elementType === 'RECORD') {
+        if (this.elementType.toUpperCase() === 'RECORD') {
           return this.$i18n.t('pages.records.itemDialog.title.create')
         } else {
           return this.$i18n.t('pages.groups.itemDialog.title.create')
         }
-      } else if (this.elementType === 'RECORD') {
+      } else if (this.elementType.toUpperCase() === 'RECORD') {
         return this.$i18n.t('pages.records.itemDialog.title.update')
       } else {
         return this.$i18n.t('pages.groups.itemDialog.title.update')
@@ -333,16 +342,16 @@ export default {
                   this.element.identification.urn = res1.identification.urn
                   this.element.parentUrn = ''
                   this.element.action = 'CREATE'
-                  this.$emit('save', this.element)
+                  this.$root.$emit('updateTreeView', this.element)
+                  this.$emit('saveSuccess', this.element)
                   this.hideDialog()
                 }.bind(this))
             }.bind(this))
             .catch(function (err) {
               this.$log.debug('Could not save Element: ' + err)
-              this.$emit('saveFailure')
+              this.$emit('saveFailure', err.response)
             }.bind(this))
         } else { // ... otherwise we update it.
-          delete this.element.valueDomainUrn
           await this.$axios.put(this.ajax.elementUrl + this.element.identification.urn,
             this.element)
             .then(function (res) {
@@ -351,14 +360,14 @@ export default {
                   this.element.identification.urn = res1.identification.urn
                   this.element.previousUrn = this.urn
                   this.element.action = 'UPDATE'
-                  this.$emit('save', this.element)
+                  this.$root.$emit('updateTreeView', this.element)
+                  this.$emit('saveSuccess', this.element)
                   this.hideDialog()
                 }.bind(this))
-              this.$log.debug(this.element)
             }.bind(this))
             .catch(function (err) {
               this.$log.debug('Could not save Element: ' + err)
-              this.$emit('saveFailure')
+              this.$emit('saveFailure', err.response)
             }.bind(this))
         }
       }

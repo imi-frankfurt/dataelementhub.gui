@@ -48,6 +48,8 @@ export default {
       showInTreeView: 'IM TREEVIEW ZEIGEN'
     },
     addItem: 'ARTIKEL HINZUFÜGEN',
+    path: 'Pfad',
+    paths: 'Pfade',
     imi: 'Institut für Medizininformatik',
     dragAndDrop: 'einfach ziehen und ablegen',
     metaData: 'Meta Daten',
@@ -137,9 +139,9 @@ export default {
     itemDialog: {
       deleteItemTitle: 'Sind Sie sicher, dass Sie diesen Artikel Element möchten?',
       snackbar: {
-        deleteFailure: 'Dieses Element konnte nicht gelöscht werden!',
+        deleteFailure: 'Dieses Element konnte nicht gelöscht werden',
         deleteSuccess: 'Element gelöscht!',
-        saveFailure: 'Dieses Element konnte nicht gespeichert werden!',
+        saveFailure: 'Dieses Element konnte nicht gespeichert werden',
         saveSuccess: 'Element gespeichert!'
       }
     },
@@ -202,7 +204,8 @@ export default {
           update: 'Namespace updaten'
         },
         form: {
-          publicNamespace: 'Öffentlicher Namespace'
+          publicNamespace: 'Öffentlicher Namespace',
+          hiddenNamespace: 'Privater Namespace'
         }
       },
       actions: {
