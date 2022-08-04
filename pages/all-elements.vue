@@ -308,66 +308,64 @@ export default {
       }
       const currentElement = this.getJsonObjects(this.treeItems, 'urn', element.previousUrn)[0]
       const parentElement = this.getJsonObjects(this.treeItems, 'urn', this.dialog.parentUrn)[0]
-      if (currentElement !== undefined && parentElement !== undefined) {
-        const item = {
-          id: this.generateItemId(),
-          urn: element.identification.urn,
-          editable: true,
-          name: element.definitions[0].designation,
-          elementType: element.identification.elementType,
-          children: element.identification.elementType === 'DATAELEMENT' ? undefined : [],
-          isPreferredLanguage: Ajax.preferredLanguage.includes(element.definitions[0].language)
-        }
-        switch (element.identification.elementType) {
-          case 'NAMESPACE': {
-            if (element.action === 'CREATE') {
-              item.children = []
-              this.treeItems.push(item)
-            } else if (element.action === 'UPDATE') {
-              const previousItem =
+      const item = {
+        id: this.generateItemId(),
+        urn: element.identification.urn,
+        editable: true,
+        name: element.definitions[0].designation,
+        elementType: element.identification.elementType,
+        children: element.identification.elementType === 'DATAELEMENT' ? undefined : [],
+        isPreferredLanguage: Ajax.preferredLanguage.includes(element.definitions[0].language)
+      }
+      switch (element.identification.elementType) {
+        case 'NAMESPACE': {
+          if (element.action === 'CREATE') {
+            item.children = []
+            this.treeItems.push(item)
+          } else if (element.action === 'UPDATE') {
+            const previousItem =
                 this.getJsonObjects(this.treeItems, 'urn', element.previousUrn)[0]
-              item.children = previousItem.children
-              item.id = previousItem.id
-              this.treeItems =
+            item.children = previousItem.children
+            item.id = previousItem.id
+            this.treeItems =
                 findAnd.replaceObject(this.treeItems, { urn: element.previousUrn }, item)
-              this.changeActiveElement(item.urn)
-            } else {
-              this.treeItems =
+            this.changeActiveElement(item.urn)
+          } else {
+            this.treeItems =
                 findAnd.removeObject(this.treeItems, { urn: element.identification.urn })
-            }
-            break
           }
-          case 'RECORD':
-          case 'DATAELEMENTGROUP':
-          case 'DATAELEMENT': {
-            item.parentUrn = this.dialog.parentUrn
-            if (element.action === 'UPDATE') {
-              const parentElement = this.getJsonObjects(this.treeItems, 'urn', currentElement.parentUrn)[0]
-              item.parentUrn = currentElement.parentUrn
-              item.id = currentElement.id
-              parentElement.children =
+          break
+        }
+        case 'RECORD':
+        case 'DATAELEMENTGROUP':
+        case 'DATAELEMENT': {
+          item.parentUrn = this.dialog.parentUrn
+          if (element.action === 'UPDATE' && currentElement !== undefined) {
+            const parentElement = this.getJsonObjects(this.treeItems, 'urn', currentElement.parentUrn)[0]
+            item.parentUrn = currentElement.parentUrn
+            item.id = currentElement.id
+            parentElement.children =
                 findAnd.replaceObject(parentElement.children, { urn: element.previousUrn }, item)
-              this.treeItems =
+            this.treeItems =
                 findAnd.changeProps(this.treeItems, { urn: parentElement.urn }, parentElement.children)
-              if (element.identification.elementType === 'DATAELEMENTGROUP' ||
+            if (element.identification.elementType === 'DATAELEMENTGROUP' ||
                 element.identification.elementType === 'RECORD') {
-                this.fetchAndReplaceMembers(item)
-                this.openNodes = findAnd.replaceObject(this.openNodes, { urn: element.previousUrn }, item)
-              }
-              this.changeActiveElement(item.urn)
+              this.fetchAndReplaceMembers(item)
+              this.openNodes = findAnd.replaceObject(this.openNodes, { urn: element.previousUrn }, item)
             }
-            if (element.action === 'CREATE') {
-              parentElement.children.push(item)
-              if (parentElement.children.length === 1) {
-                this.fetchAndReplaceMembers(parentElement)
-              }
-              this.treeItems =
+            this.changeActiveElement(item.urn)
+          }
+          if (element.action === 'CREATE' && parentElement !== undefined) {
+            parentElement.children.push(item)
+            if (parentElement.children.length === 1) {
+              this.fetchAndReplaceMembers(parentElement)
+            }
+            this.treeItems =
                 findAnd.changeProps(this.treeItems,
                   { urn: this.dialog.parentUrn },
                   { children: parentElement.children })
-            }
-            break
           }
+          break
         }
       }
       this.UpdateAllOpenNodes()
