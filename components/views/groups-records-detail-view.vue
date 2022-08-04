@@ -10,7 +10,8 @@
             :size="400"
             color="primary"
             indeterminate
-          />
+          >
+          </v-progress-circular>
         </v-col>
       </v-row>
     </v-container>
@@ -21,7 +22,7 @@
       :urn="urn"
       :namespace-urn="element.identification.namespaceUrn"
       :element-type="elementType"
-      @save="$emit('save', $event); loadDetails()"
+      @save="saveElement($event)"
       @saveFailure="$emit('saveFailure', $event)"
       @dialogClosed="dialog = false"
     />
@@ -97,7 +98,11 @@
         </v-btn>
       </v-toolbar>
     </v-card>
-    <meta-data :data="element.identification" />
+    <v-card outlined color="transparent" class="ma-0 pa-0">
+      <meta-data
+        :data="element.identification"
+      />
+    </v-card>
     <v-card v-if="hidePath" class="detailViewCard">
       <v-list>
         <v-subheader>
@@ -369,6 +374,11 @@ export default {
         }
       }
       this.detailViewDialog.show = true
+    },
+    saveElement (element) {
+      this.$emit('saveSuccess', element)
+      this.loadDetails()
+      this.fetchElementPath()
     }
   }
 }

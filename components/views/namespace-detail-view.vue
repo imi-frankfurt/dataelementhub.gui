@@ -60,7 +60,12 @@
         </v-btn>
       </v-toolbar>
     </v-card>
-    <meta-data type="NAMESPACE" :data="namespace.identification" />
+    <v-card outlined color="transparent" class="ma-0 pa-0">
+      <meta-data
+        :type="'NAMESPACE'"
+        :data="namespace.identification"
+      />
+    </v-card>
     <v-list>
       <v-subheader>{{ $t('global.definitions') }}</v-subheader>
       <v-list-item>
@@ -162,11 +167,13 @@ export default {
         await this.$axios.$delete(this.ajax.namespaceUrl + this.namespaceIdentifier)
           .then(function (res) {
             this.$emit('delete', {
-              id: this.id
+              urn: this.urn
             })
           }.bind(this))
           .catch(function (err) {
-            this.$emit('deleteFailure', err.response)
+            this.$emit('deleteFailure', {
+              urn: this.urn
+            })
             this.$log.debug('Could not delete this item: ' + err)
           }.bind(this))
       }

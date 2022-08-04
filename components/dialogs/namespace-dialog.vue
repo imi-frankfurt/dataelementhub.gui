@@ -243,7 +243,8 @@ export default {
                   this.namespace.identification.urn = res1.identification.urn
                   this.namespace.parentUrn = ''
                   this.namespace.action = 'CREATE'
-                  this.$emit('save', this.namespace)
+                  this.$root.$emit('updateTreeView', this.namespace)
+                  this.$emit('saveSuccess', this.namespace)
                   this.hideDialog()
                 }.bind(this))
             }.bind(this))
@@ -261,7 +262,8 @@ export default {
                   this.namespace.identification.urn = res1.identification.urn
                   this.namespace.parentUrn = ''
                   this.namespace.action = 'UPDATE'
-                  this.$emit('save', this.namespace)
+                  this.$root.$emit('updateTreeView', this.namespace)
+                  this.$emit('saveSuccess', this.namespace)
                   this.hideDialog()
                 }.bind(this))
             }.bind(this))

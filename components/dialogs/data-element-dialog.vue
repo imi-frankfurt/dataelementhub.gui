@@ -455,7 +455,8 @@ export default {
                   this.dataElement.identification.urn = res1.identification.urn
                   this.dataElement.parentUrn = ''
                   this.dataElement.action = 'CREATE'
-                  this.$emit('save', this.dataElement)
+                  this.$root.$emit('updateTreeView', this.dataElement)
+                  this.$emit('saveSuccess', this.dataElement)
                   this.hideDialog()
                 }.bind(this))
             }.bind(this))
@@ -473,7 +474,8 @@ export default {
                   this.dataElement.identification.urn = res1.identification.urn
                   this.dataElement.previousUrn = this.urn
                   this.dataElement.action = 'UPDATE'
-                  this.$emit('save', this.dataElement)
+                  this.$root.$emit('updateTreeView', this.dataElement)
+                  this.$emit('saveSuccess', this.dataElement)
                   this.hideDialog()
                 }.bind(this))
             }.bind(this))
