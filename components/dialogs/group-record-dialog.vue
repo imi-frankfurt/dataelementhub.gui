@@ -181,6 +181,7 @@
             </v-list-item>
             <CheckUnreleasedMembers
               v-if="unreleasedMembersDialog.show"
+              class="unreleasedMembersDialog"
               :show="unreleasedMembersDialog.show"
               :members="selectedMembers"
               @released="markAsReleased($event)"
@@ -288,8 +289,8 @@ export default {
         status: n.status
       }))
     },
-    allMembersAreReleased () {
-      const members = this.element.members.filter(elem => !elem.status.includes('RELEASED'))
+    containsNoDraftMembers () {
+      const members = this.element.members.filter(elem => elem.status.includes('DRAFT'))
       if (members.length > 0 && this.element.identification.status === 'RELEASED') {
         this.unreleasedMembersDialog.unreleasedMembers = members
         this.unreleasedMembersDialog.show = true
@@ -331,7 +332,7 @@ export default {
     },
     async saveElement () {
       this.$refs.form.validate()
-      if (this.form.valid && this.allMembersAreReleased()) {
+      if (this.form.valid && this.containsNoDraftMembers()) {
         this.$log.debug('Saving Element ...')
         if (this.urn === '') { // If the Element URN is empty we have to save it ...
           await this.$axios.post(this.ajax.elementUrl,
@@ -394,3 +395,9 @@ export default {
   }
 }
 </script>
+
+<style>
+.unreleasedMembersDialog {
+  max-width: 40%;
+}
+</style>
