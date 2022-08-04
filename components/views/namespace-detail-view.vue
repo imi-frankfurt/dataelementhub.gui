@@ -24,6 +24,7 @@
       @dialogClosed="dialog = false"
     />
     <v-card
+      v-if="!hideToolbar"
       color="grey lighten-4"
       flat
     >
@@ -114,7 +115,8 @@ export default {
     urn: { required: true, type: String },
     editable: { required: false, default: false, type: Boolean },
     deletable: { required: false, default: false, type: Boolean },
-    showJumpToElementButton: { required: false, default: false, type: Boolean }
+    showJumpToElementButton: { required: false, default: false, type: Boolean },
+    hideToolbar: { required: false, default: false, type: Boolean }
   },
   data () {
     return {

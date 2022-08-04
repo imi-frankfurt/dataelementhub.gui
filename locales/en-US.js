@@ -47,6 +47,8 @@ export default {
       close: 'Close',
       showInTreeView: 'SHOW IN TREEVIEW'
     },
+    path: 'Path',
+    paths: 'Paths',
     public: 'PUBLIC',
     hidden: 'HIDDEN',
     imi: 'Institute for Medical Informatics',
