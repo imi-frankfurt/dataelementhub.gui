@@ -285,9 +285,11 @@
               <datetime-validation
                 v-if="dataElement.valueDomain.type === 'TIME'"
                 :enable-date-format="false"
-                :enable-time-format="false"
+                :enable-time-format="true"
                 :time-format="dataElement.valueDomain.datetime.time"
+                :hour-format="dataElement.valueDomain.datetime.hourFormat"
                 @timeFormatChange="dataElement.valueDomain.datetime.time = $event"
+                @hourFormatChange="dataElement.valueDomain.datetime.hourFormat = $event"
               />
             </v-list>
           </template>
