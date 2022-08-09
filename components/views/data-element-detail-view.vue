@@ -84,7 +84,7 @@
       </v-card>
       <v-card outlined color="transparent" class="ma-0 pa-0">
         <MetaData
-          :type="DATAELEMENT"
+          :type="'DATAELEMENT'"
           :data="dataElement.identification"
         />
       </v-card>

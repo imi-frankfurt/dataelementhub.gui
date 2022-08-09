@@ -26,7 +26,7 @@
             style="max-width: 300px;"
           >
             <template #activator="{ on, attrs }">
-              <v-div
+              <div
                 v-bind="attrs"
                 v-on="on"
               >
@@ -52,7 +52,7 @@
                     </v-icon>
                   </span>
                 </p>
-              </v-div>
+              </div>
             </template>
             <v-list>
               <v-list-item>
