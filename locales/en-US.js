@@ -149,7 +149,7 @@ export default {
     },
     select: {
       namespace: 'Select a Namespace ...',
-      valueDomain: 'Select a Value Domain ...'
+      valueDomainType: 'Select Value Domain Type...'
     },
     form: {
       validation: {
@@ -185,6 +185,14 @@ export default {
         useMinimum: 'Use Minimum',
         useMaximum: 'Use Maximum',
         unitOfMeasure: 'Unit of Measure'
+      }
+    }
+  },
+  dialogs: {
+    dataElement: {
+      infoTexts: {
+        1: 'Enumerated value domains can only be created using the rest api:',
+        2: 'Available Value Domains'
       }
     }
   },

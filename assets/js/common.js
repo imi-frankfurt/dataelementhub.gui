@@ -82,6 +82,30 @@ export default {
       conceptAssociations: []
     }
   },
+  defaultEnumeratedValueDomain () {
+    return {
+      identification: {
+        elementType: 'ENUMERATED_VALUE_DOMAIN',
+        status: 'DRAFT'
+      },
+      definitions: [
+        ItemDefinition.data().defaultDefinition
+      ],
+      type: 'ENUMERATED',
+      permittedValues: [
+        {
+          identification: {
+            elementType: 'PERMISSIBLE_VALUE',
+            status: 'DRAFT'
+          },
+          definitions: [
+            ItemDefinition.data().defaultDefinition
+          ],
+          value: 'value'
+        }
+      ]
+    }
+  },
   defaultGroup () {
     return {
       identification: {

@@ -147,7 +147,7 @@ export default {
     },
     select: {
       namespace: 'Wählen Sie ein Namespace ...',
-      valueDomain: 'Wählen Sie ein Value Domain ...'
+      valueDomainType: 'Wählen Sie den ValueDomainTyp aus ...'
     },
     form: {
       validation: {
@@ -183,6 +183,14 @@ export default {
         useMinimum: 'Minimum verwenden',
         useMaximum: 'Maximum verwenden',
         unitOfMeasure: 'Maßeinheit'
+      }
+    }
+  },
+  dialogs: {
+    dataElement: {
+      infoTexts: {
+        1: 'Enumerated value domains können nur mit der Rest-API erstellt werden:',
+        2: 'Verfügbare Value Domains'
       }
     }
   },
