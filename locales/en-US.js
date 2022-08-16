@@ -47,9 +47,15 @@ export default {
       close: 'Close',
       showInTreeView: 'SHOW IN TREEVIEW'
     },
+    buttonTitle: {
+      publicNamespace: 'Public namespaces can be accessed by anyone without any restrictions.',
+      privateNamespace: 'Private namespaces are only accessible by users with appropriate authorization.'
+    },
+    accessibility: 'Accessibility',
     path: 'Path',
     paths: 'Paths',
     public: 'PUBLIC',
+    private: 'PRIVATE',
     hidden: 'HIDDEN',
     imi: 'Institute for Medical Informatics',
     login: 'LOG IN',
@@ -58,7 +64,7 @@ export default {
     metaData: 'Meta Data',
     status: 'Status',
     noItems: 'No Items Available',
-    addNamespaces: 'Add New Namespaces by clicking on the CREATE NAMESPACE button',
+    addNamespaces: 'Add New Namespaces by clicking on the CREATE button',
     type: 'Type',
     namespace: 'Namespace',
     identifier: 'Identifier',
@@ -67,7 +73,7 @@ export default {
     namespaceIdentifier: 'NAMESPACE IDENTIFIER',
     elementIdentifier: 'ELEMENT IDENTIFIER',
     elementVersion: 'ELEMENT VERSION',
-    elementType: 'ELEMENT TYPE',
+    elementType: 'Element Type',
     property: 'Property',
     properties: 'Properties',
     of: 'of',
