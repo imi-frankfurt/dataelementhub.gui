@@ -273,12 +273,11 @@
               </template>
               <!--
               -->
-              <v-card>
+              <v-card v-if="dataElement.valueDomain.type === 'ENUMERATED'">
                 <v-card-subtitle>
                   {{ $t('dialogs.dataElement.infoTexts.2') }}
                 </v-card-subtitle>
                 <enumerated
-                  v-if="dataElement.valueDomain.type === 'ENUMERATED'"
                   :available-value-domains="availableEnumertedValueDomains"
                   :namespace-id="selectedNamespaceId"
                   @chooseValueDomain="dataElement.valueDomainUrn = $event; dataElement.valueDomain = defaultEnumeratedValueDomain"
