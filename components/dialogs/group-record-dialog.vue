@@ -38,8 +38,7 @@
           v-model="form.valid"
           :lazy-validation="form.lazy"
         >
-          <v-list subheader>
-            <v-subheader>{{ $t('global.properties') }}</v-subheader>
+          <v-list class="mt-2">
             <v-list-item>
               <v-list-item-action>
                 <v-select
@@ -52,6 +51,8 @@
                 />
               </v-list-item-action>
             </v-list-item>
+          </v-list>
+          <v-list subheader>
             <v-list-item>
               <v-list-item-action>
                 <v-radio-group v-model="element.identification.status">
