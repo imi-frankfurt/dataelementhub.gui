@@ -300,8 +300,10 @@ export default {
       return true
     },
     markAsReleased (urn) {
-      this.element.members.find(elem => elem.elementUrn.toLowerCase().includes(urn)).status =
-        'RELEASED'
+      this.element.members.find(elem => elem.elementUrn.toUpperCase().includes(urn)).status = 'RELEASED'
+      if (this.containsNoDraftMembers()) {
+        this.unreleasedMembersDialog.show = false
+      }
     },
     defaultElement () {
       return this.elementType === 'RECORD'

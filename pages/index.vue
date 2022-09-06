@@ -32,7 +32,6 @@
         <v-row>
           <v-col offset="2" offset-sm="0" sm="6" md="3">
             <div
-              v-scroll-reveal.reset="revealFromRightWithDelay(100)"
               class="icon-box"
             >
               <div class="icon-box__icon mb-7">
@@ -47,7 +46,6 @@
           </v-col>
           <v-col offset="2" offset-sm="0" sm="6" md="3">
             <div
-              v-scroll-reveal.reset="revealFromRightWithDelay(200)"
               class="icon-box"
             >
               <div class="icon-box__icon mb-7">
@@ -62,7 +60,6 @@
           </v-col>
           <v-col offset="2" offset-sm="0" sm="6" md="3">
             <div
-              v-scroll-reveal.reset="revealFromRightWithDelay(300)"
               class="icon-box"
             >
               <div class="icon-box__icon mb-7">
@@ -77,7 +74,6 @@
           </v-col>
           <v-col offset="2" offset-sm="0" sm="6" md="3">
             <div
-              v-scroll-reveal.reset="revealFromRightWithDelay(400)"
               class="icon-box"
             >
               <div class="icon-box__icon mb-7">

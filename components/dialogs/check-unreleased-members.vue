@@ -58,7 +58,7 @@
         :key="editDialog.show"
         :urn="editDialog.urn"
         :show="editDialog.show"
-        @save="$emit('save', $event); removeIfReleased(editDialog.urn)"
+        @saveSuccess="$emit('saveSuccess', $event); removeIfReleased(editDialog.urn)"
         @saveFailure="$emit('saveFailure', $event)"
         @dialogClosed="editDialog.show = false"
       />
@@ -73,7 +73,7 @@
         :show="editDialog.show"
         :urn="editDialog.urn"
         :element-type="dialog.elementType"
-        @save="$emit('save', $event); removeIfReleased(editDialog.urn)"
+        @saveSuccess="$emit('saveSuccess', $event); removeIfReleased(editDialog.urn)"
         @saveFailure="$emit('saveFailure', $event)"
         @dialogClosed="editDialog.show = false"
       />
@@ -128,9 +128,9 @@ export default {
       await this.$axios.$get(this.ajax.dataElementUrl + urn, Ajax.header.ignoreLanguage)
         .then(function (res) {
           this.$log.debug('Check unreleased members: Fetching DataElement details ...')
-          if (res.identification.status === 'RELEASED') {
-            const urn = res.identification.urn
-            this.items = this.items.filter(elem => !elem.id.toLowerCase().includes(urn))
+          if (res.identification.status.toUpperCase() === 'RELEASED') {
+            const urn = res.identification.urn.toUpperCase()
+            this.items = this.items.filter(elem => !elem.id.toUpperCase().includes(urn))
             this.$emit('released', urn)
           }
         }.bind(this))
