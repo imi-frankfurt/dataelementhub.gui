@@ -10,22 +10,22 @@
         </v-col>
       </v-row>
     </v-list-item>
-    <v-list-item v-if="enableTimeFormat">
-      <v-row>
-        <v-col cols="4">
-          <time-format
-            :time-format="timeFormat"
-            @timeFormatChange="$emit('timeFormatChange', $event)"
-          />
-        </v-col>
-      </v-row>
-    </v-list-item>
     <v-list-item v-if="enableHourFormat">
       <v-row>
         <v-col cols="4">
           <hour-format
             :hour-format="hourFormat"
             @hourFormatChange="$emit('hourFormatChange', $event)"
+          />
+        </v-col>
+      </v-row>
+    </v-list-item>
+    <v-list-item v-if="enableTimeFormat">
+      <v-row>
+        <v-col cols="4">
+          <time-format
+            :time-format="timeFormat"
+            @timeFormatChange="$emit('timeFormatChange', $event)"
           />
         </v-col>
       </v-row>

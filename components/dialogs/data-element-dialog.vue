@@ -222,10 +222,21 @@
                   <v-select
                     v-model="dataElement.valueDomain.type"
                     :items="elementValueDomains"
-                    :label="$t('global.select.valueDomain')"
+                    :label="$t('global.select.valueDomainType')"
                     @change="changeValidation"
                   />
                 </v-list-item-action>
+                <v-list-item-subtitle
+                  v-if="dataElement.valueDomain.type === 'ENUMERATED'"
+                >
+                  {{ $t('dialogs.dataElement.infoTexts.1') }}
+                  <a
+                    :href="ajax.backendUrl+'/swagger-ui/index.html#/Element/Create-an-Element'"
+                    target="_blank"
+                  >
+                    REST-API
+                  </a>
+                </v-list-item-subtitle>
               </v-list-item>
               <text-validation
                 v-if="dataElement.valueDomain.type === 'STRING'"
@@ -263,10 +274,31 @@
               </template>
               <!--
               -->
-              <permitted-values-validation
-                v-if="dataElement.valueDomain.type === 'ENUMERATED'"
-                :values="dataElement.valueDomain.permittedValues"
-              />
+              <v-card v-if="dataElement.valueDomain.type === 'ENUMERATED'">
+                <v-card-subtitle>
+                  {{ $t('dialogs.dataElement.infoTexts.2') }}
+                </v-card-subtitle>
+                <enumerated
+                  :available-value-domains="availableEnumertedValueDomains"
+                  :namespace-id="selectedNamespaceId"
+                  @chooseValueDomain="dataElement.valueDomainUrn = $event; dataElement.valueDomain = defaultEnumeratedValueDomain"
+                  @deleteValueDomainUrn="delete dataElement.valueDomainUrn"
+                  @showValueDomainDialog="valueDomainDialog.urn = $event; valueDomainDialog.show = true"
+                />
+              </v-card>
+              <v-dialog
+                v-model="valueDomainDialog.show"
+                width="600"
+              >
+                <v-card>
+                  <EnumeratedValueDomainDetailView
+                    :urn="valueDomainDialog.urn"
+                    :editable="false"
+                    :deletable="false"
+                    :hide-path="true"
+                  />
+                </v-card>
+              </v-dialog>
               <datetime-validation
                 v-if="dataElement.valueDomain.type === 'DATETIME'"
                 :date-format="dataElement.valueDomain.datetime.date"
@@ -286,9 +318,11 @@
               <datetime-validation
                 v-if="dataElement.valueDomain.type === 'TIME'"
                 :enable-date-format="false"
-                :enable-time-format="false"
+                :enable-time-format="true"
                 :time-format="dataElement.valueDomain.datetime.time"
+                :hour-format="dataElement.valueDomain.datetime.hourFormat"
                 @timeFormatChange="dataElement.valueDomain.datetime.time = $event"
+                @hourFormatChange="dataElement.valueDomain.datetime.hourFormat = $event"
               />
             </v-list>
           </template>
@@ -317,17 +351,19 @@ import ItemSlot from '~/components/item/item-slot'
 import DataElement from '~/assets/js/data-element'
 import TextValidation from '~/components/validation/text'
 import NumericValidation from '~/components/validation/numeric'
-import PermittedValuesValidation from '~/components/validation/permitted-values'
 import DatetimeValidation from '~/components/validation/datetime'
+import Enumerated from '~/components/validation/enumerated'
+import EnumeratedValueDomainDetailView from '~/components/views/enumerated-value-domain-detail-view'
 export default {
   components: {
+    Enumerated,
     ItemDefinition,
     ItemSlot,
     TextValidation,
     NumericValidation,
     ItemConceptAssociation,
-    PermittedValuesValidation,
-    DatetimeValidation
+    DatetimeValidation,
+    EnumeratedValueDomainDetailView
   },
   props: {
     urn: { required: false, default: '', type: String }, // If URN is empty we assume that we want to create a new
@@ -338,14 +374,22 @@ export default {
     return {
       ajax: {
         dataElementUrl: process.env.mdrBackendUrl + '/v1/element/',
-        namespaceUrl: process.env.mdrBackendUrl + '/v1/namespaces/'
+        namespaceUrl: process.env.mdrBackendUrl + '/v1/namespaces/',
+        backendUrl: process.env.mdrBackendUrl
       },
       dialog: false,
       dataElement: Object.assign({}, Common.defaultDataElement()),
+      defaultEnumeratedValueDomain: Object.assign({}, Common.defaultEnumeratedValueDomain()),
       form: {
         valid: true,
         lazy: false
       },
+      valueDomainDialog: {
+        show: false,
+        urn: ''
+      },
+      availableEnumertedValueDomains: [],
+      selectedNamespaceId: -1,
       statuses: Common.elementStatuses(),
       namespaces: [],
       elementValueDomains: Common.elementValueDomains(),
@@ -375,6 +419,8 @@ export default {
     namespaceUrn: {
       handler () {
         this.dataElement.identification.namespaceUrn = this.namespaceUrn
+        this.selectedNamespaceId = this.namespaceUrn.split(':')[1]
+        if (this.show) { this.fetchEnumeratedValueDomains() }
       },
       immediate: true
     },
@@ -406,9 +452,21 @@ export default {
           this.namespaces.concat(res.WRITE)
         }.bind(this))
     },
+    async fetchEnumeratedValueDomains () {
+      this.$log.debug('Loading enumerated value domains in ' + this.dataElement.identification.namespaceUrn)
+      await this.$axios.$get(this.ajax.namespaceUrl + this.selectedNamespaceId + '/members' +
+        '?elementType=ENUMERATED_VALUE_DOMAIN', Ajax.header.listView)
+        .then(function (res) {
+          this.availableEnumertedValueDomains = res
+        }.bind(this))
+        .catch(function (err) {
+          this.$log.error('Unable to fetch enumerated value domains: ' + err)
+        }.bind(this))
+    },
     async loadDataElement (urn) {
       this.$log.debug('Loading DataElement with URN ' + urn)
-      await this.$axios.$get(this.ajax.dataElementUrl + this.urn, Ajax.header.ignoreLanguage)
+      await this.$axios.$get(
+        this.ajax.dataElementUrl + this.urn, Ajax.header.ignoreLanguage)
         .then(function (res) {
           const dataElement = Object.assign({}, res)
           this.$axios.$get(this.ajax.dataElementUrl + urn + '/valuedomain', Ajax.header.ignoreLanguage)
@@ -448,16 +506,19 @@ export default {
         }
         this.$log.debug('Saving DataElement ...')
         if (this.urn === '') { // If the DataElement URN is empty we have to save it ...
-          await this.$axios.post(this.ajax.dataElementUrl,
-            this.dataElement)
+          const element = this.dataElement
+          if (element.valueDomain.type === 'ENUMERATED') {
+            delete element.valueDomain
+          }
+          await this.$axios.post(this.ajax.dataElementUrl, element)
             .then(function (res) {
               this.$axios.$get(res.headers.location)
                 .then(function (res1) {
-                  this.dataElement.identification.urn = res1.identification.urn
-                  this.dataElement.parentUrn = ''
-                  this.dataElement.action = 'CREATE'
-                  this.$root.$emit('updateTreeView', this.dataElement)
-                  this.$emit('saveSuccess', this.dataElement)
+                  element.identification.urn = res1.identification.urn
+                  element.parentUrn = ''
+                  element.action = 'CREATE'
+                  this.$root.$emit('updateTreeView', element)
+                  this.$emit('saveSuccess', element)
                   this.hideDialog()
                 }.bind(this))
             }.bind(this))

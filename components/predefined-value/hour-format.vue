@@ -2,7 +2,6 @@
   <v-select
     :items="hourFormats"
     :value="hourFormat"
-    @change="$emit('hourFormatChange', $event)"
   />
 </template>
 <script>
@@ -16,6 +15,14 @@ export default {
         '12h',
         '24h'
       ]
+    }
+  },
+  watch: {
+    hourFormat: {
+      handler () {
+        this.$emit('hourFormatChange', this.hourFormat)
+      },
+      immediate: true
     }
   }
 }
