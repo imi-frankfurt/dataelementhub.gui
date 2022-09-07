@@ -22,44 +22,25 @@
         </v-col>
       </v-row>
     </v-container>
-    <v-data-table
+    <PermittedValuesTable
       v-if="valueDomain.type === 'ENUMERATED'"
-      :headers="permittedValuesTable.headers"
-      :items="valueDomain.permittedValues"
-      :items-per-page="5"
-      class="elevation-1"
-      @click:row="handlePermittedValueClicked"
+      :values="valueDomain.permittedValues"
+      :clickable="true"
     />
     <concept-association-table
       v-if="valueDomain.conceptAssociations.length > 0"
       :associations="valueDomain.conceptAssociations"
     />
-    <v-dialog
-      v-model="showPermittedValueDetailView"
-      width="600"
-    >
-      <v-card>
-        <PermittedValueDetailView
-          :urn="selectedPermittedValueUrn"
-          :editable="false"
-          :deletable="false"
-          @save="updateTree($event); snackbar.saveSuccess = true"
-          @saveFailure="snackbar.saveFailure = true"
-          @delete="updateTree(selectedElement) ; snackbar.deleteSuccess = true"
-          @deleteFailure="snackbar.deleteFailure = true"
-        />
-      </v-card>
-    </v-dialog>
   </div>
 </template>
 <script>
 import Ajax from '~/config/ajax'
 import ConceptAssociationTable from '~/components/tables/concept-association-table'
-import PermittedValueDetailView from '~/components/views/permitted-value-detail-view'
+import PermittedValuesTable from '~/components/tables/permitted-values-table'
 export default {
   components: {
-    PermittedValueDetailView,
-    ConceptAssociationTable
+    ConceptAssociationTable,
+    PermittedValuesTable
   },
   props: {
     urn: {
@@ -73,42 +54,10 @@ export default {
         dataElementUrl: process.env.mdrBackendUrl + '/v1/element/'
       },
       valueDomain: undefined,
-      showPermittedValueDetailView: false,
       selectedPermittedValueUrn: null,
       valueDomainMetaData: {
         keys: [],
         values: []
-      },
-      permittedValuesTable: {
-        headers: [
-          {
-            text: this.$i18n.t('global.permittedValue'),
-            align: 'start',
-            sortable: false,
-            value: 'value'
-          },
-          {
-            text: this.$i18n.t('global.definition'),
-            align: 'start',
-            sortable: false,
-            value: 'definitions[0].definition'
-          },
-          {
-            text: this.$i18n.t('global.designation'),
-            sortable: false,
-            value: 'definitions[0].designation'
-          },
-          {
-            text: this.$i18n.t('global.language'),
-            sortable: false,
-            value: 'definitions[0].language'
-          },
-          {
-            text: this.$i18n.t('global.urn'),
-            sortable: false,
-            value: 'identification.urn'
-          }
-        ]
       }
     }
   },
@@ -184,10 +133,6 @@ export default {
         .catch(function (err) {
           this.$log.error('Unable to fetch ValueDomain:' + err)
         }.bind(this))
-    },
-    handlePermittedValueClicked (value) {
-      this.showPermittedValueDetailView = true
-      this.selectedPermittedValueUrn = value.identification.urn
     }
   }
 }

@@ -282,8 +282,22 @@
                   :namespace-id="selectedNamespaceId"
                   @chooseValueDomain="dataElement.valueDomainUrn = $event; dataElement.valueDomain = defaultEnumeratedValueDomain"
                   @deleteValueDomainUrn="delete dataElement.valueDomainUrn"
+                  @showValueDomainDialog="valueDomainDialog.urn = $event; valueDomainDialog.show = true"
                 />
               </v-card>
+              <v-dialog
+                v-model="valueDomainDialog.show"
+                width="600"
+              >
+                <v-card>
+                  <EnumeratedValueDomainDetailView
+                    :urn="valueDomainDialog.urn"
+                    :editable="false"
+                    :deletable="false"
+                    :hide-path="true"
+                  />
+                </v-card>
+              </v-dialog>
               <datetime-validation
                 v-if="dataElement.valueDomain.type === 'DATETIME'"
                 :date-format="dataElement.valueDomain.datetime.date"
@@ -338,6 +352,7 @@ import TextValidation from '~/components/validation/text'
 import NumericValidation from '~/components/validation/numeric'
 import DatetimeValidation from '~/components/validation/datetime'
 import Enumerated from '~/components/validation/enumerated'
+import EnumeratedValueDomainDetailView from '~/components/views/enumerated-value-domain-detail-view'
 export default {
   components: {
     Enumerated,
@@ -346,7 +361,8 @@ export default {
     TextValidation,
     NumericValidation,
     ItemConceptAssociation,
-    DatetimeValidation
+    DatetimeValidation,
+    EnumeratedValueDomainDetailView
   },
   props: {
     urn: { required: false, default: '', type: String }, // If URN is empty we assume that we want to create a new
@@ -366,6 +382,10 @@ export default {
       form: {
         valid: true,
         lazy: false
+      },
+      valueDomainDialog: {
+        show: false,
+        urn: ''
       },
       availableEnumertedValueDomains: [],
       selectedNamespaceId: -1,

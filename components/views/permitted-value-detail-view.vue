@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="permittedValueDetailView">
     <div v-if="permittedValue !== undefined">
       <v-card
         color="grey lighten-4"
@@ -130,6 +130,11 @@ export default {
 }
 </script>
 <style>
+
+.permittedValueDetailView {
+  padding: 1rem;
+}
+
 .designationButton {
   min-width: 50px;
   width: 40px;

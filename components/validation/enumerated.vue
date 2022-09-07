@@ -1,36 +1,40 @@
 <template>
-  <v-list>
-    <v-list-item>
-      <v-row>
-        <v-col cols="12">
-          <v-card>
-            <v-card-title>
-              <v-text-field
-                v-model="search"
-                append-icon="mdi-magnify"
-                :label="$t('pages.tools.search.title')"
-                single-line
-                hide-details
+  <div>
+    <v-list>
+      <v-list-item>
+        <v-row>
+          <v-col cols="12">
+            <v-card>
+              <v-card-title>
+                <v-text-field
+                  v-model="search"
+                  append-icon="mdi-magnify"
+                  :label="$t('pages.tools.search.title')"
+                  single-line
+                  hide-details
+                />
+              </v-card-title>
+              <v-data-table
+                v-model="selected"
+                :headers="headers"
+                :items="convertedValueDomains"
+                :single-select="singleSelect"
+                :search="search"
+                item-key="urn"
+                show-select
+                class="elevation-1"
+                @click:row="handleValueDomainClicked"
               />
-            </v-card-title>
-            <v-data-table
-              v-model="selected"
-              :headers="headers"
-              :items="convertedValueDomains"
-              :single-select="singleSelect"
-              :search="search"
-              item-key="urn"
-              show-select
-              class="elevation-1"
-            />
-          </v-card>
-        </v-col>
-      </v-row>
-    </v-list-item>
-  </v-list>
+            </v-card>
+          </v-col>
+        </v-row>
+      </v-list-item>
+    </v-list>
+  </div>
 </template>
 <script>
 export default {
+  components: { },
   props: {
     availableValueDomains: { required: true, type: Array },
     namespaceId: { required: true, type: String }
@@ -40,6 +44,8 @@ export default {
       selected: [],
       search: '',
       singleSelect: true,
+      showValueDomainDetailView: false,
+      clickedValueDomainUrn: '',
       convertedValueDomains: [],
       selectedValueDomain: {},
       headers: [
@@ -88,6 +94,11 @@ export default {
         }
       },
       immediate: true
+    }
+  },
+  methods: {
+    handleValueDomainClicked (value) {
+      this.$emit('showValueDomainDialog', value.urn)
     }
   }
 }
