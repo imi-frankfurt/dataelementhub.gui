@@ -6,6 +6,7 @@
       color="navigation_drawer"
       :expand-on-hover="$vuetify.breakpoint.mdAndUp"
       permanent
+      dark
       app
     >
       <div class="text-center">

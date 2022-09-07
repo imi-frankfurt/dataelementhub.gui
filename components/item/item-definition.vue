@@ -1,19 +1,18 @@
 <template>
   <v-row>
     <v-col cols="4">
-      <v-text-field
+      <v-textarea
         :value="designation"
-        :counter="255"
         :rules="designationRules"
         :label="label[0]"
-        required
+        rows="1"
+        auto-grow
         @input="$emit('designation', $event)"
       />
     </v-col>
     <v-col cols="4">
       <v-textarea
         :value="definition"
-        :counter="65000"
         :rules="definitionRules"
         :label="label[1]"
         rows="1"

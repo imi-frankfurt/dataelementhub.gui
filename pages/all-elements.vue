@@ -324,15 +324,15 @@ export default {
             this.treeItems.push(item)
           } else if (element.action === 'UPDATE') {
             const previousItem =
-              this.getJsonObjects(this.treeItems, 'urn', element.previousUrn)[0]
+                this.getJsonObjects(this.treeItems, 'urn', element.previousUrn)[0]
             item.children = previousItem.children
             item.id = previousItem.id
             this.treeItems =
-              findAnd.replaceObject(this.treeItems, { urn: element.previousUrn }, item)
+                findAnd.replaceObject(this.treeItems, { urn: element.previousUrn }, item)
             this.changeActiveElement(item.urn)
           } else {
             this.treeItems =
-              findAnd.removeObject(this.treeItems, { urn: element.identification.urn })
+                findAnd.removeObject(this.treeItems, { urn: element.identification.urn })
           }
           break
         }
@@ -340,30 +340,30 @@ export default {
         case 'DATAELEMENTGROUP':
         case 'DATAELEMENT': {
           item.parentUrn = this.dialog.parentUrn
-          if (element.action === 'UPDATE') {
+          if (element.action === 'UPDATE' && currentElement !== undefined) {
             const parentElement = this.getJsonObjects(this.treeItems, 'urn', currentElement.parentUrn)[0]
             item.parentUrn = currentElement.parentUrn
             item.id = currentElement.id
             parentElement.children =
-              findAnd.replaceObject(parentElement.children, { urn: element.previousUrn }, item)
+                findAnd.replaceObject(parentElement.children, { urn: element.previousUrn }, item)
             this.treeItems =
-              findAnd.changeProps(this.treeItems, { urn: parentElement.urn }, parentElement.children)
+                findAnd.changeProps(this.treeItems, { urn: parentElement.urn }, parentElement.children)
             if (element.identification.elementType === 'DATAELEMENTGROUP' ||
-              element.identification.elementType === 'RECORD') {
+                element.identification.elementType === 'RECORD') {
               this.fetchAndReplaceMembers(item)
               this.openNodes = findAnd.replaceObject(this.openNodes, { urn: element.previousUrn }, item)
             }
             this.changeActiveElement(item.urn)
           }
-          if (element.action === 'CREATE') {
+          if (element.action === 'CREATE' && parentElement !== undefined) {
             parentElement.children.push(item)
             if (parentElement.children.length === 1) {
               this.fetchAndReplaceMembers(parentElement)
             }
             this.treeItems =
-              findAnd.changeProps(this.treeItems,
-                { urn: this.dialog.parentUrn },
-                { children: parentElement.children })
+                findAnd.changeProps(this.treeItems,
+                  { urn: this.dialog.parentUrn },
+                  { children: parentElement.children })
           }
           break
         }
