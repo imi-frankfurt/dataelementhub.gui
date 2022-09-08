@@ -1,346 +1,348 @@
 <template>
-  <v-row justify="center">
-    <v-dialog
-      v-model="dialog"
-      fullscreen
-      hide-overlay
-      transition="dialog-bottom-transition"
-    >
-      <v-card>
-        <v-toolbar
-          dark
-          color="primary"
-        >
-          <v-btn
-            icon
+  <v-container fluid>
+    <v-row justify="center">
+      <v-dialog
+        v-model="dialog"
+        fullscreen
+        hide-overlay
+        transition="dialog-bottom-transition"
+      >
+        <v-card>
+          <v-toolbar
             dark
-            @click="hideDialog"
+            color="primary"
           >
-            <v-icon>mdi-close</v-icon>
-          </v-btn>
-          <v-toolbar-title>{{ dialogTitle }}</v-toolbar-title>
-          <v-spacer />
-          <v-toolbar-items>
             <v-btn
+              icon
               dark
-              text
-              @click="saveDataElement"
+              @click="hideDialog"
             >
-              <v-icon>
-                mdi-content-save
-              </v-icon>
-              {{ $t('global.button.save') }}
+              <v-icon>mdi-close</v-icon>
             </v-btn>
-          </v-toolbar-items>
-        </v-toolbar>
-        <v-form
-          ref="form"
-          v-model="form.valid"
-          :lazy-validation="form.lazy"
-        >
-          <v-list class="mt-2">
-            <v-list-item>
-              <v-list-item-action>
-                <v-select
-                  v-model="dataElement.identification.namespaceUrn"
-                  :items="namespaces"
-                  :rules="selectNamespaceRules"
-                  item-value="identification.urn"
-                  item-text="definitions[0].designation"
-                  :label="$t('global.select.namespace')"
-                />
-              </v-list-item-action>
-            </v-list-item>
-          </v-list>
-          <v-list subheader>
-            <v-list-item>
-              <v-list-item-action>
-                <v-radio-group
-                  v-model="dataElement.identification.status"
-                  :disabled="released"
-                >
-                  <v-radio
-                    v-for="radioItem in statuses"
-                    :key="radioItem"
-                    :label="radioItem"
-                    :value="radioItem"
-                  />
-                </v-radio-group>
-              </v-list-item-action>
-            </v-list-item>
-          </v-list>
-          <v-list subheader>
-            <v-subheader>{{ $t('global.definitions') }}</v-subheader>
-            <v-list-item>
-              <v-list-item-action>
-                <v-btn
-                  color="primary"
-                  rounded
-                  small
-                  @click="addDefinition"
-                >
-                  <v-icon dark>
-                    mdi-plus
-                  </v-icon>
-                  {{ $t('global.button.add') }}
-                </v-btn>
-              </v-list-item-action>
-            </v-list-item>
-            <v-list-item v-for="(itemDefinition, index) in dataElement.definitions" :key="index">
-              <v-row>
-                <v-col cols="11">
-                  <item-definition
-                    :definition="itemDefinition.definition"
-                    :designation="itemDefinition.designation"
-                    :language="itemDefinition.language"
-                    @definition="itemDefinition.definition = $event"
-                    @designation="itemDefinition.designation = $event"
-                    @language="itemDefinition.language = $event"
-                  />
-                </v-col>
-                <v-col cols="1">
-                  <v-list-item>
-                    <v-list-item-action>
-                      <v-btn
-                        color="secondary"
-                        rounded
-                        small
-                        :disabled="disableRemoveDefinitionAction"
-                        @click="deleteDefinition(index)"
-                      >
-                        <v-icon dark>
-                          mdi-delete
-                        </v-icon>
-                        {{ $t('global.button.delete') }}
-                      </v-btn>
-                    </v-list-item-action>
-                  </v-list-item>
-                </v-col>
-              </v-row>
-            </v-list-item>
-          </v-list>
-          <v-list subheader>
-            <v-subheader>{{ $t('global.slots') }}</v-subheader>
-            <v-list-item>
-              <v-list-item-action>
-                <v-btn
-                  color="primary"
-                  rounded
-                  small
-                  @click="addSlot"
-                >
-                  <v-icon dark>
-                    mdi-plus
-                  </v-icon>
-                  {{ $t('global.button.add') }}
-                </v-btn>
-              </v-list-item-action>
-            </v-list-item>
-            <v-list-item v-for="(itemSlot, index) in dataElement.slots" :key="index">
-              <v-row>
-                <v-col cols="11">
-                  <item-slot
-                    :name="itemSlot.name"
-                    :value="itemSlot.value"
-                    @name="itemSlot.name = $event"
-                    @value="itemSlot.value = $event"
-                  />
-                </v-col>
-                <v-col cols="1">
-                  <v-list-item>
-                    <v-list-item-action>
-                      <v-btn
-                        color="secondary"
-                        rounded
-                        small
-                        @click="deleteSlot(index)"
-                      >
-                        <v-icon dark>
-                          mdi-delete
-                        </v-icon>
-                        {{ $t('global.button.delete') }}
-                      </v-btn>
-                    </v-list-item-action>
-                  </v-list-item>
-                </v-col>
-              </v-row>
-            </v-list-item>
-          </v-list>
-          <v-list subheader>
-            <v-subheader>{{ $t('global.conceptAssociations') }}</v-subheader>
-            <v-list-item>
-              <v-list-item-action>
-                <v-btn
-                  color="primary"
-                  rounded
-                  small
-                  @click="addConceptAssociation"
-                >
-                  <v-icon dark>
-                    mdi-plus
-                  </v-icon>
-                  {{ $t('global.button.add') }}
-                </v-btn>
-              </v-list-item-action>
-            </v-list-item>
-            <v-list-item
-              v-for="(concept, index) in dataElement.conceptAssociations"
-              :key="index"
-            >
-              <v-row>
-                <v-col cols="11">
-                  <item-concept-association
-                    :concept-association="concept"
-                    @conceptChanged="concept = $event"
-                  />
-                </v-col>
-                <v-col cols="1">
-                  <v-list-item>
-                    <v-list-item-action>
-                      <v-btn
-                        color="secondary"
-                        rounded
-                        small
-                        @click="deleteConceptAssociation(index)"
-                      >
-                        <v-icon dark>
-                          mdi-delete
-                        </v-icon>
-                        {{ $t('global.button.delete') }}
-                      </v-btn>
-                    </v-list-item-action>
-                  </v-list-item>
-                </v-col>
-              </v-row>
-            </v-list-item>
-          </v-list>
-          <template v-if="!released && !edit">
-            <v-list subheader>
-              <v-subheader>{{ $t('global.valueDomain') }}</v-subheader>
+            <v-toolbar-title>{{ dialogTitle }}</v-toolbar-title>
+            <v-spacer />
+            <v-toolbar-items>
+              <v-btn
+                dark
+                text
+                @click="saveDataElement"
+              >
+                <v-icon>
+                  mdi-content-save
+                </v-icon>
+                {{ $t('global.button.save') }}
+              </v-btn>
+            </v-toolbar-items>
+          </v-toolbar>
+          <v-form
+            ref="form"
+            v-model="form.valid"
+            :lazy-validation="form.lazy"
+          >
+            <v-list class="mt-2">
               <v-list-item>
                 <v-list-item-action>
                   <v-select
-                    v-model="dataElement.valueDomain.type"
-                    :items="elementValueDomains"
-                    :label="$t('global.select.valueDomainType')"
-                    @change="changeValidation"
+                    v-model="dataElement.identification.namespaceUrn"
+                    :items="namespaces"
+                    :rules="selectNamespaceRules"
+                    item-value="identification.urn"
+                    item-text="definitions[0].designation"
+                    :label="$t('global.select.namespace')"
                   />
                 </v-list-item-action>
-                <v-list-item-subtitle
-                  v-if="dataElement.valueDomain.type === 'ENUMERATED'"
-                >
-                  {{ $t('dialogs.dataElement.infoTexts.1') }}
-                  <a
-                    :href="ajax.backendUrl+'/swagger-ui/index.html#/Element/Create-an-Element'"
-                    target="_blank"
-                  >
-                    REST-API
-                  </a>
-                </v-list-item-subtitle>
               </v-list-item>
-              <text-validation
-                v-if="dataElement.valueDomain.type === 'STRING'"
-                :use-reg-ex="dataElement.valueDomain.text.useRegEx"
-                :reg-ex="dataElement.valueDomain.text.regEx"
-                :use-maximum-length="dataElement.valueDomain.text.useMaximumLength"
-                :maximum-length="dataElement.valueDomain.text.maximumLength"
-                @useRegExChange="dataElement.valueDomain.text.useRegEx = $event"
-                @regExInput="dataElement.valueDomain.text.regEx = $event"
-                @useMaximumLengthChange="dataElement.valueDomain.text.useMaximumLength = $event"
-                @maximumLengthInput="dataElement.valueDomain.text.maximumLength = parseInt($event)"
-              />
-              <template v-if="dataElement.valueDomain.type === 'NUMERIC'">
+            </v-list>
+            <v-list>
+              <v-list-item>
+                <v-list-item-action>
+                  <v-radio-group
+                    v-model="dataElement.identification.status"
+                    :disabled="released"
+                  >
+                    <v-radio
+                      v-for="radioItem in statuses"
+                      :key="radioItem"
+                      :label="radioItem"
+                      :value="radioItem"
+                    />
+                  </v-radio-group>
+                </v-list-item-action>
+              </v-list-item>
+            </v-list>
+            <v-list>
+              <v-subheader>{{ $t('global.definitions') }}</v-subheader>
+              <v-list-item>
+                <v-list-item-action>
+                  <v-btn
+                    color="primary"
+                    rounded
+                    small
+                    @click="addDefinition"
+                  >
+                    <v-icon dark>
+                      mdi-plus
+                    </v-icon>
+                    {{ $t('global.button.add') }}
+                  </v-btn>
+                </v-list-item-action>
+              </v-list-item>
+              <v-list-item v-for="(itemDefinition, index) in dataElement.definitions" :key="index">
+                <v-container fluid>
+                  <v-row>
+                    <v-col cols="9">
+                      <item-definition
+                        :definition="itemDefinition.definition"
+                        :designation="itemDefinition.designation"
+                        :language="itemDefinition.language"
+                        @definition="itemDefinition.definition = $event"
+                        @designation="itemDefinition.designation = $event"
+                        @language="itemDefinition.language = $event"
+                      />
+                    </v-col>
+                    <v-col cols="2">
+                      <v-list-item>
+                        <v-list-item-action>
+                          <v-btn
+                            color="secondary"
+                            rounded
+                            small
+                            :disabled="disableRemoveDefinitionAction"
+                            @click="deleteDefinition(index)"
+                          >
+                            <v-icon dark>
+                              mdi-delete
+                            </v-icon>
+                            {{ $t('global.button.delete') }}
+                          </v-btn>
+                        </v-list-item-action>
+                      </v-list-item>
+                    </v-col>
+                  </v-row>
+                </v-container>
+              </v-list-item>
+            </v-list>
+            <v-list>
+              <v-subheader>{{ $t('global.slots') }}</v-subheader>
+              <v-list-item>
+                <v-list-item-action>
+                  <v-btn
+                    color="primary"
+                    rounded
+                    small
+                    @click="addSlot"
+                  >
+                    <v-icon dark>
+                      mdi-plus
+                    </v-icon>
+                    {{ $t('global.button.add') }}
+                  </v-btn>
+                </v-list-item-action>
+              </v-list-item>
+              <v-list-item v-for="(itemSlot, index) in dataElement.slots" :key="index">
+                <v-row>
+                  <v-col cols="11">
+                    <item-slot
+                      :name="itemSlot.name"
+                      :value="itemSlot.value"
+                      @name="itemSlot.name = $event"
+                      @value="itemSlot.value = $event"
+                    />
+                  </v-col>
+                  <v-col cols="1">
+                    <v-list-item>
+                      <v-list-item-action>
+                        <v-btn
+                          color="secondary"
+                          rounded
+                          small
+                          @click="deleteSlot(index)"
+                        >
+                          <v-icon dark>
+                            mdi-delete
+                          </v-icon>
+                          {{ $t('global.button.delete') }}
+                        </v-btn>
+                      </v-list-item-action>
+                    </v-list-item>
+                  </v-col>
+                </v-row>
+              </v-list-item>
+            </v-list>
+            <v-list>
+              <v-subheader>{{ $t('global.conceptAssociations') }}</v-subheader>
+              <v-list-item>
+                <v-list-item-action>
+                  <v-btn
+                    color="primary"
+                    rounded
+                    small
+                    @click="addConceptAssociation"
+                  >
+                    <v-icon dark>
+                      mdi-plus
+                    </v-icon>
+                    {{ $t('global.button.add') }}
+                  </v-btn>
+                </v-list-item-action>
+              </v-list-item>
+              <v-list-item
+                v-for="(concept, index) in dataElement.conceptAssociations"
+                :key="index"
+              >
+                <v-row>
+                  <v-col cols="11">
+                    <item-concept-association
+                      :concept-association="concept"
+                      @conceptChanged="concept = $event"
+                    />
+                  </v-col>
+                  <v-col cols="1">
+                    <v-list-item>
+                      <v-list-item-action>
+                        <v-btn
+                          color="secondary"
+                          rounded
+                          small
+                          @click="deleteConceptAssociation(index)"
+                        >
+                          <v-icon dark>
+                            mdi-delete
+                          </v-icon>
+                          {{ $t('global.button.delete') }}
+                        </v-btn>
+                      </v-list-item-action>
+                    </v-list-item>
+                  </v-col>
+                </v-row>
+              </v-list-item>
+            </v-list>
+            <template v-if="!released && !edit">
+              <v-list>
+                <v-subheader>{{ $t('global.valueDomain') }}</v-subheader>
                 <v-list-item>
                   <v-list-item-action>
                     <v-select
-                      v-model="dataElement.valueDomain.numeric.type"
-                      :items="numericValueDomains"
+                      v-model="dataElement.valueDomain.type"
+                      :items="elementValueDomains"
+                      :label="$t('global.select.valueDomainType')"
+                      @change="changeValidation"
                     />
                   </v-list-item-action>
+                  <v-list-item-subtitle
+                    v-if="dataElement.valueDomain.type === 'ENUMERATED'"
+                  >
+                    {{ $t('dialogs.dataElement.infoTexts.1') }}
+                    <a
+                      :href="ajax.backendUrl+'/swagger-ui/index.html#/Element/Create-an-Element'"
+                      target="_blank"
+                    >
+                      REST-API
+                    </a>
+                  </v-list-item-subtitle>
                 </v-list-item>
-                <numeric-validation
-                  :use-minimum="dataElement.valueDomain.numeric.useMinimum"
-                  :minimum="dataElement.valueDomain.numeric.minimum"
-                  :use-maximum="dataElement.valueDomain.numeric.useMaximum"
-                  :maximum="dataElement.valueDomain.numeric.maximum"
-                  :type="dataElement.valueDomain.numeric.type"
-                  :unit-of-measure="dataElement.valueDomain.numeric.unitOfMeasure"
-                  @useMinimumChange="dataElement.valueDomain.numeric.useMinimum = $event"
-                  @minimumInput="dataElement.valueDomain.numeric.minimum = parseInt($event)"
-                  @useMaximumChange="dataElement.valueDomain.numeric.useMaximum = $event"
-                  @maximumInput="dataElement.valueDomain.numeric.maximum = parseInt($event)"
-                  @unitOfMeasureInput="dataElement.valueDomain.numeric.unitOfMeasure = $event"
+                <text-validation
+                  v-if="dataElement.valueDomain.type === 'STRING'"
+                  :use-reg-ex="dataElement.valueDomain.text.useRegEx"
+                  :reg-ex="dataElement.valueDomain.text.regEx"
+                  :use-maximum-length="dataElement.valueDomain.text.useMaximumLength"
+                  :maximum-length="dataElement.valueDomain.text.maximumLength"
+                  @useRegExChange="dataElement.valueDomain.text.useRegEx = $event"
+                  @regExInput="dataElement.valueDomain.text.regEx = $event"
+                  @useMaximumLengthChange="dataElement.valueDomain.text.useMaximumLength = $event"
+                  @maximumLengthInput="dataElement.valueDomain.text.maximumLength = parseInt($event)"
                 />
-              </template>
-              <!--
-              -->
-              <v-card v-if="dataElement.valueDomain.type === 'ENUMERATED'">
-                <v-card-subtitle>
-                  {{ $t('dialogs.dataElement.infoTexts.2') }}
-                </v-card-subtitle>
-                <enumerated
-                  :available-value-domains="availableEnumertedValueDomains"
-                  :namespace-id="selectedNamespaceId"
-                  @chooseValueDomain="dataElement.valueDomainUrn = $event; dataElement.valueDomain = defaultEnumeratedValueDomain"
-                  @deleteValueDomainUrn="delete dataElement.valueDomainUrn"
-                  @showValueDomainDialog="valueDomainDialog.urn = $event; valueDomainDialog.show = true"
-                />
-              </v-card>
-              <v-dialog
-                v-model="valueDomainDialog.show"
-                width="600"
-              >
-                <v-card>
-                  <EnumeratedValueDomainDetailView
-                    :urn="valueDomainDialog.urn"
-                    :editable="false"
-                    :deletable="false"
-                    :hide-path="true"
+                <template v-if="dataElement.valueDomain.type === 'NUMERIC'">
+                  <v-list-item>
+                    <v-list-item-action>
+                      <v-select
+                        v-model="dataElement.valueDomain.numeric.type"
+                        :items="numericValueDomains"
+                      />
+                    </v-list-item-action>
+                  </v-list-item>
+                  <numeric-validation
+                    :use-minimum="dataElement.valueDomain.numeric.useMinimum"
+                    :minimum="dataElement.valueDomain.numeric.minimum"
+                    :use-maximum="dataElement.valueDomain.numeric.useMaximum"
+                    :maximum="dataElement.valueDomain.numeric.maximum"
+                    :type="dataElement.valueDomain.numeric.type"
+                    :unit-of-measure="dataElement.valueDomain.numeric.unitOfMeasure"
+                    @useMinimumChange="dataElement.valueDomain.numeric.useMinimum = $event"
+                    @minimumInput="dataElement.valueDomain.numeric.minimum = parseInt($event)"
+                    @useMaximumChange="dataElement.valueDomain.numeric.useMaximum = $event"
+                    @maximumInput="dataElement.valueDomain.numeric.maximum = parseInt($event)"
+                    @unitOfMeasureInput="dataElement.valueDomain.numeric.unitOfMeasure = $event"
+                  />
+                </template>
+                <v-card v-if="dataElement.valueDomain.type === 'ENUMERATED'">
+                  <v-card-subtitle>
+                    {{ $t('dialogs.dataElement.infoTexts.2') }}
+                  </v-card-subtitle>
+                  <enumerated
+                    :available-value-domains="availableEnumertedValueDomains"
+                    :namespace-id="selectedNamespaceId"
+                    @chooseValueDomain="dataElement.valueDomainUrn = $event; dataElement.valueDomain = defaultEnumeratedValueDomain"
+                    @deleteValueDomainUrn="delete dataElement.valueDomainUrn"
+                    @showValueDomainDialog="valueDomainDialog.urn = $event; valueDomainDialog.show = true"
                   />
                 </v-card>
-              </v-dialog>
-              <datetime-validation
-                v-if="dataElement.valueDomain.type === 'DATETIME'"
-                :date-format="dataElement.valueDomain.datetime.date"
-                :time-format="dataElement.valueDomain.datetime.time"
-                :hour-format="dataElement.valueDomain.datetime.hourFormat"
-                @dateFormatChange="dataElement.valueDomain.datetime.date = $event"
-                @timeFormatChange="dataElement.valueDomain.datetime.time = $event"
-                @hourFormatChange="dataElement.valueDomain.datetime.hourFormat = $event"
-              />
-              <datetime-validation
-                v-if="dataElement.valueDomain.type === 'DATE'"
-                :enable-time-format="false"
-                :enable-hour-format="false"
-                :date-format="dataElement.valueDomain.datetime.date"
-                @dateFormatChange="dataElement.valueDomain.datetime.date = $event"
-              />
-              <datetime-validation
-                v-if="dataElement.valueDomain.type === 'TIME'"
-                :enable-date-format="false"
-                :enable-time-format="true"
-                :time-format="dataElement.valueDomain.datetime.time"
-                :hour-format="dataElement.valueDomain.datetime.hourFormat"
-                @timeFormatChange="dataElement.valueDomain.datetime.time = $event"
-                @hourFormatChange="dataElement.valueDomain.datetime.hourFormat = $event"
-              />
-            </v-list>
-          </template>
-          <template v-else>
-            <v-list>
-              <v-list-item>
-                <v-alert
-                  type="warning"
+                <v-dialog
+                  v-model="valueDomainDialog.show"
+                  width="600"
                 >
-                  {{ $t('global.valueDomainNotEditable') }}
-                </v-alert>
-              </v-list-item>
-            </v-list>
-          </template>
-        </v-form>
-      </v-card>
-    </v-dialog>
-  </v-row>
+                  <v-card>
+                    <EnumeratedValueDomainDetailView
+                      :urn="valueDomainDialog.urn"
+                      :editable="false"
+                      :deletable="false"
+                      :hide-path="true"
+                    />
+                  </v-card>
+                </v-dialog>
+                <datetime-validation
+                  v-if="dataElement.valueDomain.type === 'DATETIME'"
+                  :date-format="dataElement.valueDomain.datetime.date"
+                  :time-format="dataElement.valueDomain.datetime.time"
+                  :hour-format="dataElement.valueDomain.datetime.hourFormat"
+                  @dateFormatChange="dataElement.valueDomain.datetime.date = $event"
+                  @timeFormatChange="dataElement.valueDomain.datetime.time = $event"
+                  @hourFormatChange="dataElement.valueDomain.datetime.hourFormat = $event"
+                />
+                <datetime-validation
+                  v-if="dataElement.valueDomain.type === 'DATE'"
+                  :enable-time-format="false"
+                  :enable-hour-format="false"
+                  :date-format="dataElement.valueDomain.datetime.date"
+                  @dateFormatChange="dataElement.valueDomain.datetime.date = $event"
+                />
+                <datetime-validation
+                  v-if="dataElement.valueDomain.type === 'TIME'"
+                  :enable-date-format="false"
+                  :enable-time-format="true"
+                  :time-format="dataElement.valueDomain.datetime.time"
+                  :hour-format="dataElement.valueDomain.datetime.hourFormat"
+                  @timeFormatChange="dataElement.valueDomain.datetime.time = $event"
+                  @hourFormatChange="dataElement.valueDomain.datetime.hourFormat = $event"
+                />
+              </v-list>
+            </template>
+            <template v-else>
+              <v-list>
+                <v-list-item>
+                  <v-alert
+                    type="warning"
+                  >
+                    {{ $t('global.valueDomainNotEditable') }}
+                  </v-alert>
+                </v-list-item>
+              </v-list>
+            </template>
+          </v-form>
+        </v-card>
+      </v-dialog>
+    </v-row>
+  </v-container>
 </template>
 <script>
 import Ajax from '~/config/ajax'

@@ -1,36 +1,32 @@
 <template>
-  <div>
-    <v-list>
-      <v-list-item>
-        <v-row>
-          <v-col cols="12">
-            <v-card>
-              <v-card-title>
-                <v-text-field
-                  v-model="search"
-                  append-icon="mdi-magnify"
-                  :label="$t('pages.tools.search.title')"
-                  single-line
-                  hide-details
-                />
-              </v-card-title>
-              <v-data-table
-                v-model="selected"
-                :headers="headers"
-                :items="convertedValueDomains"
-                :single-select="singleSelect"
-                :search="search"
-                item-key="urn"
-                show-select
-                class="elevation-1"
-                @click:row="handleValueDomainClicked"
-              />
-            </v-card>
-          </v-col>
-        </v-row>
-      </v-list-item>
-    </v-list>
-  </div>
+  <v-container fluid>
+    <v-row>
+      <v-col cols="12">
+        <v-card>
+          <v-card-title>
+            <v-text-field
+              v-model="search"
+              append-icon="mdi-magnify"
+              :label="$t('pages.tools.search.title')"
+              single-line
+              hide-details
+            />
+          </v-card-title>
+          <v-data-table
+            v-model="selected"
+            :headers="headers"
+            :items="convertedValueDomains"
+            :single-select="singleSelect"
+            :search="search"
+            item-key="urn"
+            show-select
+            class="elevation-1"
+            @click:row="handleValueDomainClicked"
+          />
+        </v-card>
+      </v-col>
+    </v-row>
+  </v-container>
 </template>
 <script>
 export default {
@@ -78,7 +74,11 @@ export default {
       handler () {
         this.convertedValueDomains = this.availableValueDomains.map((obj) => {
           const newObj = {}
-          newObj.designation = obj.definitions[0].designation
+          const maxLength = 45
+          const designation = obj.definitions[0].designation
+          newObj.designation = designation.length > maxLength
+            ? designation.substring(0, maxLength - 3) + '...'
+            : designation
           newObj.urn = 'urn:' + this.namespaceId + ':' + 'valuedomain' + ':' + obj.identifier + ':' + obj.revision
           return newObj
         })
