@@ -355,8 +355,25 @@ export default {
       subtitle: ''
     },
     help: {
-      title: 'Hilfe',
-      subtitle: ''
+      title: 'DEHub Hilfe-Center',
+      subtitle: 'Womit können wir dir helfen?',
+      faq: 'FAQ',
+      faqExtended: 'Häufig gestellte Fragen',
+      footer: 'Bei Fragen kannst du uns gerne kontaktieren:',
+      faqList: {
+        demoAccount: [
+          {
+            id: 0,
+            question: 'Wie kann ich das DEHub testen?',
+            answer: 'Mit dem folgendem test-account kannst Du Dich zum Testen einloggen:\n\tUsername: dehub-demo\n\tPasswort: demo'
+          },
+          {
+            id: 1,
+            question: 'Kann ich einen eigenen test-account haben, um die Funktionalität von Public/Private Namespaces zu testen?',
+            answer: 'Selbstverständlich, kontaktiere uns bitte unter info@dataelementhub.de'
+          }
+        ]
+      }
     },
     login: {
       title: 'Anmeldung',

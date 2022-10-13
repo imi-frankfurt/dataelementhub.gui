@@ -357,8 +357,27 @@ export default {
       subtitle: ''
     },
     help: {
-      title: 'Help?',
-      subtitle: ''
+      title: 'DEHub Help Center',
+      subtitle: 'What can we help you with?',
+      faq: 'FAQ',
+      faqExtended: 'Frequently asked questions',
+      footer: 'If you have any questions feel free to send an Email to:',
+      faqList: {
+        demoAccount: [
+          {
+            id: 0,
+            question: 'How can I test the DEHub?',
+            answer: 'You can log in for testing with the following test account:' +
+              '\n\tUsername: dehub-demo' +
+              '\n\tPassword: demo'
+          },
+          {
+            id: 1,
+            question: 'Can I have my own test account to test the functionality of public/private namespaces?',
+            answer: 'Of course, please contact us at info@dataelementhub.de'
+          }
+        ]
+      }
     },
     login: {
       title: 'Login',
