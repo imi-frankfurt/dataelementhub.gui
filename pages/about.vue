@@ -1,39 +1,7 @@
-<template>
-  <v-container>
-    <h1>{{ $t('pages.about.title') }}</h1>
-    <template v-if="backendData !== undefined">
-      <h2>{{ $t('global.backend') }}</h2>
-      <ul>
-        <li>buildVersion: {{ backendData.buildVersion }}</li>
-        <li>buildDate: {{ backendData.buildDate }}</li>
-        <li>buildBranch: {{ backendData.buildBranch }}</li>
-        <li>buildHash: {{ backendData.buildHash }}</li>
-      </ul>
-    </template>
-    <h2>{{ $t('global.frontend') }}</h2>
-    <ul>
-      <li>buildVersion: 1.0.0</li>
-      <li>buildDate: 2021-09-30</li>
-      <li>buildBranch: develop</li>
-    </ul>
-    <h2>Github</h2>
-    <p>
-      <b>DataElementHub REST</b><br>
-      <a href="https://github.com/mig-frankfurt/dataelementhub.rest" target="_blank">
-        https://github.com/mig-frankfurt/dataelementhub.rest
-      </a>
-    </p>
-    <p>
-      <b>DataElementHub GUI</b><br>
-      <a href="https://github.com/mig-frankfurt/dataelementhub.gui" target="_blank">
-        https://github.com/mig-frankfurt/dataelementhub.gui
-      </a>
-    </p>
-  </v-container>
-</template>
 <script>
 export default {
   auth: false,
+
   data () {
     return {
       ajax: {
@@ -42,7 +10,7 @@ export default {
       backendData: undefined
     }
   },
-  mounted () {
+  beforeMount () {
     this.loadBackendVersion()
   },
   methods: {
@@ -55,3 +23,245 @@ export default {
   }
 }
 </script>
+
+<template>
+  <v-container fluid>
+    <v-row class="first-row">
+      <v-col class="first-col">
+        <p class="p-1">
+          {{ $t('pages.about.subtitle') }}
+        </p>
+        <h1 class="h1-1">
+          {{ $t('pages.about.title') }}
+        </h1>
+      </v-col>
+    </v-row>
+    <v-row v-if="backendData !== undefined" class="current-setup-row">
+      <v-col>
+        <h1 class="current-setup-title">
+          {{ $t('pages.about.currentSetup') }}
+        </h1>
+        <p class="current-setup-subtitle">
+        </p>
+        <v-row class="second-row">
+          <v-col cols="5">
+            <v-tooltip bottom>
+              <template #activator="{ on, attrs }">
+                <div v-bind="attrs" v-on="on">
+                  <img
+                    src="@/assets/images/others/3.png"
+                    height="250px"
+                  >
+                  <v-card-title class="center-1">
+                    {{ $t('pages.about.backend') }}
+                  </v-card-title>
+                  <v-card-subtitle class="center-2">
+                    {{ $t('pages.about.version') }}: {{ backendData.buildVersion }}
+                  </v-card-subtitle>
+                </div>
+              </template>
+              <span>
+                <ul>
+                  <li>buildVersion: {{ backendData.buildVersion }}</li>
+                  <li>buildDate: {{ backendData.buildDate }}</li>
+                  <li>buildBranch: {{ backendData.buildBranch }}</li>
+                  <li>buildHash: {{ backendData.buildHash }}</li>
+                </ul>
+              </span>
+            </v-tooltip>
+          </v-col>
+          <v-col cols="2">
+            <v-divider vertical />
+          </v-col>
+          <v-col cols="5">
+            <img
+              src="@/assets/images/others/4.png"
+              height="250px"
+            >
+            <v-card-title class="center-3">
+              {{ $t('pages.about.frontend') }}
+            </v-card-title>
+            <v-card-subtitle class="center-4">
+              {{ $t('pages.about.version') }}: 1.0.0
+            </v-card-subtitle>
+          </v-col>
+        </v-row>
+      </v-col>
+    </v-row>
+    <v-row class="github-row">
+      <v-col>
+        <h1 class="github-title">
+          {{ $t('pages.about.weAreOnGithub') }}
+        </h1>
+        <p class="github-subtitle">
+          {{ $t('pages.about.weAreOnGithubSubtitle') }}
+        </p>
+        <v-row class="github-repos-row">
+          <v-col>
+            <a class="button" href="https://github.com/mig-frankfurt/dataelementhub.rest">
+              <img src="@/assets/images/others/6.png" height="150px">
+              <h3 class="github-repo-text">{{ $t('pages.about.rest') }}</h3>
+            </a>
+          </v-col>
+          <v-col>
+            <a class="button" href="https://github.com/mig-frankfurt/dataelementhub.gui">
+              <img src="@/assets/images/others/8.png" height="150px">
+              <h3 class="github-repo-text">{{ $t('pages.about.gui') }}</h3>
+            </a>
+          </v-col>
+          <v-col>
+            <a class="button" href="https://github.com/mig-frankfurt/dataelementhub.model">
+              <img src="@/assets/images/others/5.png" height="150px">
+              <h3 class="github-repo-text">{{ $t('pages.about.model') }}</h3>
+            </a>
+          </v-col>
+          <v-col>
+            <a class="button" href="https://github.com/mig-frankfurt/dataelementhub.dal">
+              <img src="@/assets/images/others/7.png" height="150px">
+              <h3 class="github-repo-text">{{ $t('pages.about.dal') }}</h3>
+            </a>
+          </v-col>
+        </v-row>
+      </v-col>
+    </v-row>
+    <v-row class="third-row">
+      <v-col class="third-col">
+        <v-card class="contact-card text-center">
+          <img
+            height="180"
+            src="@/assets/images/logo/2.png"
+          >
+          <v-card-subtitle>
+            {{ $t('pages.about.footer') }} <a href="mailto:info@dataelementhub.de">info@dataelementhub.de</a>.
+          </v-card-subtitle>
+        </v-card>
+      </v-col>
+    </v-row>
+  </v-container>
+</template>
+
+<style lang="scss">
+
+.current-setup-row {
+  padding-top: 5rem;
+  padding-left: 17rem;
+}
+
+.current-setup-title {
+  font-weight: 900;
+  letter-spacing: 3px;
+}
+
+.current-setup-subtitle {
+  font-weight: 20;
+  color: darkgrey;
+  letter-spacing: -0.6px;
+}
+
+.github-repo-text {
+  padding-top: 1rem;
+  padding-left: 3.2rem;
+}
+
+.github-repos-row {
+  padding-top: 3rem;
+}
+
+a {
+  color: black;
+  text-decoration: none;
+}
+
+.github-subtitle {
+  font-weight: 20;
+  color: darkgrey;
+  letter-spacing: -0.6px;
+}
+
+.github-title {
+  font-weight: 900;
+  letter-spacing: 6px;
+}
+
+.github-row {
+  padding-top: 5rem;
+  padding-left: 17rem;
+}
+
+.center-1 {
+  padding-left: 4.6rem;
+}
+
+.center-2 {
+  padding-left: 4.45rem;
+}
+
+.center-3 {
+  padding-left: 4.5rem;
+}
+
+.center-4 {
+  padding-left: 4.8rem;
+}
+
+.second-row {
+  padding-top: 4rem;
+  padding-left: 8%;
+}
+
+.third-col {
+  padding-left: 30%;
+}
+
+.contact-card {
+  margin-top: 20vh;
+  width: 60%;
+}
+
+.footer-row {
+  position: fixed;
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  height: 3rem;
+  text-align: center;
+}
+
+.faq-table {
+  width: 60%;
+}
+
+.first-col {
+  padding-left: 15%;
+  padding-top: 4%;
+  width: 30%;
+}
+
+.p-1 {
+  color: white;
+  font-size: 1.5rem;
+  font-weight: 700;
+  letter-spacing: 0;
+  line-height: 1.3rem;
+  margin-bottom: 2rem;
+}
+
+.h1-1 {
+  color: white;
+  font-size: 4rem;
+  font-weight: 800;
+  letter-spacing: -0.025rem;
+  line-height: 3.6rem;
+}
+
+.first-row {
+  position: relative;
+  font-family: "Lato", sans-serif;
+  height: 30vh;
+  background-image: linear-gradient(to right bottom, rgba(172, 206, 248, 0.81), rgba(6, 130, 196, 0.73));
+  background-size: cover;
+  background-position: top;
+  -webkit-clip-path: polygon(0 0, 100% 0, 100% 20%, 0 100%);
+  clip-path: polygon(0 0, 100% 0, 100% 50%, 0 100%);
+}
+</style>

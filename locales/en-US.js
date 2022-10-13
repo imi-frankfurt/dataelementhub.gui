@@ -353,8 +353,19 @@ export default {
       subtitle: ''
     },
     about: {
-      title: 'About the DataElementHub',
-      subtitle: ''
+      title: 'DEHub',
+      subtitle: 'About',
+      currentSetup: 'YOUR CURRENT SETUP',
+      backend: 'BACKEND',
+      frontend: 'FRONTEND',
+      version: 'VERSION',
+      weAreOnGithub: 'WE ARE ON GITHUB',
+      weAreOnGithubSubtitle: 'Follow us to get the latest features and changes.',
+      rest: 'REST',
+      gui: 'GUI',
+      model: 'MODEL',
+      dal: 'DAL',
+      footer: 'We’re always open to hear about your experience with DEHub, so don’t hesitate to reach out to us and let us know what you think.'
     },
     help: {
       title: 'Help?',
