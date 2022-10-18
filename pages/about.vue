@@ -38,54 +38,71 @@ export default {
     </v-row>
     <v-row v-if="backendData !== undefined" class="current-setup-row">
       <v-col>
-        <h1 class="current-setup-title">
-          {{ $t('pages.about.currentSetup') }}
-        </h1>
-        <p class="current-setup-subtitle">
-        </p>
-        <v-row class="second-row">
-          <v-col cols="5">
-            <v-tooltip bottom>
-              <template #activator="{ on, attrs }">
-                <div v-bind="attrs" v-on="on">
-                  <img
-                    src="@/assets/images/others/3.png"
-                    height="250px"
-                  >
-                  <v-card-title class="center-1">
-                    {{ $t('pages.about.backend') }}
-                  </v-card-title>
-                  <v-card-subtitle class="center-2">
-                    {{ $t('pages.about.version') }}: {{ backendData.buildVersion }}
-                  </v-card-subtitle>
-                </div>
-              </template>
-              <span>
-                <ul>
-                  <li>buildVersion: {{ backendData.buildVersion }}</li>
-                  <li>buildDate: {{ backendData.buildDate }}</li>
-                  <li>buildBranch: {{ backendData.buildBranch }}</li>
-                  <li>buildHash: {{ backendData.buildHash }}</li>
-                </ul>
-              </span>
-            </v-tooltip>
-          </v-col>
-          <v-col cols="2">
-            <v-divider vertical />
-          </v-col>
-          <v-col cols="5">
-            <img
-              src="@/assets/images/others/4.png"
-              height="250px"
-            >
-            <v-card-title class="center-3">
-              {{ $t('pages.about.frontend') }}
-            </v-card-title>
-            <v-card-subtitle class="center-4">
-              {{ $t('pages.about.version') }}: 1.0.0
-            </v-card-subtitle>
-          </v-col>
-        </v-row>
+        <v-container fluid>
+          <v-row>
+            <v-col>
+              <h1 class="current-setup-title">
+                {{ $t('pages.about.currentSetup') }}
+              </h1>
+              <p class="current-setup-subtitle" />
+            </v-col>
+          </v-row>
+          <v-row class="second-row">
+            <v-col cols="3">
+              <img
+                src="@/assets/images/others/3.png"
+                height="250px"
+              >
+              <v-card-title class="center-1">
+                {{ $t('pages.about.backend') }}
+              </v-card-title>
+            </v-col>
+            <v-col cols="2">
+              <v-card class="version-card">
+                <v-container fluid>
+                  <v-row class="version-row" align="stretch">
+                    <v-col>
+                      {{ $t('pages.about.buildVersion') }}: {{ backendData.buildVersion }}
+                    </v-col>
+                  </v-row>
+                  <v-divider />
+                  <v-row class="version-row">
+                    <v-col>
+                      {{ $t('pages.about.buildDate') }}: {{ backendData.buildDate }}
+                    </v-col>
+                  </v-row>
+                  <v-divider />
+                  <v-row class="version-row">
+                    <v-col>
+                      {{ $t('pages.about.buildBranch') }}: {{ backendData.buildBranch }}
+                    </v-col>
+                  </v-row>
+                  <v-divider />
+                  <v-row class="version-row">
+                    <v-col>
+                      {{ $t('pages.about.buildHash') }}: {{ backendData.buildHash }}
+                    </v-col>
+                  </v-row>
+                </v-container>
+              </v-card>
+            </v-col>
+            <v-col cols="2">
+              <v-divider vertical />
+            </v-col>
+            <v-col cols="5">
+              <img
+                src="@/assets/images/others/4.png"
+                height="250px"
+              >
+              <v-card-title class="center-3">
+                {{ $t('pages.about.frontend') }}
+              </v-card-title>
+              <v-card-subtitle class="center-4">
+                {{ $t('pages.about.version') }}: 1.0.0
+              </v-card-subtitle>
+            </v-col>
+          </v-row>
+        </v-container>
       </v-col>
     </v-row>
     <v-row class="github-row">
@@ -141,6 +158,17 @@ export default {
 </template>
 
 <style lang="scss">
+
+.version-row {
+  padding: 0.3rem;
+}
+
+.version-card {
+  padding: 0.3rem;
+  margin-left: -2rem;
+  background: linear-gradient(#f87f80, #a7adf3);
+  opacity: 65%;
+}
 
 .current-setup-row {
   padding-top: 5rem;

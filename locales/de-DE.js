@@ -363,6 +363,10 @@ export default {
       gui: 'GUI',
       model: 'MODEL',
       dal: 'DAL',
+      buildVersion: 'Build-Version',
+      buildDate: 'Build Datum',
+      buildBranch: 'Build branch',
+      buildHash: 'Build hash',
       footer: 'Wir sind selbstverständlich immer offen für ein Feedback.'
     },
     help: {

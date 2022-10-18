@@ -365,6 +365,10 @@ export default {
       gui: 'GUI',
       model: 'MODEL',
       dal: 'DAL',
+      buildVersion: 'Build version',
+      buildDate: 'Build date',
+      buildBranch: 'Build branch',
+      buildHash: 'Build hash',
       footer: 'We’re always open to hear about your experience with DEHub, so don’t hesitate to reach out to us and let us know what you think.'
     },
     help: {
