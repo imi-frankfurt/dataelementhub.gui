@@ -371,6 +371,11 @@ export default {
             id: 1,
             question: 'Kann ich einen eigenen test-account haben, um die Funktionalität von Public/Private Namespaces zu testen?',
             answer: 'Selbstverständlich, kontaktiere uns bitte unter info@dataelementhub.de'
+          },
+          {
+            id: 2,
+            question: 'Wie lange bleiben meine Test-Namespaces in der Datenbank gespeichert?',
+            answer: 'Die Test-Datenbank wird jeden Sonntag automatisch geleert.'
           }
         ]
       }
