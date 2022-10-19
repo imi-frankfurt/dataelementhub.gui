@@ -351,12 +351,49 @@ export default {
       subtitle: ''
     },
     about: {
-      title: 'Über das Data Element Hub',
-      subtitle: ''
+      title: 'DEHub',
+      subtitle: 'Über',
+      currentSetup: 'DEIN AKTUELLES SETUP',
+      backend: 'BACKEND',
+      frontend: 'FRONTEND',
+      version: 'VERSION',
+      weAreOnGithub: 'WIR SIND AUF GITHUB',
+      weAreOnGithubSubtitle: 'Folge uns, damit du die neuesten Funktionen und Änderungen erhältst.',
+      rest: 'REST',
+      gui: 'GUI',
+      model: 'MODEL',
+      dal: 'DAL',
+      buildVersion: 'Build-Version',
+      buildDate: 'Build Datum',
+      buildBranch: 'Build branch',
+      buildHash: 'Build hash',
+      footer: 'Wir sind selbstverständlich immer offen für ein Feedback.'
     },
     help: {
-      title: 'Hilfe',
-      subtitle: ''
+      title: 'DEHub Hilfe-Center',
+      subtitle: 'Womit können wir dir helfen?',
+      faq: 'FAQ',
+      faqExtended: 'Häufig gestellte Fragen',
+      footer: 'Bei Fragen kannst du uns gerne kontaktieren:',
+      faqList: {
+        demoAccount: [
+          {
+            id: 0,
+            question: 'Wie kann ich mich in diese DEHub-Demoinstanz einloggen?',
+            answer: 'Zum testen kannst du folgende Zugangsdaten nutzen:\n\tUsername: dehub-demo\n\tPasswort: demo'
+          },
+          {
+            id: 1,
+            question: 'Kann ich einen eigenen Testzugang für diese Instanz anfordern, um z.B. die Funktionalität der öffentlichen/privaten Namensräume auszuprobieren?',
+            answer: 'Selbstverständlich, Kontaktiere uns hierfür bitte unter info@dataelementhub.de'
+          },
+          {
+            id: 2,
+            question: 'Wie lange werden meine erstellten Daten in dieser Instanz gespeichert?',
+            answer: 'Jeden Sonntag werden die Daten automatisch aus der Datenbank gelöscht.'
+          }
+        ]
+      }
     },
     login: {
       title: 'Anmeldung',

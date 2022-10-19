@@ -353,12 +353,51 @@ export default {
       subtitle: ''
     },
     about: {
-      title: 'About the DataElementHub',
-      subtitle: ''
+      title: 'DEHub',
+      subtitle: 'About',
+      currentSetup: 'YOUR CURRENT SETUP',
+      backend: 'BACKEND',
+      frontend: 'FRONTEND',
+      version: 'VERSION',
+      weAreOnGithub: 'WE ARE ON GITHUB',
+      weAreOnGithubSubtitle: 'Follow us to get the latest features and changes.',
+      rest: 'REST',
+      gui: 'GUI',
+      model: 'MODEL',
+      dal: 'DAL',
+      buildVersion: 'Build version',
+      buildDate: 'Build date',
+      buildBranch: 'Build branch',
+      buildHash: 'Build hash',
+      footer: 'We’re always open to hear about your experience with DEHub, so don’t hesitate to reach out to us and let us know what you think.'
     },
     help: {
-      title: 'Help?',
-      subtitle: ''
+      title: 'DEHub Help Center',
+      subtitle: 'What can we help you with?',
+      faq: 'FAQ',
+      faqExtended: 'Frequently asked questions',
+      footer: 'If you have any questions feel free to send an Email to:',
+      faqList: {
+        demoAccount: [
+          {
+            id: 0,
+            question: 'How can I get access to this demo DEHub instance?',
+            answer: 'You can log in for testing with the following test account:' +
+              '\n\tUsername: dehub-demo' +
+              '\n\tPassword: demo'
+          },
+          {
+            id: 1,
+            question: 'Can I have my own test account for this instance to try out the functionality of public/private namespaces?',
+            answer: 'Of course, please contact us at info@dataelementhub.de'
+          },
+          {
+            id: 2,
+            question: 'How long will my data be persisted in this instance?',
+            answer: 'Every sunday the data will be automatically deleted from the database.'
+          }
+        ]
+      }
     },
     login: {
       title: 'Login',
