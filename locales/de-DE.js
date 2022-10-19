@@ -364,18 +364,18 @@ export default {
         demoAccount: [
           {
             id: 0,
-            question: 'Wie kann ich das DEHub testen?',
-            answer: 'Mit dem folgendem test-account kannst Du Dich zum Testen einloggen:\n\tUsername: dehub-demo\n\tPasswort: demo'
+            question: 'Wie kann ich mich in diese DEHub-Demoinstanz einloggen?',
+            answer: 'Zum testen kannst du folgende Zugangsdaten nutzen:\n\tUsername: dehub-demo\n\tPasswort: demo'
           },
           {
             id: 1,
-            question: 'Kann ich einen eigenen test-account haben, um die Funktionalität von Public/Private Namespaces zu testen?',
-            answer: 'Selbstverständlich, kontaktiere uns bitte unter info@dataelementhub.de'
+            question: 'Kann ich einen eigenen Testzugang für diese Instanz anfordern, um z.B. die Funktionalität der öffentlichen/privaten Namensräume auszuprobieren?',
+            answer: 'Selbstverständlich, Kontaktiere uns hierfür bitte unter info@dataelementhub.de'
           },
           {
             id: 2,
-            question: 'Wie lange bleiben meine Test-Namespaces in der Datenbank gespeichert?',
-            answer: 'Die Test-Datenbank wird jeden Sonntag automatisch geleert.'
+            question: 'Wie lange werden meine erstellten Daten in dieser Instanz gespeichert?',
+            answer: 'Jeden Sonntag werden die Daten automatisch aus der Datenbank gelöscht.'
           }
         ]
       }
