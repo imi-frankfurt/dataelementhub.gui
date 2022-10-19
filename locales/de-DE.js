@@ -351,8 +351,23 @@ export default {
       subtitle: ''
     },
     about: {
-      title: 'Über das Data Element Hub',
-      subtitle: ''
+      title: 'DEHub',
+      subtitle: 'Über',
+      currentSetup: 'DEIN AKTUELLES SETUP',
+      backend: 'BACKEND',
+      frontend: 'FRONTEND',
+      version: 'VERSION',
+      weAreOnGithub: 'WIR SIND AUF GITHUB',
+      weAreOnGithubSubtitle: 'Folge uns, damit du die neuesten Funktionen und Änderungen erhältst.',
+      rest: 'REST',
+      gui: 'GUI',
+      model: 'MODEL',
+      dal: 'DAL',
+      buildVersion: 'Build-Version',
+      buildDate: 'Build Datum',
+      buildBranch: 'Build branch',
+      buildHash: 'Build hash',
+      footer: 'Wir sind selbstverständlich immer offen für ein Feedback.'
     },
     help: {
       title: 'Hilfe',
