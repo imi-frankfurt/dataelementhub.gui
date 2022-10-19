@@ -366,20 +366,20 @@ export default {
         demoAccount: [
           {
             id: 0,
-            question: 'How can I test the DEHub?',
+            question: 'How can I get access to this demo DEHub instance?',
             answer: 'You can log in for testing with the following test account:' +
               '\n\tUsername: dehub-demo' +
               '\n\tPassword: demo'
           },
           {
             id: 1,
-            question: 'Can I have my own test account to test the functionality of public/private namespaces?',
+            question: 'Can I have my own test account for this instance to try out the functionality of public/private namespaces?',
             answer: 'Of course, please contact us at info@dataelementhub.de'
           },
           {
             id: 2,
-            question: 'How long will my test namespaces stay in the database?',
-            answer: 'The test database is automatically emptied every Sunday.'
+            question: 'How long will my data be persisted in this instance?',
+            answer: 'Every sunday the data will be automatically deleted from the database.'
           }
         ]
       }
