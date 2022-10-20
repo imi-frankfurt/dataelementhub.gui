@@ -166,8 +166,7 @@ export default {
 .version-card {
   padding: 0.3rem;
   margin-left: -2rem;
-  background: linear-gradient(#f87f80, #a7adf3);
-  opacity: 65%;
+  background: linear-gradient(#ffbebf, #dbddfa);
 }
 
 .current-setup-row {
