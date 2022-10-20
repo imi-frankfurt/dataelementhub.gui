@@ -21,6 +21,21 @@
             >
               {{ $t('pages.login.loginButton') }}
             </v-btn>
+            <v-tooltip bottom>
+              <template v-slot:activator="{ on, attrs }">
+                <v-icon
+                  color="primary"
+                  dark
+                  v-bind="attrs"
+                  v-on="on"
+                >
+                  mdi-information-outline
+                </v-icon>
+              </template>
+              <span>
+                {{ $t('pages.help.faqList.demoAccount[0].answer') }}
+              </span>
+            </v-tooltip>
           </v-col>
           <v-col id="hero__image-wrap" md="4">
             <v-img
