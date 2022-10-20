@@ -351,7 +351,7 @@ export default {
       subtitle: ''
     },
     about: {
-      title: 'Informationsseite',
+      title: 'About',
       currentSetup: 'DEIN AKTUELLES SETUP',
       backend: 'BACKEND',
       frontend: 'FRONTEND',
