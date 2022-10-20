@@ -27,137 +27,157 @@ export default {
 <template>
   <v-container fluid>
     <v-row class="first-row">
-      <v-col class="first-col">
-        <p class="p-1">
-          {{ $t('pages.about.subtitle') }}
-        </p>
-        <h1 class="h1-1">
-          {{ $t('pages.about.title') }}
-        </h1>
-      </v-col>
-    </v-row>
-    <v-row v-if="backendData !== undefined" class="current-setup-row">
       <v-col>
-        <v-container fluid>
-          <v-row>
-            <v-col>
-              <h1 class="current-setup-title">
-                {{ $t('pages.about.currentSetup') }}
-              </h1>
-              <p class="current-setup-subtitle" />
-            </v-col>
-          </v-row>
-          <v-row class="second-row">
-            <v-col cols="3">
-              <img
-                src="@/assets/images/others/3.png"
-                height="250px"
-              >
-              <v-card-title class="center-1">
-                {{ $t('pages.about.backend') }}
-              </v-card-title>
-            </v-col>
-            <v-col cols="2">
-              <v-card class="version-card">
-                <v-container fluid>
-                  <v-row class="version-row" align="stretch">
-                    <v-col>
-                      {{ $t('pages.about.buildVersion') }}: {{ backendData.buildVersion }}
-                    </v-col>
-                  </v-row>
-                  <v-divider />
-                  <v-row class="version-row">
-                    <v-col>
-                      {{ $t('pages.about.buildDate') }}: {{ backendData.buildDate }}
-                    </v-col>
-                  </v-row>
-                  <v-divider />
-                  <v-row class="version-row">
-                    <v-col>
-                      {{ $t('pages.about.buildBranch') }}: {{ backendData.buildBranch }}
-                    </v-col>
-                  </v-row>
-                  <v-divider />
-                  <v-row class="version-row">
-                    <v-col>
-                      {{ $t('pages.about.buildHash') }}: {{ backendData.buildHash }}
-                    </v-col>
-                  </v-row>
-                </v-container>
-              </v-card>
-            </v-col>
-            <v-col cols="2">
-              <v-divider vertical />
-            </v-col>
-            <v-col cols="5">
-              <img
-                src="@/assets/images/others/4.png"
-                height="250px"
-              >
-              <v-card-title class="center-3">
-                {{ $t('pages.about.frontend') }}
-              </v-card-title>
-              <v-card-subtitle class="center-4">
-                {{ $t('pages.about.version') }}: 1.0.0
-              </v-card-subtitle>
-            </v-col>
-          </v-row>
-        </v-container>
+        <div class="title">
+          <p class="p-1">
+            {{ $t('pages.about.subtitle') }}
+          </p>
+          <h1 class="h1-1">
+            {{ $t('pages.about.title') }}
+          </h1>
+        </div>
       </v-col>
     </v-row>
-    <v-row class="github-row">
+    <v-row v-if="backendData !== undefined">
       <v-col>
-        <h1 class="github-title">
-          {{ $t('pages.about.weAreOnGithub') }}
-        </h1>
-        <p class="github-subtitle">
-          {{ $t('pages.about.weAreOnGithubSubtitle') }}
-        </p>
-        <v-row class="github-repos-row">
-          <v-col>
-            <a class="button" href="https://github.com/mig-frankfurt/dataelementhub.rest">
-              <img src="@/assets/images/others/6.png" height="150px">
-              <h3 class="github-repo-text">{{ $t('pages.about.rest') }}</h3>
-            </a>
-          </v-col>
-          <v-col>
-            <a class="button" href="https://github.com/mig-frankfurt/dataelementhub.gui">
-              <img src="@/assets/images/others/8.png" height="150px">
-              <h3 class="github-repo-text">{{ $t('pages.about.gui') }}</h3>
-            </a>
-          </v-col>
-          <v-col>
-            <a class="button" href="https://github.com/mig-frankfurt/dataelementhub.model">
-              <img src="@/assets/images/others/5.png" height="150px">
-              <h3 class="github-repo-text">{{ $t('pages.about.model') }}</h3>
-            </a>
-          </v-col>
-          <v-col>
-            <a class="button" href="https://github.com/mig-frankfurt/dataelementhub.dal">
-              <img src="@/assets/images/others/7.png" height="150px">
-              <h3 class="github-repo-text">{{ $t('pages.about.dal') }}</h3>
-            </a>
-          </v-col>
-        </v-row>
+        <div class="current-setup-row">
+          <v-container fluid>
+            <v-row>
+              <v-col>
+                <h1 class="current-setup-title">
+                  {{ $t('pages.about.currentSetup') }}
+                </h1>
+                <p class="current-setup-subtitle" />
+              </v-col>
+            </v-row>
+            <v-row class="second-row">
+              <v-col>
+                <div class="text-center">
+                  <img
+                    src="@/assets/images/others/3.png"
+                    height="250px"
+                  >
+                  <p class="center-1">
+                    {{ $t('pages.about.backend') }}
+                  </p>
+                </div>
+              </v-col>
+              <v-col>
+                <v-card class="version-card">
+                  <v-container fluid>
+                    <v-row class="version-row" align="stretch">
+                      <v-col>
+                        {{ $t('pages.about.buildVersion') }}: {{ backendData.buildVersion }}
+                      </v-col>
+                    </v-row>
+                    <v-divider />
+                    <v-row class="version-row">
+                      <v-col>
+                        {{ $t('pages.about.buildDate') }}: {{ backendData.buildDate }}
+                      </v-col>
+                    </v-row>
+                    <v-divider />
+                    <v-row class="version-row">
+                      <v-col>
+                        {{ $t('pages.about.buildBranch') }}: {{ backendData.buildBranch }}
+                      </v-col>
+                    </v-row>
+                    <v-divider />
+                    <v-row class="version-row">
+                      <v-col>
+                        {{ $t('pages.about.buildHash') }}: {{ backendData.buildHash }}
+                      </v-col>
+                    </v-row>
+                  </v-container>
+                </v-card>
+              </v-col>
+              <v-col>
+                <v-divider vertical />
+              </v-col>
+              <v-col>
+                <div class="text-center">
+                  <img
+                    src="@/assets/images/others/4.png"
+                    height="250px"
+                  >
+                  <p class="center-1">
+                    {{ $t('pages.about.frontend') }}
+                  </p>
+                  <p class="center-4">
+                    {{ $t('pages.about.version') }}: 1.0.0
+                  </p>
+                </div>
+              </v-col>
+            </v-row>
+          </v-container>
+        </div>
       </v-col>
     </v-row>
-    <v-row class="third-row">
-      <v-col class="third-col">
-        <v-card class="contact-card text-center">
-          <img
-            height="180"
-            src="@/assets/images/logo/2.png"
-          >
-          <v-card-subtitle>
-            {{ $t('pages.about.footer') }} <a href="mailto:info@dataelementhub.de">info@dataelementhub.de</a>.
-          </v-card-subtitle>
-        </v-card>
+    <v-row>
+      <v-col>
+        <div class="github-row">
+          <h1 class="github-title">
+            {{ $t('pages.about.weAreOnGithub') }}
+          </h1>
+          <p class="github-subtitle">
+            {{ $t('pages.about.weAreOnGithubSubtitle') }}
+          </p>
+          <v-container>
+            <v-row class="github-repos-row">
+              <v-col>
+                <a class="button" href="https://github.com/mig-frankfurt/dataelementhub.rest">
+                  <img src="@/assets/images/others/6.png" height="150px">
+                  <h3 class="github-repo-text">{{ $t('pages.about.rest') }}</h3>
+                </a>
+              </v-col>
+              <v-col>
+                <a class="button" href="https://github.com/mig-frankfurt/dataelementhub.gui">
+                  <img src="@/assets/images/others/8.png" height="150px">
+                  <h3 class="github-repo-text">{{ $t('pages.about.gui') }}</h3>
+                </a>
+              </v-col>
+              <v-col>
+                <a class="button" href="https://github.com/mig-frankfurt/dataelementhub.model">
+                  <img src="@/assets/images/others/5.png" height="150px">
+                  <h3 class="github-repo-text">{{ $t('pages.about.model') }}</h3>
+                </a>
+              </v-col>
+              <v-col>
+                <a class="button" href="https://github.com/mig-frankfurt/dataelementhub.dal">
+                  <img src="@/assets/images/others/7.png" height="150px">
+                  <h3 class="github-repo-text">{{ $t('pages.about.dal') }}</h3>
+                </a>
+              </v-col>
+            </v-row>
+          </v-container>
+        </div>
+      </v-col>
+    </v-row>
+    <v-row>
+      <v-col>
+        <div class="contact-card text-center">
+          <v-card>
+            <img
+              height="180"
+              src="@/assets/images/logo/2.png"
+            >
+            <v-card-subtitle>
+              {{ $t('pages.about.footer') }} <a href="mailto:info@dataelementhub.de">info@dataelementhub.de</a>.
+            </v-card-subtitle>
+          </v-card>
+        </div>
       </v-col>
     </v-row>
   </v-container>
 </template>
 
 <style lang="scss">
+
+.title {
+  padding-top: 3rem;
+  width: 80%;
+  margin: 0 auto;
+}
 
 .version-row {
   padding: 0.3rem;
@@ -170,8 +190,9 @@ export default {
 }
 
 .current-setup-row {
-  padding-top: 5rem;
-  padding-left: 17rem;
+  padding-top: 4rem;
+  width: 80%;
+  margin: 0 auto;
 }
 
 .current-setup-title {
@@ -191,7 +212,8 @@ export default {
 }
 
 .github-repos-row {
-  padding-top: 3rem;
+  width: 80%;
+  margin: 0 auto;
 }
 
 a {
@@ -211,24 +233,26 @@ a {
 }
 
 .github-row {
-  padding-top: 5rem;
-  padding-left: 17rem;
+  padding-top: 4rem;
+  width: 80%;
+  margin: 0 auto;
 }
 
 .center-1 {
-  padding-left: 4.6rem;
-}
-
-.center-2 {
-  padding-left: 4.45rem;
-}
-
-.center-3 {
-  padding-left: 4.5rem;
+  padding-top: 5px;
+  font-size: 1.25rem;
+  font-weight: 500;
+  letter-spacing: 0.0125em;
+  line-height: 2rem;
+  word-break: break-all;
 }
 
 .center-4 {
-  padding-left: 4.8rem;
+  margin-top: -18px;
+  font-size: 0.875rem;
+  font-weight: 400;
+  line-height: 1.375rem;
+  letter-spacing: 0.0071428571em;
 }
 
 .second-row {
@@ -241,8 +265,9 @@ a {
 }
 
 .contact-card {
-  margin-top: 20vh;
-  width: 60%;
+  padding-top: 8rem;
+  width: 80%;
+  margin: 0 auto;
 }
 
 .footer-row {
