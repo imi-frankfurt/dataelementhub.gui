@@ -29,9 +29,6 @@ export default {
     <v-row class="first-row">
       <v-col>
         <div class="title">
-          <p class="p-1">
-            {{ $t('pages.about.subtitle') }}
-          </p>
           <h1 class="h1-1">
             {{ $t('pages.about.title') }}
           </h1>
