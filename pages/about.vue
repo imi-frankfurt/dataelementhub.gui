@@ -29,16 +29,13 @@ export default {
     <v-row class="first-row">
       <v-col>
         <div class="title">
-          <p class="p-1">
-            {{ $t('pages.about.subtitle') }}
-          </p>
           <h1 class="h1-1">
             {{ $t('pages.about.title') }}
           </h1>
         </div>
       </v-col>
     </v-row>
-    <v-row v-if="backendData !== undefined">
+    <v-row>
       <v-col>
         <div class="current-setup-row">
           <v-container fluid>
@@ -60,17 +57,14 @@ export default {
                   <p class="center-1">
                     {{ $t('pages.about.backend') }}
                   </p>
+                  <p v-if="backendData !== undefined" class="center-4">
+                    {{ $t('pages.about.version') }}: {{ backendData.buildVersion }}
+                  </p>
                 </div>
               </v-col>
               <v-col>
-                <v-card class="version-card">
+                <v-card v-if="backendData !== undefined" class="version-card">
                   <v-container fluid>
-                    <v-row class="version-row" align="stretch">
-                      <v-col>
-                        {{ $t('pages.about.buildVersion') }}: {{ backendData.buildVersion }}
-                      </v-col>
-                    </v-row>
-                    <v-divider />
                     <v-row class="version-row">
                       <v-col>
                         {{ $t('pages.about.buildDate') }}: {{ backendData.buildDate }}
@@ -103,7 +97,7 @@ export default {
                   <p class="center-1">
                     {{ $t('pages.about.frontend') }}
                   </p>
-                  <p class="center-4">
+                  <p v-if="backendData !== undefined" class="center-4">
                     {{ $t('pages.about.version') }}: 1.0.0
                   </p>
                 </div>

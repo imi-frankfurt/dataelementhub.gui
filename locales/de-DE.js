@@ -351,8 +351,7 @@ export default {
       subtitle: ''
     },
     about: {
-      title: 'DEHub',
-      subtitle: 'Über',
+      title: 'About',
       currentSetup: 'DEIN AKTUELLES SETUP',
       backend: 'BACKEND',
       frontend: 'FRONTEND',

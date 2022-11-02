@@ -353,8 +353,7 @@ export default {
       subtitle: ''
     },
     about: {
-      title: 'DEHub',
-      subtitle: 'About',
+      title: 'About',
       currentSetup: 'YOUR CURRENT SETUP',
       backend: 'BACKEND',
       frontend: 'FRONTEND',
