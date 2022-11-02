@@ -48,68 +48,6 @@
         </v-row>
       </v-container>
     </section>
-    <section class="py-12 mt-12">
-      <v-container>
-        <v-row>
-          <v-col offset="2" offset-sm="0" sm="6" md="3">
-            <div
-              class="icon-box"
-            >
-              <div class="icon-box__icon mb-7">
-                <v-icon x-large>
-                  #1
-                </v-icon>
-              </div>
-              <h4 class="title">
-                {{ $t('pages.login.1') }}
-              </h4>
-            </div>
-          </v-col>
-          <v-col offset="2" offset-sm="0" sm="6" md="3">
-            <div
-              class="icon-box"
-            >
-              <div class="icon-box__icon mb-7">
-                <v-icon x-large>
-                  #2
-                </v-icon>
-              </div>
-              <h4 class="title">
-                {{ $t('pages.login.1') }}
-              </h4>
-            </div>
-          </v-col>
-          <v-col offset="2" offset-sm="0" sm="6" md="3">
-            <div
-              class="icon-box"
-            >
-              <div class="icon-box__icon mb-7">
-                <v-icon x-large>
-                  #3
-                </v-icon>
-              </div>
-              <h4 class="title">
-                {{ $t('pages.login.3') }}
-              </h4>
-            </div>
-          </v-col>
-          <v-col offset="2" offset-sm="0" sm="6" md="3">
-            <div
-              class="icon-box"
-            >
-              <div class="icon-box__icon mb-7">
-                <v-icon x-large>
-                  #4
-                </v-icon>
-              </div>
-              <h4 class="title">
-                {{ $t('pages.login.4') }}
-              </h4>
-            </div>
-          </v-col>
-        </v-row>
-      </v-container>
-    </section>
   </div>
 </template>
 
