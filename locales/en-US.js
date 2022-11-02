@@ -204,8 +204,8 @@ export default {
   },
   pages: {
     home: {
-      introduction: 'Introducing DataElementHub',
-      dehub: 'The central entry point for human users as well as machines for storing, managing and retrieving data element specifications.',
+      introduction: 'Get started with the DEHub',
+      dehub: 'to capture, manage and reuse your metadata in a structured way.',
       1: 'Syntactic and semantic interoperability between data sources of different structure and formalization.',
       2: 'Partial implementation of ISO 11179-3 and ISO 21526 focusing on use cases on healthcare and medical research.',
       3: 'The metadata stored in DEHub helps to ensure, that data element specifications and thereby the respective data collections are accessible in a long-term manner, even for third parties.',
@@ -401,8 +401,8 @@ export default {
     },
     login: {
       title: 'Login',
-      introduction: 'Introducing DataElementHub',
-      dehub: 'The central entry point for human users as well as machines for storing, managing and retrieving data element specifications.',
+      introduction: 'Get started with the DEHub',
+      dehub: 'to capture, manage and reuse your metadata in a structured way.',
       1: 'Syntactic and semantic interoperability between data sources of different structure and formalization.',
       2: 'Partial implementation of ISO 11179-3 and ISO 21526 focusing on use cases on healthcare and medical research.',
       3: 'The metadata stored in DEHub helps to ensure, that data element specifications and thereby the respective data collections are accessible in a long-term manner, even for third parties.',

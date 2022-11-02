@@ -3,17 +3,17 @@
     <section class="hero">
       <v-container>
         <v-row no-gutters>
-          <v-col md="4" offset="2" offset-md="0" class="bg-symbol-1 mt-12">
-            <h4
-              class="overline mb-4 mb-5"
+          <v-col md="6" offset="2" offset-md="0" class="bg-symbol-1 mt-15">
+            <h1
+              class="introduction-text mb-5"
             >
               {{ $t('pages.home.introduction') }}
-            </h4>
-            <h1
-              class="display-1 font-weight-medium"
+            </h1>
+            <h3
+              class="dehub-text mb-5"
             >
               {{ $t('pages.home.dehub') }}
-            </h1>
+            </h3>
           </v-col>
           <v-col id="hero__image-wrap" md="4">
             <v-img
@@ -57,6 +57,16 @@ export default {
 
 <style lang="scss">
 @import '~vuetify/src/styles/styles.sass';
+
+.dehub-text {
+  font-size: 30px;
+  font-weight: 200;
+}
+
+.introduction-text {
+  font-size: 60px;
+  font-weight: 300;
+}
 
 .bg-symbol-1,
 .bg-symbol-2 {

@@ -202,8 +202,8 @@ export default {
   },
   pages: {
     home: {
-      introduction: 'Das DataElementHub',
-      dehub: 'Der zentrale Einstiegspunkt für menschliche Benutzer und Maschinen zum Speichern, Verwalten und Abrufen von Datenelement-Spezifikationen.',
+      introduction: 'Starten Sie mit dem DEHub,',
+      dehub: 'um Ihre Metadaten strukturiert zu erfassen, zu verwalten und wiederzuverwenden.',
       1: 'Syntaktische und semantische Interoperabilität zwischen Datenquellen mit unterschiedlicher Struktur und Formalisierung.',
       2: 'Teilweise Implementierung von ISO 11179-3 und ISO 21526 mit Schwerpunkt auf Anwendungsfällen im Gesundheitswesen und in der medizinischen Forschung.',
       3: 'Die in DEHub gespeicherten Metadaten tragen dazu bei, dass die Spezifikationen der Datenelemente und damit die jeweiligen Datensammlungen auch für Dritte langfristig zugänglich sind.',
@@ -397,8 +397,8 @@ export default {
     },
     login: {
       title: 'Anmeldung',
-      introduction: 'Das DataElementHub',
-      dehub: 'Der zentrale Einstiegspunkt für menschliche Benutzer und Maschinen zum Speichern, Verwalten und Abrufen von Datenelement-Spezifikationen.',
+      introduction: 'Starten Sie mit dem DEHub,',
+      dehub: 'um Ihre Metadaten strukturiert zu erfassen, zu verwalten und wiederzuverwenden.',
       1: 'Syntaktische und semantische Interoperabilität zwischen Datenquellen mit unterschiedlicher Struktur und Formalisierung.',
       2: 'Teilweise Implementierung von ISO 11179-3 und ISO 21526 mit Schwerpunkt auf Anwendungsfällen im Gesundheitswesen und in der medizinischen Forschung.',
       3: 'Die in DEHub gespeicherten Metadaten tragen dazu bei, dass die Spezifikationen der Datenelemente und damit die jeweiligen Datensammlungen auch für Dritte langfristig zugänglich sind.',
