@@ -4,7 +4,7 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [1.0.0] - UNRELEASED
+## [1.0.0] - 2022-11-03
 ### Added
 - Add conceptAssociations to dataElement dialog [https://github.com/imi-frankfurt/dataelementhub.gui/issues/1]
   - This allows users to add and edit conceptAssociations while creating or editing a data element using the data element dialog.
