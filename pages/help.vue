@@ -19,7 +19,7 @@ export default {
 <template>
   <v-container fluid>
     <v-row class="first-row">
-      <v-col>
+      <v-col cols="8">
         <div class="first-col">
           <p class="p-1">
             {{ $t('pages.help.title') }}
@@ -88,8 +88,9 @@ export default {
 }
 
 .first-col {
-  padding-top: 3rem;
-  width: 80%;
+  padding-top: 5vh;
+  padding-left: 5vw;
+  width: 100%;
   margin: 0 auto;
 }
 
@@ -113,11 +114,11 @@ export default {
 .first-row {
   position: relative;
   font-family: "Lato", sans-serif;
-  height: 30vh;
+  height: 40vh;
   background-image: linear-gradient(to right bottom, rgba(172, 206, 248, 0.81), rgba(6, 130, 196, 0.73));
   background-size: cover;
   background-position: top;
-  -webkit-clip-path: polygon(0 0, 100% 0, 100% 20%, 0 100%);
-  clip-path: polygon(0 0, 100% 0, 100% 50%, 0 100%);
+  -webkit-clip-path: polygon(0 0, 100% 0, 100% 60%, 0 100%);
+  clip-path: polygon(0 0, 100% 0, 100% 60%, 0 100%);
 }
 </style>
