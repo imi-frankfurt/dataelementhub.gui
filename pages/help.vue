@@ -19,15 +19,13 @@ export default {
 <template>
   <v-container fluid>
     <v-row class="first-row">
-      <v-col cols="8">
-        <div class="first-col">
-          <p class="p-1">
-            {{ $t('pages.help.title') }}
-          </p>
-          <h1 class="h1-1">
-            {{ $t('pages.help.subtitle') }}
-          </h1>
-        </div>
+      <v-col cols="8" class="mt-6 ml-3">
+        <p class="p-1">
+          {{ $t('pages.help.title') }}
+        </p>
+        <h1 class="h1-1">
+          {{ $t('pages.help.subtitle') }}
+        </h1>
       </v-col>
     </v-row>
     <v-row>
@@ -74,7 +72,7 @@ export default {
   </v-container>
 </template>
 
-<style lang="scss">
+<style>
 
 .third-col {
   padding-top: 10rem;
@@ -84,13 +82,6 @@ export default {
 
 .second-col {
   width: 50%;
-  margin: 0 auto;
-}
-
-.first-col {
-  padding-top: 5vh;
-  padding-left: 5vw;
-  width: 100%;
   margin: 0 auto;
 }
 
