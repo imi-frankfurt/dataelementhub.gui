@@ -84,8 +84,7 @@ export default {
 }
 </script>
 
-<style lang="scss">
-@import '~vuetify/src/styles/styles.sass';
+<style scoped lang="scss">
 
 .second-row {
   background: #eaf3fa;
@@ -132,12 +131,6 @@ export default {
     content: '';
     z-index: -1;
     position: absolute;
-  }
-
-  @media #{map-get($display-breakpoints, 'sm-and-down')} {
-    &::before {
-      display: none;
-    }
   }
 }
 </style>
