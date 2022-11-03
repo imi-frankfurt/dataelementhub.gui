@@ -71,7 +71,6 @@ export default {
 
 .hero-row {
   display: flex;
-  max-height: 50vh;
   background-color: #e8f9fd;
 }
 
