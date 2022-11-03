@@ -119,25 +119,25 @@ export default {
           <v-container>
             <v-row class="github-repos-row">
               <v-col>
-                <a class="button" href="https://github.com/mig-frankfurt/dataelementhub.rest">
+                <a class="button" href="https://github.com/imi-frankfurt/dataelementhub.rest">
                   <img src="@/assets/images/others/6.png" height="150px">
                   <h3 class="github-repo-text">{{ $t('pages.about.rest') }}</h3>
                 </a>
               </v-col>
               <v-col>
-                <a class="button" href="https://github.com/mig-frankfurt/dataelementhub.gui">
+                <a class="button" href="https://github.com/imi-frankfurt/dataelementhub.gui">
                   <img src="@/assets/images/others/8.png" height="150px">
                   <h3 class="github-repo-text">{{ $t('pages.about.gui') }}</h3>
                 </a>
               </v-col>
               <v-col>
-                <a class="button" href="https://github.com/mig-frankfurt/dataelementhub.model">
+                <a class="button" href="https://github.com/imi-frankfurt/dataelementhub.model">
                   <img src="@/assets/images/others/5.png" height="150px">
                   <h3 class="github-repo-text">{{ $t('pages.about.model') }}</h3>
                 </a>
               </v-col>
               <v-col>
-                <a class="button" href="https://github.com/mig-frankfurt/dataelementhub.dal">
+                <a class="button" href="https://github.com/imi-frankfurt/dataelementhub.dal">
                   <img src="@/assets/images/others/7.png" height="150px">
                   <h3 class="github-repo-text">{{ $t('pages.about.dal') }}</h3>
                 </a>
