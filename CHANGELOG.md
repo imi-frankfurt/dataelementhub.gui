@@ -51,6 +51,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Add FAQ table and some helpful information.
 - Update the about page [https://github.com/imi-frankfurt/dataelementhub.gui/issues/96]
   - Add links to source code and visualize the current setup.
+- Update the home page [https://github.com/imi-frankfurt/dataelementhub.gui/issues/103]
+  - Delete the description text to replace it later with more customized text.
 
 ### Deprecated
 ### Removed
