@@ -13,6 +13,9 @@ export default {
       return null
     }
   },
+  preferredLanguage () {
+    return 'de,en-US;q=0.7,en;q=0.3'
+  },
   // Return all element types
   elementTypes () {
     return [
@@ -48,7 +51,7 @@ export default {
       identification: {
         elementType: 'NAMESPACE',
         status: 'DRAFT',
-        hideNamespace: true
+        hideNamespace: false
       },
       definitions: [
         ItemDefinition.data().defaultDefinition
@@ -66,6 +69,7 @@ export default {
       definitions: [
         ItemDefinition.data().defaultDefinition
       ],
+      valueDomainUrn: '',
       valueDomain: {
         type: 'STRING',
         text: {
@@ -74,7 +78,32 @@ export default {
           useMaximumLength: false
         }
       },
-      slots: []
+      slots: [],
+      conceptAssociations: []
+    }
+  },
+  defaultEnumeratedValueDomain () {
+    return {
+      identification: {
+        elementType: 'ENUMERATED_VALUE_DOMAIN',
+        status: 'DRAFT'
+      },
+      definitions: [
+        ItemDefinition.data().defaultDefinition
+      ],
+      type: 'ENUMERATED',
+      permittedValues: [
+        {
+          identification: {
+            elementType: 'PERMISSIBLE_VALUE',
+            status: 'DRAFT'
+          },
+          definitions: [
+            ItemDefinition.data().defaultDefinition
+          ],
+          value: 'value'
+        }
+      ]
     }
   },
   defaultGroup () {

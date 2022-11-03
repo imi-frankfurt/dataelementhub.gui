@@ -1,19 +1,47 @@
 <template>
-  <div v-if="namespace !== undefined">
+  <div v-if="fetchingNamespace">
+    <v-container fluid>
+      <v-row>
+        <v-col
+          align="center"
+          justify="center"
+        >
+          <v-progress-circular
+            :size="400"
+            color="primary"
+            indeterminate
+          />
+        </v-col>
+      </v-row>
+    </v-container>
+  </div>
+  <div v-else>
     <namespace-dialog
-      :id="id"
+      :id="namespaceIdentifier"
       :show="dialog"
       @save="$emit('save', $event); fetchNamespaceDetails()"
       @saveFailure="$emit('saveFailure', $event)"
       @dialogClosed="dialog = false"
     />
     <v-card
+      v-if="!hideToolbar"
       color="grey lighten-4"
       flat
     >
       <!-- Namespace Toolbar TODO: Check of this could be outsourced ...-->
       <v-toolbar>
-        <v-toolbar-title>{{ $t('global.properties') }} {{ $t('global.of') }} <b>{{ urn }}</b></v-toolbar-title>
+        <v-btn
+          width="140"
+          class="designationButton"
+          color="grey lighten-4"
+          rounded
+        >
+          <div
+            style="text-align: center; width: 100%; white-space: normal;"
+          >
+            {{ namespace.definitions[0].designation }}
+          </div>
+        </v-btn>
         <v-spacer />
         <v-btn
           v-if="editable"
@@ -32,7 +60,12 @@
         </v-btn>
       </v-toolbar>
     </v-card>
-    <meta-data type="NAMESPACE" :data="namespace.identification" />
+    <v-card outlined color="transparent" class="ma-0 pa-0">
+      <meta-data
+        :type="'NAMESPACE'"
+        :data="namespace.identification"
+      />
+    </v-card>
     <v-list>
       <v-subheader>{{ $t('global.definitions') }}</v-subheader>
       <v-list-item>
@@ -51,6 +84,18 @@
         </v-list-item>
       </template>
     </v-list>
+    <v-btn
+      v-if="showJumpToElementButton"
+      class="d-block mr-0 ml-auto"
+      color="primary"
+      rounded
+      @click="$root.$emit('changeActiveElement', urn)"
+    >
+      {{ $t('global.button.showInTreeView') }}
+      <v-icon dark>
+        mdi-arrow-right-circle
+      </v-icon>
+    </v-btn>
   </div>
 </template>
 <script>
@@ -67,34 +112,47 @@ export default {
     NamespaceDialog
   },
   props: {
-    id: { required: true, type: Number },
     urn: { required: true, type: String },
     editable: { required: false, default: false, type: Boolean },
-    deletable: { required: false, default: false, type: Boolean }
+    deletable: { required: false, default: false, type: Boolean },
+    showJumpToElementButton: { required: false, default: false, type: Boolean },
+    hideToolbar: { required: false, default: false, type: Boolean }
   },
   data () {
     return {
       ajax: {
         namespaceUrl: process.env.mdrBackendUrl + '/v1/namespaces/'
       },
+      detailViewDialog: {
+        urn: '',
+        show: false,
+        namespaceIdentifier: -1
+      },
+      fetchingNamespace: true,
+      namespaceIdentifier: -1,
       namespace: undefined,
       dialog: false
     }
   },
   watch: {
-    id (n) {
+    urn (n) {
+      this.fetchingNamespace = true
+      this.namespaceIdentifier = this.urn.split(':')[3]
       this.fetchNamespaceDetails()
     }
   },
   mounted () {
     this.$log.debug('Mounted Namespace view ...')
+    this.namespaceIdentifier = this.urn.split(':')[3]
     this.fetchNamespaceDetails()
   },
   methods: {
     async fetchNamespaceDetails () {
-      await this.$axios.$get(this.ajax.namespaceUrl + this.id, Ajax.header.ignoreLanguage)
+      await this.$axios.$get(this.ajax.namespaceUrl + this.namespaceIdentifier,
+        Ajax.header.ignoreLanguage)
         .then(function (res) {
           this.$log.debug('Fetching Namespace details ...')
+          this.fetchingNamespace = false
           this.namespace = Object.assign({}, res)
         }.bind(this))
         .catch(function (err) {
@@ -106,20 +164,45 @@ export default {
     },
     async deleteNamespace () {
       if (confirm(this.$i18n.t('global.itemDialog.deleteItemTitle').toString())) {
-        await this.$axios.$delete(this.ajax.namespaceUrl + this.id)
+        await this.$axios.$delete(this.ajax.namespaceUrl + this.namespaceIdentifier)
           .then(function (res) {
             this.$emit('delete', {
-              id: this.id
+              urn: this.urn
             })
           }.bind(this))
           .catch(function (err) {
             this.$emit('deleteFailure', {
-              id: this.id
+              urn: this.urn
             })
             this.$log.debug('Could not delete this item: ' + err)
           }.bind(this))
       }
+    },
+    showDetailViewDialog (urn) {
+      if (this.elementPath.length > 0 && this.elementPath.slice(-1)[0].urn === urn) {
+        return
+      }
+      this.detailViewDialog.urn = urn
+      if (!urn.toUpperCase().includes('NAMESPACE')) {
+        for (let i = 0; i < this.elementPath.length; i++) {
+          if (this.elementPath[i].urn === urn) {
+            this.detailViewDialog.parentUrn = this.elementPath[i - 1].urn
+            break
+          }
+        }
+      }
+      this.detailViewDialog.show = true
     }
   }
 }
 </script>
+<style>
+.designationButton {
+  min-width: 50px;
+  width: 40px;
+  display: inline-block;
+  overflow-wrap: break-word;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+</style>

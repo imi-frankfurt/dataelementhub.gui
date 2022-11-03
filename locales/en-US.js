@@ -33,6 +33,10 @@ export default {
       about: 'About',
       help: 'Help'
     },
+    alerts: {
+      warning: 'WARNING!',
+      defineLanguage: 'Preferred Language is not defined.'
+    },
     button: {
       save: 'Save',
       cancel: 'Cancel',
@@ -40,16 +44,36 @@ export default {
       create: 'Create',
       edit: 'Edit',
       delete: 'Delete',
-      close: 'Close'
+      close: 'Close',
+      showInTreeView: 'SHOW IN TREEVIEW'
     },
+    buttonTitle: {
+      publicNamespace: 'Public namespaces can be accessed by anyone without any restrictions.',
+      privateNamespace: 'Private namespaces are only accessible by users with appropriate authorization.'
+    },
+    accessibility: 'Accessibility',
+    path: 'Path',
+    paths: 'Paths',
+    public: 'PUBLIC',
+    private: 'PRIVATE',
+    hidden: 'HIDDEN',
+    imi: 'Institute for Medical Informatics',
+    login: 'LOG IN',
+    addItem: 'ADD ITEM',
+    dragAndDrop: 'simply drag and drop',
     metaData: 'Meta Data',
     status: 'Status',
+    noItems: 'No Items Available',
+    addNamespaces: 'Add New Namespaces by clicking on the CREATE button',
     type: 'Type',
     namespace: 'Namespace',
     identifier: 'Identifier',
     revision: 'Revision',
     urn: 'URN',
-    hidden: 'Hidden',
+    namespaceIdentifier: 'NAMESPACE IDENTIFIER',
+    elementIdentifier: 'ELEMENT IDENTIFIER',
+    elementVersion: 'ELEMENT VERSION',
+    elementType: 'Element Type',
     property: 'Property',
     properties: 'Properties',
     of: 'of',
@@ -61,6 +85,7 @@ export default {
     slot: 'Slot',
     slots: 'Slots',
     valueDomain: 'Value Domain',
+    permittedValue: 'Permitted Value',
     valueDomains: 'Value Domains',
     valueDomainNotEditable: 'Value Domains can not be edited right now.',
     language: 'Language',
@@ -91,10 +116,13 @@ export default {
     regEx: 'RegEx',
     minimum: 'Minimum',
     maximum: 'Maximum',
+    range: 'Range',
     maximumLength: 'Maximum length',
     date: 'Date',
     time: 'Time',
     hourFormat: 'Hour Format',
+    frontend: 'Frontend',
+    backend: 'Backend',
     address: {
       name1: 'Universitätsklinikum Frankfurt',
       name2: 'Medical Informatics Group (MIG)',
@@ -119,19 +147,20 @@ export default {
     itemDialog: {
       deleteItemTitle: 'Are you sure you want to delete this item?',
       snackbar: {
-        deleteFailure: 'Could not delete this item!',
+        deleteFailure: 'Could not delete this item',
         deleteSuccess: 'Item deleted!',
-        saveFailure: 'Could not save this item!',
+        saveFailure: 'Could not save this item',
         saveSuccess: 'Item saved!'
       }
     },
     select: {
       namespace: 'Select a Namespace ...',
-      valueDomain: 'Select a Value Domain ...'
+      valueDomainType: 'Select Value Domain Type...'
     },
     form: {
       validation: {
         messages: {
+          requiredField: 'This Field is required',
           definitionRequired: 'Definition is required',
           designationRequired: 'Designation is required',
           languageRequired: 'Language is required',
@@ -157,27 +186,30 @@ export default {
         value: 'Enter value'
       },
       label: {
-        useRegEx: 'Use RegEx?',
-        useMaximumLength: 'Use Maximum Length?',
-        useMinimum: 'Use Minimum?',
-        useMaximum: 'Use Maximum?',
+        useRegEx: 'Use RegEx',
+        useMaximumLength: 'Use Maximum Length',
+        useMinimum: 'Use Minimum',
+        useMaximum: 'Use Maximum',
         unitOfMeasure: 'Unit of Measure'
+      }
+    }
+  },
+  dialogs: {
+    dataElement: {
+      infoTexts: {
+        1: 'Enumerated value domains can only be created using the rest api:',
+        2: 'Available Value Domains'
       }
     }
   },
   pages: {
     home: {
-      title: 'Home',
-      subtitle: '',
-      content: {
-        howdy: 'Howdy stranger!',
-        preAlpha: 'What you see here is a <b>PreAlpha</b> Version of the new DataElement Hub GUI. ' +
-          'So do not expect a fully working bug-free Version. Quite the contrary, expect the worst.',
-        bugReport: 'If you stumble over a bug, feel free to create an Issue in the projects repository, which can be found ' +
-          '<a href="https://github.com/mig-frankfurt/dataelementhub.gui" target="_blank">here</a>.',
-        dockerImage: 'From time to time there will be new a new Release of the corresponding Docker image. So be sure to check that too.',
-        thanks: '<b>Thanks!</b>'
-      }
+      introduction: 'Get started with the DEHub',
+      dehub: 'to capture, manage and reuse your metadata in a structured way.',
+      1: 'Syntactic and semantic interoperability between data sources of different structure and formalization.',
+      2: 'Partial implementation of ISO 11179-3 and ISO 21526 focusing on use cases on healthcare and medical research.',
+      3: 'The metadata stored in DEHub helps to ensure, that data element specifications and thereby the respective data collections are accessible in a long-term manner, even for third parties.',
+      4: 'The DEHub is intended to be a central component that can be used flexibly for different application scenarios, but still fulfills the requirements for structured and quality-controlled collection of metadata.'
     },
     namespaces: {
       title: 'Namespaces',
@@ -188,7 +220,8 @@ export default {
           update: 'Update Namespace'
         },
         form: {
-          publicNamespace: 'Public Namespace?'
+          publicNamespace: 'Public Namespace',
+          hiddenNamespace: 'Hide Namespace'
         }
       },
       actions: {
@@ -320,16 +353,59 @@ export default {
       subtitle: ''
     },
     about: {
-      title: 'About the DataElement Hub',
-      subtitle: ''
+      title: 'About',
+      currentSetup: 'YOUR CURRENT SETUP',
+      backend: 'BACKEND',
+      frontend: 'FRONTEND',
+      version: 'VERSION',
+      weAreOnGithub: 'WE ARE ON GITHUB',
+      weAreOnGithubSubtitle: 'Follow us to get the latest features and changes.',
+      rest: 'REST',
+      gui: 'GUI',
+      model: 'MODEL',
+      dal: 'DAL',
+      buildVersion: 'Build version',
+      buildDate: 'Build date',
+      buildBranch: 'Build branch',
+      buildHash: 'Build hash',
+      footer: 'We’re always open to hear about your experience with DEHub, so don’t hesitate to reach out to us and let us know what you think.'
     },
     help: {
-      title: 'Help?',
-      subtitle: ''
+      title: 'DEHub Help Center',
+      subtitle: 'What can we help you with?',
+      faq: 'FAQ',
+      faqExtended: 'Frequently asked questions',
+      footer: 'If you have any questions feel free to send an Email to:',
+      faqList: {
+        demoAccount: [
+          {
+            id: 0,
+            question: 'How can I get access to this demo DEHub instance?',
+            answer: 'You can log in for testing with the following test account:' +
+              '\n\tUsername: dehub-demo' +
+              '\n\tPassword: demo'
+          },
+          {
+            id: 1,
+            question: 'Can I have my own test account for this instance to try out the functionality of public/private namespaces?',
+            answer: 'Of course, please contact us at info@dataelementhub.de'
+          },
+          {
+            id: 2,
+            question: 'How long will my data be persisted in this instance?',
+            answer: 'Every sunday the data will be automatically deleted from the database.'
+          }
+        ]
+      }
     },
     login: {
       title: 'Login',
-      subtitle: '',
+      introduction: 'Get started with the DEHub',
+      dehub: 'to capture, manage and reuse your metadata in a structured way.',
+      1: 'Syntactic and semantic interoperability between data sources of different structure and formalization.',
+      2: 'Partial implementation of ISO 11179-3 and ISO 21526 focusing on use cases on healthcare and medical research.',
+      3: 'The metadata stored in DEHub helps to ensure, that data element specifications and thereby the respective data collections are accessible in a long-term manner, even for third parties.',
+      4: 'The DEHub is intended to be a central component that can be used flexibly for different application scenarios, but still fulfills the requirements for structured and quality-controlled collection of metadata.',
       infoAlert: {
         text: 'In order to use this DEHub you have to authenticate against a <abbr title="Single Sign On">SSO Server</abbr>. The current <abbr title="Single Sign On">SSO Server</abbr> is operated by Medical Informatics Group (MIG).'
       },

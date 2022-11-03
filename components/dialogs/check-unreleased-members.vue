@@ -17,23 +17,20 @@
         class="overflow-y-auto"
       >
         <v-list-item
-          v-for="(item) in items"
+          v-for="(item) in onlyDraftItems(items)"
           :key="item.id"
           @click="editElementDialog(item.id)"
         >
           <v-list-item-icon>
-            <v-icon v-if="item.elementType === 'NAMESPACE'">
-              mdi-alphabetical-variant
-            </v-icon>
-            <v-icon v-else-if="item.elementType === 'DATAELEMENT'">
+            <v-icon v-if="item.elementType.toUpperCase() === 'DATAELEMENT'">
               mdi-vector-arrange-below
             </v-icon>
             <v-icon
-              v-else-if="item.elementType === 'DATAELEMENTGROUP'"
+              v-else-if="item.elementType.toUpperCase() === 'DATAELEMENTGROUP'"
             >
               mdi-group
             </v-icon>
-            <v-icon v-else-if="item.elementType === 'RECORD'">
+            <v-icon v-else-if="item.elementType.toUpperCase() === 'RECORD'">
               mdi-group
             </v-icon>
           </v-list-item-icon>
@@ -47,7 +44,7 @@
         <v-btn
           color="green darken-1"
           text
-          @click="dialog = false"
+          @click="dialog = false; $emit('closeUnreleasedMembersDialog') "
         >
           {{ $t('global.cancel') }}
         </v-btn>
@@ -61,7 +58,7 @@
         :key="editDialog.show"
         :urn="editDialog.urn"
         :show="editDialog.show"
-        @save="$emit('save', $event); removeIfReleased(editDialog.urn)"
+        @saveSuccess="$emit('saveSuccess', $event); removeIfReleased(editDialog.urn)"
         @saveFailure="$emit('saveFailure', $event)"
         @dialogClosed="editDialog.show = false"
       />
@@ -76,7 +73,7 @@
         :show="editDialog.show"
         :urn="editDialog.urn"
         :element-type="dialog.elementType"
-        @save="$emit('save', $event); removeIfReleased(editDialog.urn)"
+        @saveSuccess="$emit('saveSuccess', $event); removeIfReleased(editDialog.urn)"
         @saveFailure="$emit('saveFailure', $event)"
         @dialogClosed="editDialog.show = false"
       />
@@ -120,6 +117,9 @@ export default {
     }
   },
   methods: {
+    onlyDraftItems (items) {
+      return items.filter(elem => elem.status.toUpperCase().includes('DRAFT'))
+    },
     editElementDialog (urn) {
       this.editDialog.show = true
       this.editDialog.urn = urn
@@ -128,9 +128,9 @@ export default {
       await this.$axios.$get(this.ajax.dataElementUrl + urn, Ajax.header.ignoreLanguage)
         .then(function (res) {
           this.$log.debug('Check unreleased members: Fetching DataElement details ...')
-          if (res.identification.status === 'RELEASED') {
-            const urn = res.identification.urn
-            this.items = this.items.filter(elem => !elem.id.toLowerCase().includes(urn))
+          if (res.identification.status.toUpperCase() === 'RELEASED') {
+            const urn = res.identification.urn.toUpperCase()
+            this.items = this.items.filter(elem => !elem.id.toUpperCase().includes(urn))
             this.$emit('released', urn)
           }
         }.bind(this))

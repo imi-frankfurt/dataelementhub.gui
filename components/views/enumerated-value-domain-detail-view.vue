@@ -1,5 +1,5 @@
 <template>
-  <div v-if="fetchingDataElement">
+  <div v-if="fetchingValueDomain">
     <v-container fluid>
       <v-row>
         <v-col
@@ -16,21 +16,13 @@
     </v-container>
   </div>
   <div v-else>
-    <div v-if="dataElement !== undefined">
-      <data-element-dialog
-        :urn="urn"
-        :show="dialog"
-        @save="$emit('saveSuccess', $event); fetchDataElementDetails(); fetchElementPath()"
-        @saveFailure="$emit('saveFailure', $event)"
-        @dialogClosed="dialog = false"
-      />
+    <div v-if="valueDomain !== undefined" class="detailView">
       <v-card
         v-if="!hidePath"
         class="detailViewCard"
         color="grey lighten-4"
         flat
       >
-        <!-- Namespace Toolbar TODO: Check of this could be outsourced ...-->
         <v-toolbar>
           <v-toolbar-title>
             <v-container class="text-center">
@@ -69,14 +61,14 @@
             v-if="editable"
             icon
             color="primary"
-            @click="editDataElement"
+            @click="editValueDomain"
           >
             <v-icon>mdi-pencil</v-icon>
           </v-btn>
           <v-btn
             v-if="deletable"
             icon
-            @click="deleteDataElement"
+            @click="deleteValueDomain"
           >
             <v-icon>mdi-delete</v-icon>
           </v-btn>
@@ -84,8 +76,8 @@
       </v-card>
       <v-card outlined color="transparent" class="ma-0 pa-0">
         <MetaData
-          :type="'DATAELEMENT'"
-          :data="dataElement.identification"
+          :type="'ENUMERATED_VALUE_DOMAIN'"
+          :data="valueDomain.identification"
         />
       </v-card>
       <v-card v-if="hidePath" class="detailViewCard">
@@ -119,54 +111,46 @@
           <v-subheader>{{ $t('global.definitions') }}</v-subheader>
           <v-list-item>
             <v-list-item-content>
-              <definition-table :definitions="dataElement.definitions" />
+              <definition-table :definitions="valueDomain.definitions" />
             </v-list-item-content>
           </v-list-item>
         </v-list>
       </v-card>
       <v-card class="detailViewCard">
-        <v-list>
-          <v-subheader>{{ $t('global.valueDomain') }} : {{ dataElement.valueDomainUrn }}</v-subheader>
-          <v-list-item>
-            <v-list-item-content>
-              <value-domain :urn="dataElement.identification.urn" />
-            </v-list-item-content>
-          </v-list-item>
-        </v-list>
-      </v-card>
-      <v-card class="detailViewCard">
-        <v-list v-if="dataElement.slots.length > 0">
+        <v-list v-if="valueDomain.slots.length > 0">
           <v-subheader>{{ $t('global.slots') }}</v-subheader>
           <v-list-item>
             <v-list-item-content>
-              <slot-table :slots="dataElement.slots" />
+              <slot-table :slots="valueDomain.slots" />
             </v-list-item-content>
           </v-list-item>
         </v-list>
       </v-card>
       <v-card class="detailViewCard">
-        <v-list v-if="dataElement.relations.length > 0">
-          <v-subheader>{{ $t('global.relations') }}</v-subheader>
-          <v-list-item>
-            <v-list-item-content>
-              <relation-table
-                :relations="dataElement.relations"
-                :detail-view-available="relationDetailViewAvailable"
-              />
-            </v-list-item-content>
-          </v-list-item>
-        </v-list>
-      </v-card>
-      <v-card class="detailViewCard">
-        <v-list v-if="dataElement.conceptAssociations.length > 0">
+        <v-list v-if="valueDomain.conceptAssociations.length > 0">
           <v-subheader>{{ $t('global.conceptAssociations') }}</v-subheader>
           <v-list-item>
             <v-list-item-content>
-              <concept-association-table :associations="dataElement.conceptAssociations" />
+              <concept-association-table :associations="valueDomain.conceptAssociations" />
             </v-list-item-content>
           </v-list-item>
         </v-list>
       </v-card>
+      <v-card class="detailViewCard">
+        <v-list v-if="valueDomain.conceptAssociations.length > 0">
+          <v-subheader>{{ $t('global.conceptAssociations') }}</v-subheader>
+          <v-list-item>
+            <v-list-item-content>
+              <concept-association-table :associations="valueDomain.conceptAssociations" />
+            </v-list-item-content>
+          </v-list-item>
+        </v-list>
+      </v-card>
+      <PermittedValuesTable
+        v-if="valueDomain.type === 'ENUMERATED'"
+        :values="valueDomain.permittedValues"
+        :clickable="true"
+      />
       <v-btn
         v-if="showJumpToElementButton"
         class="d-block mr-0 ml-auto"
@@ -180,30 +164,6 @@
         </v-icon>
       </v-btn>
     </div>
-    <v-dialog
-      v-model="detailViewDialog.show"
-      width="600"
-    >
-      <v-card class="dialogCard">
-        <GroupsRecordsDetailView
-          v-if="detailViewDialog.urn.toUpperCase().includes('DATAELEMENTGROUP')
-            || detailViewDialog.urn.toUpperCase().includes('RECORD')"
-          :urn="detailViewDialog.urn"
-          :parent-urn="detailViewDialog.parentUrn"
-          :activate-path-navigation="false"
-          :show-jump-to-element-button="true"
-          :editable="false"
-          :deletable="false"
-        />
-        <NamespaceDetailView
-          v-if="detailViewDialog.urn.toUpperCase().includes('NAMESPACE')"
-          :show-jump-to-element-button="true"
-          :urn="detailViewDialog.urn"
-          :editable="false"
-          :deletable="false"
-        />
-      </v-card>
-    </v-dialog>
   </div>
 </template>
 <script>
@@ -211,28 +171,21 @@ import Ajax from '~/config/ajax'
 import DefinitionTable from '~/components/tables/definition-table'
 import SlotTable from '~/components/tables/slot-table'
 import MetaData from '~/components/item/meta-data'
-import DataElementDialog from '~/components/dialogs/data-element-dialog'
-import RelationTable from '~/components/tables/relation-table'
 import ConceptAssociationTable from '~/components/tables/concept-association-table'
-import ValueDomain from '~/components/views/value-domain'
-import NamespaceDetailView from '~/components/views/namespace-detail-view.vue'
 import PathsTable from '~/components/tables/paths-table'
+import PermittedValuesTable from '~/components/tables/permitted-values-table'
 export default {
   components: {
     PathsTable,
     DefinitionTable,
     SlotTable,
     MetaData,
-    DataElementDialog,
-    RelationTable,
     ConceptAssociationTable,
-    ValueDomain,
-    GroupsRecordsDetailView: () => import('~/components/views/groups-records-detail-view'),
-    NamespaceDetailView
+    PermittedValuesTable
   },
   props: {
     urn: { required: true, type: String },
-    parentUrn: { required: true, type: String },
+    parentUrn: { required: false, default: '', type: String },
     hidePath: { required: false, default: false, type: Boolean },
     activatePathNavigation: { required: false, default: true, type: Boolean },
     editable: { required: false, default: false, type: Boolean },
@@ -243,7 +196,7 @@ export default {
   data () {
     return {
       ajax: {
-        dataElementUrl: process.env.mdrBackendUrl + '/v1/element/'
+        valueDomainUrl: process.env.mdrBackendUrl + '/v1/element/'
       },
       detailViewDialog: {
         urn: '',
@@ -252,8 +205,8 @@ export default {
         namespaceIdentifier: -1
       },
       showAllPaths: false,
-      fetchingDataElement: true,
-      dataElement: undefined,
+      fetchingValueDomain: true,
+      valueDomain: undefined,
       dialog: false,
       elementPathInTree: [],
       allElementPaths: [],
@@ -269,13 +222,13 @@ export default {
       this.allElementPathsAsString = this.getElementPathsAsStrings(this.selectedElementPathType)
     },
     urn (n) {
-      this.fetchingDataElement = true
+      this.fetchingValueDomain = true
       this.fetchDataElementDetails()
       this.fetchElementPath()
     }
   },
   mounted () {
-    this.$log.debug('Mounted DataElement view ...')
+    this.$log.debug('Mounted ValueDomain view ...')
     this.fetchDataElementDetails()
     this.fetchElementPath()
   },
@@ -293,31 +246,22 @@ export default {
       }
     },
     async fetchDataElementDetails () {
-      this.$log.debug('DataElement DetailView: Fetching DataElement details ...')
-      await this.$axios.$get(this.ajax.dataElementUrl + this.urn, Ajax.header.ignoreLanguage)
+      this.$log.debug('ValueDomain DetailView: Fetching ValueDomain details ...')
+      await this.$axios.$get(this.ajax.valueDomainUrl + this.urn, Ajax.header.ignoreLanguage)
         .then(function (res) {
-          res.relations = []
-          this.dataElement = Object.assign({}, res)
-          this.$log.debug('Fetching DataElement relations ...')
-          this.$axios.$get(this.ajax.dataElementUrl + this.urn + '/relations', Ajax.header.ignoreLanguage)
-            .then(function (res1) {
-              this.dataElement.relations = res1
-              this.fetchingDataElement = false
-            }.bind(this))
-            .catch(function (err) {
-              this.$log.error('Could not fetch relations: ' + err)
-            }.bind(this))
+          this.fetchingValueDomain = false
+          this.valueDomain = Object.assign({}, res)
         }.bind(this))
         .catch(function (err) {
-          this.$log.error('Unable to fetch DataElement details: ' + err)
+          this.$log.error('Unable to fetch ValueDomain details: ' + err)
         }.bind(this))
     },
-    editDataElement () {
+    editValueDomain () {
       this.dialog = true
     },
-    async deleteDataElement () {
+    async deleteValueDomain () {
       if (confirm(this.$i18n.t('global.itemDialog.deleteItemTitle').toString())) {
-        await this.$axios.$delete(this.ajax.dataElementUrl + this.urn)
+        await this.$axios.$delete(this.ajax.valueDomainUrl + this.urn)
           .then(function (res) {
             this.$emit('delete', {
               urn: this.urn
@@ -330,8 +274,8 @@ export default {
       }
     },
     async fetchElementPath () {
-      this.$log.debug('DataElement DetailView: Fetching DataElement path ...')
-      await this.$axios.$get(this.ajax.dataElementUrl + this.urn + '/paths',
+      this.$log.debug('ValueDomain DetailView: Fetching ValueDomain path ...')
+      await this.$axios.$get(this.ajax.valueDomainUrl + this.urn + '/paths',
         Ajax.header.ignoreLanguage)
         .then(function (res) {
           this.allElementPaths = res
@@ -344,7 +288,7 @@ export default {
         }.bind(this))
         .catch(function (err) {
           this.elementPath = []
-          this.$log.error('Unable to fetch DataElement paths: ' + err)
+          this.$log.error('Unable to fetch ValueDomain paths: ' + err)
         }.bind(this))
     },
     getElementPathsAsStrings (type) {
@@ -389,6 +333,11 @@ export default {
 }
 </script>
 <style>
+
+.detailView {
+  padding: 2px 10px;
+}
+
 .dialogCard {
   padding-top: 40px;
   padding-bottom: 25px;

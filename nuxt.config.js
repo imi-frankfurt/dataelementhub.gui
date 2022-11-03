@@ -19,7 +19,7 @@ export default {
       { hid: 'description', name: 'description', content: '' }
     ],
     link: [
-      { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' }
+      { rel: 'icon', type: 'image/png', href: 'src/assets/images/logo/1.png' }
     ]
   },
 
@@ -56,7 +56,8 @@ export default {
         detectBrowserLanguage: {
           useCookie: true,
           cookieKey: 'i18n_current',
-          onlyOnRoot: true
+          onlyOnRoot: true,
+          cookieSecure: true
         },
         locales: [
           {
@@ -85,15 +86,24 @@ export default {
     // retry: { retries: 3 }
   },
   auth: {
+    plugins: [
+      '~/plugins/axios.js'
+    ],
+    cookie: {
+      options: {
+        httpOnly: true,
+        secure: true
+      }
+    },
     strategies: {
       local: false,
       keycloak: {
         scheme: 'oauth2',
         endpoints: {
-          authorization: process.env.KEYCLOAK_URL + '/auth/realms/' + process.env.KEYCLOAK_REALM + '/protocol/openid-connect/auth',
-          userInfo: process.env.KEYCLOAK_URL + '/auth/realms/' + process.env.KEYCLOAK_REALM + '/protocol/openid-connect/userinfo',
-          token: process.env.KEYCLOAK_URL + '/auth/realms/' + process.env.KEYCLOAK_REALM + '/protocol/openid-connect/token',
-          logout: process.env.KEYCLOAK_URL + '/auth/realms/' + process.env.KEYCLOAK_REALM + '/protocol/openid-connect/logout?redirect_uri=' + encodeURIComponent(process.env.BASE_URL)
+          authorization: process.env.KEYCLOAK_URL + '/realms/' + process.env.KEYCLOAK_REALM + '/protocol/openid-connect/auth',
+          userInfo: process.env.KEYCLOAK_URL + '/realms/' + process.env.KEYCLOAK_REALM + '/protocol/openid-connect/userinfo',
+          token: process.env.KEYCLOAK_URL + '/realms/' + process.env.KEYCLOAK_REALM + '/protocol/openid-connect/token',
+          logout: process.env.KEYCLOAK_URL + '/realms/' + process.env.KEYCLOAK_REALM + '/protocol/openid-connect/logout?redirect_uri=' + encodeURIComponent(process.env.BASE_URL)
         },
         token: {
           property: 'access_token',
@@ -103,7 +113,7 @@ export default {
         },
         refreshToken: {
           property: 'refresh_token',
-          maxAge: 60 * 60 * 24 * 30
+          maxAge: 60 * 3
         },
         redirect: {
           login: '/',
@@ -116,7 +126,7 @@ export default {
         },
         responseType: 'code',
         grantType: 'authorization_code',
-        clientId: 'dehub',
+        clientId: process.env.KEYCLOAK_CLIENT_ID,
         scope: ['openid', 'profile', 'email'],
         codeChallengeMethod: 'S256'
       }
@@ -131,15 +141,55 @@ export default {
     customVariables: ['~/assets/variables.scss'],
     theme: {
       dark: false,
+      options: { customProperties: true },
       themes: {
         dark: {
-          primary: colors.blue.darken2,
-          accent: colors.grey.darken3,
-          secondary: colors.amber.darken3,
-          info: colors.teal.lighten1,
+          primary: {
+            base: '#099b63',
+            darken1: '#04c279'
+          },
+          accent: '#8f7d91',
+          secondary: '#97812F',
+          info: {
+            base: '#1FFFF1',
+            darken1: '#450b5a',
+            darken2: '#1125c0',
+            darken3: '#40bfa4'
+          },
           warning: colors.amber.base,
           error: colors.deepOrange.accent4,
-          success: colors.green.accent3
+          success: colors.green.accent3,
+          anchor: '#1FFFF1'
+        },
+        light: {
+          primary: {
+            base: '#022844',
+            darken1: '#d6eec5'
+          },
+          header: {
+            base: '#21587f'
+          },
+          footer: {
+            base: '#edfceb'
+          },
+          background: {
+            base: '#fcfffc'
+          },
+          navigation_drawer: {
+            base: '#21587f'
+          },
+          accent: '#8f7d91',
+          secondary: '#97812F',
+          info: {
+            base: '#4caff5',
+            darken1: '#450b5a',
+            darken2: '#1125c0',
+            darken3: '#40bfa4'
+          },
+          warning: '#499ab0',
+          error: colors.deepOrange.accent4,
+          success: colors.green.accent3,
+          anchor: '#52b7f6'
         }
       }
     }

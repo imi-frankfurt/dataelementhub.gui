@@ -1,70 +1,72 @@
 <template>
-  <v-row
-    class="pa-4"
-  >
-    <v-col cols="5" class="elevation-1 pa-3 ma-2">
-      <v-row>
-        <v-col>
-          <v-text-field
-            v-model="search.query"
-            :counter="255"
-            :label="$t('global.searchText')"
-            @input="executeSearch()"
-          />
-        </v-col>
-      </v-row>
-      <v-list
-        max-height="300px"
-        class="overflow-y-auto"
-      >
-        <draggable v-model="membersToChooseFrom" :options="{group:'people'}" min-height="100px">
-          <template v-for="item in membersToChooseFrom">
-            <v-list :key="item.id">
-              <v-list-item two-line>
-                <v-list-item-content>
-                  <v-list-item-title>{{ item.designation }}</v-list-item-title>
-                  <v-list-item-subtitle>{{ item.definition }}</v-list-item-subtitle>
-                </v-list-item-content>
-              </v-list-item>
-            </v-list>
-          </template>
-        </draggable>
-      </v-list>
-    </v-col>
-    <v-col cols="5" class="elevation-1 pa-3 ma-2">
-      <v-subheader>
-        Selected Members:
-      </v-subheader>
-      <v-list
-        max-height="300px"
-        class="overflow-y-auto"
-      >
-        <draggable v-model="selectedMembers" :options="{group:'people'}">
-          <template v-for="item in selectedMembers">
-            <v-list :key="item.id" min-height="50px">
-              <v-list-item two-line>
-                <v-list-item-content>
-                  <v-list-item-title>{{ item.designation }}</v-list-item-title>
-                  <v-list-item-subtitle>{{ item.definition }}</v-list-item-subtitle>
-                </v-list-item-content>
-              </v-list-item>
-            </v-list>
-          </template>
-          <div v-if="selectedMembers.length === 0" align="middle">
-            <v-icon size="70">
-              mdi-hand-pointing-up
-            </v-icon>
-            <h3 class="text-h2 mb-2">
-              ADD ITEM
-            </h3>
-            <h3 class="text-h6 mb-2">
-              simply drag and drop
-            </h3>
-          </div>
-        </draggable>
-      </v-list>
-    </v-col>
-  </v-row>
+  <v-container fluid>
+    <v-row
+      class="pa-1"
+    >
+      <v-col cols="5" class="elevation-1 pa-3 ma-2">
+        <v-row>
+          <v-col>
+            <v-text-field
+              v-model="search.query"
+              :counter="255"
+              :label="$t('global.searchText')"
+              @input="executeSearch()"
+            />
+          </v-col>
+        </v-row>
+        <v-list
+          max-height="300px"
+          class="overflow-y-auto"
+        >
+          <draggable v-model="membersToChooseFrom" :options="{group:'people'}" min-height="100px">
+            <template v-for="item in membersToChooseFrom">
+              <v-list :key="item.id">
+                <v-list-item two-line>
+                  <v-list-item-content>
+                    <v-list-item-title>{{ item.designation }}</v-list-item-title>
+                    <v-list-item-subtitle>{{ item.definition }}</v-list-item-subtitle>
+                  </v-list-item-content>
+                </v-list-item>
+              </v-list>
+            </template>
+          </draggable>
+        </v-list>
+      </v-col>
+      <v-col cols="5" class="elevation-1 pa-3 ma-2">
+        <v-subheader>
+          Selected Members:
+        </v-subheader>
+        <v-list
+          max-height="300px"
+          class="overflow-y-auto"
+        >
+          <draggable v-model="selectedMembers" :options="{group:'people'}">
+            <template v-for="item in selectedMembers">
+              <v-list :key="item.id" min-height="50px">
+                <v-list-item two-line>
+                  <v-list-item-content>
+                    <v-list-item-title>{{ item.designation }}</v-list-item-title>
+                    <v-list-item-subtitle>{{ item.definition }}</v-list-item-subtitle>
+                  </v-list-item-content>
+                </v-list-item>
+              </v-list>
+            </template>
+            <div v-if="selectedMembers.length === 0" align="middle">
+              <v-icon size="70">
+                mdi-hand-pointing-up
+              </v-icon>
+              <h3 class="text-h2 mb-2">
+                {{ $t('global.addItem') }}
+              </h3>
+              <h3 class="text-h6 mb-2">
+                {{ $t('global.dragAndDrop') }}
+              </h3>
+            </div>
+          </draggable>
+        </v-list>
+      </v-col>
+    </v-row>
+  </v-container>
 </template>
 <script>
 import draggable from 'vuedraggable'
@@ -74,7 +76,8 @@ export default {
     draggable
   },
   props: {
-    namespaceUrn: { required: true, type: String }
+    namespaceUrn: { required: true, type: String },
+    elementUrn: { required: false, default: '', type: String }
   },
   data () {
     return {
@@ -87,7 +90,7 @@ export default {
       },
       ajax: {
         namespaceUrl: process.env.mdrBackendUrl + '/v1/namespaces/',
-        dataElementGroupUrl: process.env.mdrBackendUrl + '/v1/element/'
+        elementUrl: process.env.mdrBackendUrl + '/v1/element/'
       },
       namespaceMembers: [],
       selectedMembers: [],
@@ -102,7 +105,10 @@ export default {
   watch: {
     $props: {
       handler () {
-        this.fetchMembers(this.namespaceUrn)
+        this.fetchNamespaceMembers(this.namespaceUrn)
+        if (this.elementUrn !== '') { // load group/record members only in edit mode
+          this.fetchElementMembers(this.elementUrn)
+        }
       },
       deep: true,
       immediate: true
@@ -111,8 +117,10 @@ export default {
       handler () {
         if (this.search.query) {
           this.membersToChooseFrom = this.search.filteredMembers
+            .filter(ar => !this.selectedMembers.find(rm => rm.id.toUpperCase() === ar.id.toUpperCase()))
         } else {
           this.membersToChooseFrom = this.excludeSelectedMembers
+            .filter(ar => !this.selectedMembers.find(rm => rm.id.toUpperCase() === ar.id.toUpperCase()))
         }
       },
       deep: true,
@@ -121,16 +129,20 @@ export default {
     namespaceMembers () {
       if (this.search.query) {
         this.membersToChooseFrom = this.search.filteredMembers
+          .filter(ar => !this.selectedMembers.find(rm => rm.id.toUpperCase() === ar.id.toUpperCase()))
       } else {
         this.membersToChooseFrom = this.excludeSelectedMembers
+          .filter(ar => !this.selectedMembers.find(rm => rm.id.toUpperCase() === ar.id.toUpperCase()))
       }
     },
     selectedMembers () {
+      this.membersToChooseFrom = this.membersToChooseFrom
+        .filter(ar => !this.selectedMembers.find(rm => rm.id.toUpperCase() === ar.id.toUpperCase()))
       this.$emit('selectedMembers', this.selectedMembers)
     }
   },
   methods: {
-    async fetchMembers (namespaceUrn) {
+    async fetchNamespaceMembers (namespaceUrn) {
       const namespaceIdentifier = namespaceUrn.split(':')[1]
       await this.$axios.$get(this.ajax.namespaceUrl + namespaceIdentifier +
         '/members', Ajax.header.listView)
@@ -139,15 +151,37 @@ export default {
           for (const member of Array.from(res)) {
             const id = 'urn:' + namespaceIdentifier + ':' +
             member.elementType + ':' + member.identifier + ':' + member.revision
+            if (member.status.toUpperCase() !== 'OUTDATED' && // OUTDATED elements are not allowed to be added as members
+              id.toUpperCase() !== this.elementUrn.toUpperCase()
+            ) {
+              members.push({
+                id,
+                elementType: member.elementType,
+                designation: member.definitions[0].designation,
+                definition: member.definitions[0].definition,
+                status: member.status
+              })
+            }
+          }
+          this.namespaceMembers = members
+        }.bind(this))
+    },
+    async fetchElementMembers (elementUrn) {
+      await this.$axios.$get(this.ajax.elementUrl + elementUrn +
+        '/members', Ajax.header.listView)
+        .then(function (res) {
+          const members = []
+          for (const member of Array.from(res)) {
+            const elementType = member.urn.split(':')[2]
             members.push({
-              id,
-              elementType: member.elementType,
-              designation: member.definition.designation,
-              definition: member.definition.definition,
+              id: member.urn,
+              elementType,
+              designation: member.definitions[0].designation,
+              definition: member.definitions[0].definition,
               status: member.status
             })
           }
-          this.namespaceMembers = members
+          this.selectedMembers = members
         }.bind(this))
     },
     executeSearch () {

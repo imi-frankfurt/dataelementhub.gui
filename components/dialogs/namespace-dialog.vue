@@ -33,22 +33,34 @@
             </v-btn>
           </v-toolbar-items>
         </v-toolbar>
+        <v-list subheader>
+          <v-list-item>
+            <div class="choose-button-wrapper">
+              <button
+                :class="getLeftButtonClass()"
+                :disabled="released"
+                :title="$t('global.buttonTitle.publicNamespace')"
+                @click="namespace.identification.hideNamespace = false"
+              >
+                {{ $t('global.public') }}
+              </button>
+              <button
+                :class="getRightButtonClass()"
+                :disabled="released"
+                :title="$t('global.buttonTitle.privateNamespace')"
+                @click="namespace.identification.hideNamespace = true"
+              >
+                {{ $t('global.private') }}
+              </button>
+            </div>
+          </v-list-item>
+        </v-list>
         <v-form
           ref="form"
           v-model="form.valid"
           :lazy-validation="form.lazy"
         >
-          <v-list subheader>
-            <v-subheader>{{ $t('global.properties') }}</v-subheader>
-            <v-list-item>
-              <v-list-item-action>
-                <v-checkbox
-                  v-model="namespace.identification.hideNamespace"
-                  :label="$t('pages.namespaces.itemDialog.form.publicNamespace')"
-                  :disabled="released"
-                />
-              </v-list-item-action>
-            </v-list-item>
+          <v-list>
             <v-list-item>
               <v-list-item-action>
                 <v-radio-group
@@ -214,6 +226,18 @@ export default {
     this.dialog = this.show
   },
   methods: {
+    getRightButtonClass () {
+      return {
+        'right-button-marked': this.namespace.identification.hideNamespace === true,
+        'right-button': this.namespace.identification.hideNamespace === false
+      }
+    },
+    getLeftButtonClass () {
+      return {
+        'left-button-marked': this.namespace.identification.hideNamespace === false,
+        'left-button': this.namespace.identification.hideNamespace === true
+      }
+    },
     hideDialog () {
       this.dialog = false
       this.$emit('dialogClosed')
@@ -241,24 +265,35 @@ export default {
               this.$axios.$get(res.headers.location)
                 .then(function (res1) {
                   this.namespace.identification.urn = res1.identification.urn
-                  this.$emit('save', this.namespace)
+                  this.namespace.parentUrn = ''
+                  this.namespace.action = 'CREATE'
+                  this.$root.$emit('updateTreeView', this.namespace)
+                  this.$emit('saveSuccess', this.namespace)
                   this.hideDialog()
                 }.bind(this))
             }.bind(this))
             .catch(function (err) {
               this.$log.debug('Could not save Namespace: ' + err)
-              this.$emit('saveFailure')
+              this.$emit('saveFailure', err.response)
             }.bind(this))
         } else { // ... otherwise we update it.
           await this.$axios.put(this.ajax.namespaceUrl + this.namespace.identification.identifier,
             this.namespace)
             .then(function (res) {
-              this.hideDialog()
-              this.$emit('save', this.namespace)
+              this.$axios.$get(res.headers.location)
+                .then(function (res1) {
+                  this.namespace.previousUrn = this.namespace.identification.urn
+                  this.namespace.identification.urn = res1.identification.urn
+                  this.namespace.parentUrn = ''
+                  this.namespace.action = 'UPDATE'
+                  this.$root.$emit('updateTreeView', this.namespace)
+                  this.$emit('saveSuccess', this.namespace)
+                  this.hideDialog()
+                }.bind(this))
             }.bind(this))
             .catch(function (err) {
               this.$log.debug('Could not save Namespace: ' + err)
-              this.$emit('saveFailure', this.namespace)
+              this.$emit('saveFailure', err.response)
             }.bind(this))
         }
       }
@@ -278,3 +313,58 @@ export default {
   }
 }
 </script>
+
+<style>
+
+.choose-button-wrapper {
+  position: absolute;
+  top: 20px;
+  left: 15px;
+  margin-bottom: 20px;
+}
+
+.left-button {
+  background-color: white;
+  color: #21587f;
+  border-radius: 6.5rem 0 0 6.5rem;
+  border: solid 0.1rem #21587f;
+  width: 110px;
+  height: 35px;
+  font-size: 1rem;
+  cursor: pointer;
+}
+
+.left-button-marked {
+  background-color: #21587f;
+  color: white;
+  border-radius: 6.5rem 0 0 6.5rem;
+  border: none;
+  width: 110px;
+  height: 35px;
+  font-size: 1rem;
+  cursor: pointer;
+}
+
+.right-button {
+  background-color: white;
+  color: #21587f;
+  border-radius: 0 6.5rem 6.5rem 0;
+  border: solid 0.1rem #21587f;
+  width: 110px;
+  height: 35px;
+  font-size: 1rem;
+  cursor: pointer;
+}
+
+.right-button-marked {
+  background-color: #21587f;
+  color: white;
+  border-radius: 0 6.5rem 6.5rem 0;
+  border: none;
+  width: 110px;
+  height: 35px;
+  font-size: 1rem;
+  cursor: pointer;
+}
+
+</style>

@@ -38,8 +38,7 @@
           v-model="form.valid"
           :lazy-validation="form.lazy"
         >
-          <v-list subheader>
-            <v-subheader>{{ $t('global.properties') }}</v-subheader>
+          <v-list class="mt-2">
             <v-list-item>
               <v-list-item-action>
                 <v-select
@@ -47,11 +46,13 @@
                   :items="namespaces"
                   :rules="selectNamespaceRules"
                   item-value="identification.urn"
-                  item-text="definition.designation"
+                  item-text="definitions[0].designation"
                   :label="$t('global.select.namespace')"
                 />
               </v-list-item-action>
             </v-list-item>
+          </v-list>
+          <v-list subheader>
             <v-list-item>
               <v-list-item-action>
                 <v-radio-group v-model="element.identification.status">
@@ -165,14 +166,23 @@
           <v-list subheader>
             <v-subheader>{{ $t('global.members') }}</v-subheader>
             <v-list-item>
+              <v-list-item-content
+                v-if="element.identification.status === 'RELEASED'
+                  && element.identification.elementType.toUpperCase().includes('RECORD')"
+              >
+                <members-table :members="element.members" />
+              </v-list-item-content>
               <Members
+                v-else
                 :namespace-urn="namespaceUrn"
+                :element-urn="urn"
                 @selectedMembers="selectedMembers = $event; element.members =
                   convertMembersFormat($event)"
               />
             </v-list-item>
             <CheckUnreleasedMembers
               v-if="unreleasedMembersDialog.show"
+              class="unreleasedMembersDialog"
               :show="unreleasedMembersDialog.show"
               :members="selectedMembers"
               @released="markAsReleased($event)"
@@ -191,10 +201,12 @@ import ItemDefinition from '~/components/item/item-definition'
 import ItemSlot from '~/components/item/item-slot'
 import Members from '~/components/common/members'
 import CheckUnreleasedMembers from '~/components/dialogs/check-unreleased-members'
+import MembersTable from '~/components/tables/members-table'
 export default {
   components: {
     CheckUnreleasedMembers,
     ItemDefinition,
+    MembersTable,
     ItemSlot,
     Members
   },
@@ -228,12 +240,12 @@ export default {
   computed: {
     dialogTitle () {
       if (this.urn === '') {
-        if (this.elementType === 'RECORD') {
+        if (this.elementType.toUpperCase() === 'RECORD') {
           return this.$i18n.t('pages.records.itemDialog.title.create')
         } else {
           return this.$i18n.t('pages.groups.itemDialog.title.create')
         }
-      } else if (this.elementType === 'RECORD') {
+      } else if (this.elementType.toUpperCase() === 'RECORD') {
         return this.$i18n.t('pages.records.itemDialog.title.update')
       } else {
         return this.$i18n.t('pages.groups.itemDialog.title.update')
@@ -278,8 +290,8 @@ export default {
         status: n.status
       }))
     },
-    allMembersAreReleased () {
-      const members = this.element.members.filter(elem => !elem.status.includes('RELEASED'))
+    containsNoDraftMembers () {
+      const members = this.element.members.filter(elem => elem.status.includes('DRAFT'))
       if (members.length > 0 && this.element.identification.status === 'RELEASED') {
         this.unreleasedMembersDialog.unreleasedMembers = members
         this.unreleasedMembersDialog.show = true
@@ -288,8 +300,10 @@ export default {
       return true
     },
     markAsReleased (urn) {
-      this.element.members.find(elem => elem.elementUrn.toLowerCase().includes(urn)).status =
-        'RELEASED'
+      this.element.members.find(elem => elem.elementUrn.toUpperCase().includes(urn)).status = 'RELEASED'
+      if (this.containsNoDraftMembers()) {
+        this.unreleasedMembersDialog.show = false
+      }
     },
     defaultElement () {
       return this.elementType === 'RECORD'
@@ -297,6 +311,7 @@ export default {
         : Common.defaultGroup()
     },
     hideDialog () {
+      this.clearForm()
       this.dialog = false
       this.$emit('dialogClosed')
     },
@@ -320,31 +335,43 @@ export default {
     },
     async saveElement () {
       this.$refs.form.validate()
-      if (this.form.valid && this.allMembersAreReleased()) {
+      if (this.form.valid && this.containsNoDraftMembers()) {
         this.$log.debug('Saving Element ...')
         if (this.urn === '') { // If the Element URN is empty we have to save it ...
           await this.$axios.post(this.ajax.elementUrl,
             this.element)
             .then(function (res) {
-              this.hideDialog()
-              this.$emit('save')
+              this.$axios.$get(res.headers.location)
+                .then(function (res1) {
+                  this.element.identification.urn = res1.identification.urn
+                  this.element.parentUrn = ''
+                  this.element.action = 'CREATE'
+                  this.$root.$emit('updateTreeView', this.element)
+                  this.$emit('saveSuccess', this.element)
+                  this.hideDialog()
+                }.bind(this))
             }.bind(this))
             .catch(function (err) {
               this.$log.debug('Could not save Element: ' + err)
-              this.$emit('saveFailure')
+              this.$emit('saveFailure', err.response)
             }.bind(this))
         } else { // ... otherwise we update it.
-          delete this.element.valueDomainUrn
           await this.$axios.put(this.ajax.elementUrl + this.element.identification.urn,
             this.element)
             .then(function (res) {
-              this.hideDialog()
-              this.$log.debug(this.element)
-              this.$emit('save')
+              this.$axios.$get(res.headers.location)
+                .then(function (res1) {
+                  this.element.identification.urn = res1.identification.urn
+                  this.element.previousUrn = this.urn
+                  this.element.action = 'UPDATE'
+                  this.$root.$emit('updateTreeView', this.element)
+                  this.$emit('saveSuccess', this.element)
+                  this.hideDialog()
+                }.bind(this))
             }.bind(this))
             .catch(function (err) {
               this.$log.debug('Could not save Element: ' + err)
-              this.$emit('saveFailure')
+              this.$emit('saveFailure', err.response)
             }.bind(this))
         }
       }
@@ -360,7 +387,20 @@ export default {
     },
     deleteSlot (index) {
       this.element.slots.splice(index, 1)
+    },
+    clearForm () {
+      this.element.definitions = [
+        ItemDefinition.data().defaultDefinition
+      ]
+      this.element.slots = []
+      this.element.members = []
     }
   }
 }
 </script>
+
+<style>
+.unreleasedMembersDialog {
+  max-width: 40%;
+}
+</style>
