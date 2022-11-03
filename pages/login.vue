@@ -1,54 +1,55 @@
 <template>
-  <div class="home">
-    <section class="hero">
-      <v-container>
-        <v-row no-gutters>
-          <v-col md="6" offset="2" offset-md="0" class="bg-symbol-1 mt-15">
-            <h1
-              class="introduction-text mb-5"
-            >
-              {{ $t('pages.login.introduction') }}
-            </h1>
-            <h3
-              class="dehub-text mb-5"
-            >
-              {{ $t('pages.login.dehub') }}
-            </h3>
-            <v-btn
-              color="primary"
-              class="mr-4"
-              @click="loginWithKeycloak"
-            >
-              {{ $t('pages.login.loginButton') }}
-            </v-btn>
-            <v-tooltip bottom>
-              <template v-slot:activator="{ on, attrs }">
-                <v-icon
-                  color="primary"
-                  dark
-                  v-bind="attrs"
-                  v-on="on"
-                >
-                  mdi-information-outline
-                </v-icon>
-              </template>
-              <span>
+  <v-container fluid class="hero-container">
+    <v-row class="hero-row">
+      <v-col cols="6" class="bg-symbol-1 introduction-col">
+        <div class="introduction-container">
+          <h1
+            class="introduction-text mb-5"
+          >
+            {{ $t('pages.login.introduction') }}
+          </h1>
+          <h3
+            class="dehub-text mb-5"
+          >
+            {{ $t('pages.login.dehub') }}
+          </h3>
+          <v-btn
+            color="primary"
+            class="mr-4"
+            @click="loginWithKeycloak"
+          >
+            {{ $t('pages.login.loginButton') }}
+          </v-btn>
+          <v-tooltip bottom>
+            <template v-slot:activator="{ on, attrs }">
+              <v-icon
+                color="primary"
+                dark
+                v-bind="attrs"
+                v-on="on"
+              >
+                mdi-information-outline
+              </v-icon>
+            </template>
+            <span>
                 {{ $t('pages.help.faqList.demoAccount[0].answer') }}
               </span>
-            </v-tooltip>
-          </v-col>
-          <v-col id="hero__image-wrap" md="4">
-            <v-img
-              class="hero__image"
-              contain
-              :src="require('~/assets/images/logo/2.png')"
-              :lazy-src="require('~/assets/images/logo/2.png')"
-            />
-          </v-col>
-        </v-row>
-      </v-container>
-    </section>
-  </div>
+          </v-tooltip>
+        </div>
+      </v-col>
+      <v-col cols="5" class="logo-col">
+        <v-img
+          height="60%"
+          contain
+          :src="require('~/assets/images/logo/2.png')"
+          :lazy-src="require('~/assets/images/logo/2.png')"
+        />
+      </v-col>
+    </v-row>
+    <v-row class="second-row">
+
+    </v-row>
+  </v-container>
 </template>
 
 <script>
@@ -86,23 +87,47 @@ export default {
 <style lang="scss">
 @import '~vuetify/src/styles/styles.sass';
 
+.second-row {
+  background: #eaf3fa;
+}
+
+.hero-row {
+  display: flex;
+  max-height: 50vh;
+  background-color: #e8f9fd;
+}
+
+.introduction-col {
+  margin: 0 auto;
+}
+
+.logo-col {
+  position: relative;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto;
+}
+
 .dehub-text {
-  font-size: 30px;
+  font-size: 1.5rem;
   font-weight: 200;
 }
 
 .introduction-text {
-  font-size: 60px;
+  margin-top: 10vh;
+  font-size: 4rem;
   font-weight: 300;
 }
 
-.bg-symbol-1,
-.bg-symbol-2 {
+.bg-symbol-1 {
   position: relative;
   z-index: 2;
 
   &::before {
     background-repeat: no-repeat;
+    background-image: url(~assets/images/startpage/symbol-bg2.png);
+    left: -100px;
+    top: -90px;
     width: 470px;
     height: 400px;
     content: '';
@@ -113,129 +138,6 @@ export default {
   @media #{map-get($display-breakpoints, 'sm-and-down')} {
     &::before {
       display: none;
-    }
-  }
-}
-
-.hero {
-  background-color: #e8f9fd;
-  height: 590px;
-  padding-top: 85px;
-  position: relative;
-
-  .hero__image {
-    position: relative;
-    top: -80px;
-    right: -600px;
-  }
-
-  .bg-symbol-1 {
-    &::before {
-      background-image: url(~assets/images/startpage/symbol-bg2.png);
-      left: -240px;
-      top: -135px;
-    }
-  }
-}
-
-.dots-map {
-  position: absolute;
-  right: 0;
-  bottom: -100px;
-  height: 205px;
-  width: 200px;
-  margin-left: auto;
-  background-image: url(~assets/images/startpage/dots.png);
-
-  &.left {
-    right: initial;
-    left: 0;
-  }
-}
-
-.icon-box {
-  max-width: 250px;
-  margin-right: 20px;
-  padding: 40px;
-  position: relative;
-  overflow: hidden;
-  border-radius: 0 60px 0 0;
-
-  .icon-box__icon {
-    position: relative;
-    z-index: 2;
-    padding-top: 25px;
-  }
-
-  &:hover {
-    background-color: #a4c2da;
-  }
-
-  &.active {
-    background-color: #a4c2da;
-
-    &::before {
-      content: '';
-      position: absolute;
-      z-index: 1;
-      top: -60px;
-      left: -40px;
-      width: 125%;
-      height: 178px;
-      background-color: #a4c2da;
-      border-radius: 50%;
-    }
-  }
-}
-
-.pointed-img-wrap {
-  position: relative;
-
-  &::before {
-    position: absolute;
-    left: -50px;
-    content: '';
-    height: 205px;
-    width: 200px;
-    background-image: url(~assets/images/startpage/dots.png);
-  }
-
-  &::after {
-    content: '';
-    position: absolute;
-    bottom: -67px;
-    right: 130px;
-    width: 40px;
-    height: 200px;
-    background-color: rgba(map-get($amber, 'darken-1'), 0.7);
-    border-radius: 20px;
-    transform: rotate(45deg);
-
-    @media #{map-get($display-breakpoints, 'sm-and-down')} {
-      display: none;
-    }
-  }
-
-  .pointed-img {
-    height: 470px;
-    width: 470px;
-    border-radius: 50% 50% 0 50%;
-  }
-
-  &.left {
-    .pointed-img {
-      border-radius: 50% 50% 50% 0;
-    }
-
-    &::before {
-      left: initial;
-      right: 55px;
-    }
-
-    &::after {
-      transform: rotate(-45deg);
-      right: initial;
-      left: 20px;
     }
   }
 }
