@@ -1,49 +1,68 @@
 <template>
-  <v-container fluid class="hero-container">
-    <v-row class="hero-row">
-      <v-col cols="6" class="bg-symbol-1 introduction-col">
-        <div class="introduction-container">
-          <h1
-            class="introduction-text mb-5"
-          >
-            {{ $t('pages.home.introduction') }}
-          </h1>
-          <h3
-            class="dehub-text mb-5"
-          >
-            {{ $t('pages.home.dehub') }}
-          </h3>
-        </div>
-      </v-col>
-      <v-col cols="5" class="logo-col">
+  <v-container fluid class="main-container">
+    <v-row class="hero-row pb-10">
+      <v-col class="bg-symbol-1 logo-col">
         <v-img
-          height="60%"
+          height="600px"
+          max-height="45vw"
           contain
           :src="require('~/assets/images/logo/2.png')"
           :lazy-src="require('~/assets/images/logo/2.png')"
         />
       </v-col>
+      <v-col>
+        <v-container fill-height fluid>
+          <v-row align="center" justify="center">
+            <v-col class="mx-4">
+              <h1
+                class="introduction-text mb-5"
+              >
+                {{ $t('pages.home.introduction') }}
+              </h1>
+              <h3
+                class="dehub-text mb-5"
+              >
+                {{ $t('pages.home.dehub') }}
+              </h3>
+            </v-col>
+          </v-row>
+        </v-container>
+      </v-col>
     </v-row>
-    <v-row class="second-row">
-
+    <v-row class="second-row py-8">
+      <v-col>
+        <div class="markdown-class" v-html="markdownToHtml" />
+      </v-col>
+    </v-row>
+    <v-row class="extern-logos-row">
+      <v-col v-for="logo in externalLogos" :key="logo">
+        <v-img
+          height="80px"
+          contain
+          :src="require('~/assets/images/logo/extern/' + logo)"
+        />
+      </v-col>
     </v-row>
   </v-container>
 </template>
 
 <script>
+import { marked } from 'marked'
+import HomepageText from '@/assets/others/homepage.md'
+
 export default {
   data () {
     return {
-
+      markdown: HomepageText,
+      externalLogos: process.env.externalLogos
+    }
+  },
+  computed: {
+    markdownToHtml () {
+      return marked(this.markdown)
     }
   },
   methods: {
-    async loginWithKeycloak () {
-      try {
-        await this.$auth.loginWith('keycloak')
-      } catch (err) {
-      }
-    },
     revealFromRightWithDelay (delay) {
       return {
         distance: '100%',
@@ -64,12 +83,24 @@ export default {
 
 <style scoped lang="scss">
 
-.second-row {
-  background: #eaf3fa;
+.extern-logos-row {
+  background: #21587f;
+}
+
+.main-container {
+  height: 100%;
+  width: 100%;
+}
+
+.markdown-class {
+  font-family: Avenir, Helvetica, Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-align: center;
+  color: #2c3e50;
 }
 
 .hero-row {
-  display: flex;
   background-color: #e8f9fd;
 }
 
@@ -79,9 +110,9 @@ export default {
 
 .logo-col {
   position: relative;
+  margin: 0 auto;
   align-items: center;
   justify-content: center;
-  margin: 0 auto;
 }
 
 .dehub-text {
@@ -89,10 +120,15 @@ export default {
   font-weight: 200;
 }
 
+.introduction-container {
+  min-height: 60%;
+  max-width: 80%;
+  justify-content: center;
+}
+
 .introduction-text {
-  margin-top: 10vh;
   font-size: 4rem;
-  font-weight: 300;
+  font-weight: 250;
 }
 
 .bg-symbol-1 {
