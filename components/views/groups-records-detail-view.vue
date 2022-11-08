@@ -18,6 +18,7 @@
   </div>
   <div v-else>
     <GroupRecordDialog
+      v-if="dialog"
       :show="dialog"
       :urn="urn"
       :namespace-urn="element.identification.namespaceUrn"
@@ -187,7 +188,7 @@
       class="d-block mr-0 ml-auto"
       color="primary"
       rounded
-      @click="$root.$emit('changeActiveElement', urn)"
+      @click="$store.commit('changeActiveTreeItemUrn', urn)"
     >
       {{ $t('global.button.showInTreeView') }}
       <v-icon dark>
@@ -333,9 +334,9 @@ export default {
       if (confirm(this.$i18n.t('global.itemDialog.deleteItemTitle').toString())) {
         await this.$axios.$delete(this.ajax.elementUrl + this.urn)
           .then(function (res) {
-            this.$emit('delete', {
-              urn: this.urn
-            })
+            if (res !== undefined) {
+              this.$root.$emit('updateTreeView')
+            }
           }.bind(this))
           .catch(function (err) {
             this.$emit('deleteFailure', err.response)

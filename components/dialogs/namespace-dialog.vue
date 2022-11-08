@@ -262,15 +262,11 @@ export default {
           await this.$axios.post(this.ajax.namespaceUrl,
             this.namespace)
             .then(function (res) {
-              this.$axios.$get(res.headers.location)
-                .then(function (res1) {
-                  this.namespace.identification.urn = res1.identification.urn
-                  this.namespace.parentUrn = ''
-                  this.namespace.action = 'CREATE'
-                  this.$root.$emit('updateTreeView', this.namespace)
-                  this.$emit('saveSuccess', this.namespace)
-                  this.hideDialog()
-                }.bind(this))
+              if (res !== undefined) {
+                this.$root.$emit('updateTreeView')
+                this.$emit('saveSuccess', this.namespace)
+                this.hideDialog()
+              }
             }.bind(this))
             .catch(function (err) {
               this.$log.debug('Could not save Namespace: ' + err)
@@ -280,16 +276,11 @@ export default {
           await this.$axios.put(this.ajax.namespaceUrl + this.namespace.identification.identifier,
             this.namespace)
             .then(function (res) {
-              this.$axios.$get(res.headers.location)
-                .then(function (res1) {
-                  this.namespace.previousUrn = this.namespace.identification.urn
-                  this.namespace.identification.urn = res1.identification.urn
-                  this.namespace.parentUrn = ''
-                  this.namespace.action = 'UPDATE'
-                  this.$root.$emit('updateTreeView', this.namespace)
-                  this.$emit('saveSuccess', this.namespace)
-                  this.hideDialog()
-                }.bind(this))
+              if (res !== undefined) {
+                this.$root.$emit('updateTreeView')
+                this.$emit('saveSuccess', this.namespace)
+                this.hideDialog()
+              }
             }.bind(this))
             .catch(function (err) {
               this.$log.debug('Could not save Namespace: ' + err)

@@ -35,7 +35,9 @@ export default {
     },
     alerts: {
       warning: 'WARNUNG!',
-      defineLanguage: 'Bevorzugte Sprache ist nicht definiert.'
+      defineLanguage: 'Bevorzugte Sprache ist nicht definiert.',
+      outdatedMembers: 'Dieses Element enthält outdated members.',
+      outdatedElement: 'Dieses Element ist outdated.'
     },
     button: {
       save: 'Speichern',

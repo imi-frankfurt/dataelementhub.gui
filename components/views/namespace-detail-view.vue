@@ -17,6 +17,7 @@
   </div>
   <div v-else>
     <namespace-dialog
+      v-if="dialog"
       :id="namespaceIdentifier"
       :show="dialog"
       @save="$emit('save', $event); fetchNamespaceDetails()"
@@ -166,9 +167,9 @@ export default {
       if (confirm(this.$i18n.t('global.itemDialog.deleteItemTitle').toString())) {
         await this.$axios.$delete(this.ajax.namespaceUrl + this.namespaceIdentifier)
           .then(function (res) {
-            this.$emit('delete', {
-              urn: this.urn
-            })
+            if (res !== undefined) {
+              this.$root.$emit('updateTreeView')
+            }
           }.bind(this))
           .catch(function (err) {
             this.$emit('deleteFailure', {

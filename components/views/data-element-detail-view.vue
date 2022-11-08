@@ -18,6 +18,7 @@
   <div v-else>
     <div v-if="dataElement !== undefined">
       <data-element-dialog
+        v-if="dialog"
         :urn="urn"
         :show="dialog"
         @save="$emit('saveSuccess', $event); fetchDataElementDetails(); fetchElementPath()"
@@ -319,9 +320,9 @@ export default {
       if (confirm(this.$i18n.t('global.itemDialog.deleteItemTitle').toString())) {
         await this.$axios.$delete(this.ajax.dataElementUrl + this.urn)
           .then(function (res) {
-            this.$emit('delete', {
-              urn: this.urn
-            })
+            if (res !== undefined) {
+              this.$root.$emit('updateTreeView')
+            }
           }.bind(this))
           .catch(function (err) {
             this.$emit('deleteFailure', err.response)

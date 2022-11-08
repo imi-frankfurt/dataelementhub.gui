@@ -200,8 +200,8 @@ import Common from '~/assets/js/common'
 import ItemDefinition from '~/components/item/item-definition'
 import ItemSlot from '~/components/item/item-slot'
 import Members from '~/components/common/members'
-import CheckUnreleasedMembers from '~/components/dialogs/check-unreleased-members'
 import MembersTable from '~/components/tables/members-table'
+import CheckUnreleasedMembers from '~/components/dialogs/check-unreleased-members'
 export default {
   components: {
     CheckUnreleasedMembers,
@@ -341,15 +341,11 @@ export default {
           await this.$axios.post(this.ajax.elementUrl,
             this.element)
             .then(function (res) {
-              this.$axios.$get(res.headers.location)
-                .then(function (res1) {
-                  this.element.identification.urn = res1.identification.urn
-                  this.element.parentUrn = ''
-                  this.element.action = 'CREATE'
-                  this.$root.$emit('updateTreeView', this.element)
-                  this.$emit('saveSuccess', this.element)
-                  this.hideDialog()
-                }.bind(this))
+              if (res !== undefined) {
+                this.$root.$emit('updateTreeView')
+                this.$emit('saveSuccess', this.element)
+                this.hideDialog()
+              }
             }.bind(this))
             .catch(function (err) {
               this.$log.debug('Could not save Element: ' + err)
@@ -359,15 +355,13 @@ export default {
           await this.$axios.put(this.ajax.elementUrl + this.element.identification.urn,
             this.element)
             .then(function (res) {
-              this.$axios.$get(res.headers.location)
-                .then(function (res1) {
-                  this.element.identification.urn = res1.identification.urn
-                  this.element.previousUrn = this.urn
-                  this.element.action = 'UPDATE'
-                  this.$root.$emit('updateTreeView', this.element)
-                  this.$emit('saveSuccess', this.element)
-                  this.hideDialog()
-                }.bind(this))
+              if (res !== undefined) {
+                console.log('res')
+                console.log(res)
+                this.$root.$emit('updateTreeView')
+                this.$emit('saveSuccess', this.element)
+                this.hideDialog()
+              }
             }.bind(this))
             .catch(function (err) {
               this.$log.debug('Could not save Element: ' + err)
