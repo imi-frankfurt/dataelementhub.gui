@@ -57,7 +57,7 @@ export default {
     public: 'PUBLIC',
     private: 'PRIVATE',
     hidden: 'HIDDEN',
-    imi: 'Institute for Medical Informatics',
+    imi: 'Institute for Medical Informatics Frankfurt',
     login: 'LOG IN',
     addItem: 'ADD ITEM',
     dragAndDrop: 'simply drag and drop',

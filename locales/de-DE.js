@@ -56,7 +56,7 @@ export default {
     path: 'Pfad',
     paths: 'Pfade',
     private: 'PRIVAT',
-    imi: 'Institut für Medizininformatik',
+    imi: 'Institut für Medizininformatik Frankfurt',
     dragAndDrop: 'einfach ziehen und ablegen',
     metaData: 'Meta Daten',
     status: 'Status',
