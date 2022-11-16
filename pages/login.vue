@@ -112,7 +112,7 @@ export default {
 <style scoped lang="scss">
 
 .extern-logos-row {
-  background: #21587f;
+  background: #e8f9fd;
 }
 
 .main-container {
