@@ -1,7 +1,12 @@
 import fs from 'fs'
 import colors from 'vuetify/es5/util/colors'
 
-const allExternalLogos = fs.readdirSync('assets/images/logo/extern')
+let allExternalLogos
+if (fs.existsSync('assets/images/logo/extern')) {
+  allExternalLogos = fs.readdirSync('assets/images/logo/extern')
+} else {
+  allExternalLogos = []
+}
 
 export default {
   env: {
