@@ -384,7 +384,7 @@ export default {
               mdi-chevron-right
             </v-icon>
           </div>
-          <div v-else class="node-container-child" :style="{'padding-left': `${depth*20}px`}">
+          <div v-else class="node-container-child" :style="{'padding-left': `26px`}">
             <v-icon />
           </div>
           <div class="designation node-container-child" @click="activateNode(element)">
