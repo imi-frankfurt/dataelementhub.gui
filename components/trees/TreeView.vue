@@ -158,42 +158,34 @@ export default {
             this.treeItems = members
           }.bind(this))
       } else {
-        await this.$axios.$get(this.ajax.elementUrl + this.parentElement.urn)
-          .then(function (res) {
-            let parentElementUrn
-            if (res.identification.status.toUpperCase() === 'OUTDATED') {
-              parentElementUrn = this.getNextUrnRevision(this.parentElement.urn)
-            } else {
-              parentElementUrn = this.parentElement.urn
+        const parentElementUrn = this.parentElement.urn
+        this.$log.debug('Update treeItems ' + parentElementUrn)
+        this.$axios.$get(this.ajax.elementUrl + parentElementUrn + '/members', Ajax.header.listView)
+          .then(function (res1) {
+            const resMembers = Array.from(res1)
+            const members = []
+            for (let i = 0; i < resMembers.length; i++) {
+              const member = resMembers[i]
+              const type = member.urn.split(':')[2].toUpperCase()
+              const urn = member.urn
+              const previousItem = this.treeItems.filter(item => this.ignoreUrnRevision(item.urn) === this.ignoreUrnRevision(urn))[0]
+              const newMember = {
+                id: this.generateItemId(),
+                parentUrn: parentElementUrn,
+                namespaceUrn: this.parentElement.namespaceUrn,
+                urn,
+                editable: this.parentElement.editable,
+                isPreferredLanguage: Ajax.preferredLanguage.includes(member.definitions[0].language),
+                designation: member.definitions[0].designation,
+                type,
+                expanded: previousItem ? previousItem.expanded : false,
+                children: previousItem ? previousItem.children : [],
+                elementStatus: member.status
+              }
+              newMember.warnings = this.checkWarnings(newMember)
+              members.push(newMember)
             }
-            this.$log.debug('Update treeItems ' + parentElementUrn)
-            this.$axios.$get(this.ajax.elementUrl + parentElementUrn + '/members', Ajax.header.listView)
-              .then(function (res1) {
-                const resMembers = Array.from(res1)
-                const members = []
-                for (let i = 0; i < resMembers.length; i++) {
-                  const member = resMembers[i]
-                  const type = member.urn.split(':')[2].toUpperCase()
-                  const urn = member.urn
-                  const previousItem = this.treeItems.filter(item => this.ignoreUrnRevision(item.urn) === this.ignoreUrnRevision(urn))[0]
-                  const newMember = {
-                    id: this.generateItemId(),
-                    parentUrn: parentElementUrn,
-                    namespaceUrn: this.parentElement.namespaceUrn,
-                    urn,
-                    editable: this.parentElement.editable,
-                    isPreferredLanguage: Ajax.preferredLanguage.includes(member.definitions[0].language),
-                    designation: member.definitions[0].designation,
-                    type,
-                    expanded: previousItem ? previousItem.expanded : false,
-                    children: previousItem ? previousItem.children : [],
-                    elementStatus: member.status
-                  }
-                  newMember.warnings = this.checkWarnings(newMember)
-                  members.push(newMember)
-                }
-                this.refreshTreeItems(members, parentElementUrn)
-              }.bind(this))
+            this.refreshTreeItems(members, parentElementUrn)
           }.bind(this))
       }
     },
