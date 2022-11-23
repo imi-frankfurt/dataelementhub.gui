@@ -263,10 +263,9 @@ export default {
     activateNode (node) {
       this.$log.debug('Activate Node ' + node.urn)
       if (this.$store.getters.getActiveTreeItemUrn !== node.urn) {
-        this.$store.commit('changeActiveTreeItemUrn', node.urn)
-        this.$root.$emit('changeActiveElement', node)
+        this.$store.commit('changeActiveTreeViewNode', { ...node })
       } else {
-        this.$store.commit('changeActiveTreeItemUrn', '')
+        this.$store.commit('changeActiveTreeViewNode', '')
       }
     },
     containsOutdatedMembers (element) {

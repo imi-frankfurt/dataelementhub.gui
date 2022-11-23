@@ -90,7 +90,7 @@
       class="d-block mr-0 ml-auto"
       color="primary"
       rounded
-      @click="$root.$emit('changeActiveElement', urn)"
+      @click="$store.commit('changeActiveTreeViewNode', { ...getNodeFromElement } )"
     >
       {{ $t('global.button.showInTreeView') }}
       <v-icon dark>
@@ -135,6 +135,23 @@ export default {
       dialog: false
     }
   },
+  computed: {
+    getNodeFromElement () {
+      return {
+        id: this.generateItemId(),
+        parentUrn: '',
+        namespaceUrn: this.namespace.identification.namespaceUrn,
+        urn: this.namespace.identification.urn,
+        editable: this.editable,
+        isPreferredLanguage: Ajax.preferredLanguage.includes(this.namespace.definitions[0].language),
+        designation: this.namespace.definitions[0].designation,
+        type: this.namespace.identification.elementType,
+        elementStatus: this.namespace.identification.status,
+        expanded: false,
+        children: []
+      }
+    }
+  },
   watch: {
     urn (n) {
       this.fetchingNamespace = true
@@ -148,6 +165,10 @@ export default {
     this.fetchNamespaceDetails()
   },
   methods: {
+    generateItemId () {
+      this.$store.commit('generateItemId')
+      return this.$store.getters.getItemId
+    },
     async fetchNamespaceDetails () {
       await this.$axios.$get(this.ajax.namespaceUrl + this.namespaceIdentifier,
         Ajax.header.ignoreLanguage)

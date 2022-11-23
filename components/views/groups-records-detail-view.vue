@@ -10,8 +10,7 @@
             :size="400"
             color="primary"
             indeterminate
-          >
-          </v-progress-circular>
+          />
         </v-col>
       </v-row>
     </v-container>
@@ -188,7 +187,7 @@
       class="d-block mr-0 ml-auto"
       color="primary"
       rounded
-      @click="$store.commit('changeActiveTreeItemUrn', urn)"
+      @click="$store.commit('changeActiveTreeViewNode', { ...getNodeFromElement })"
     >
       {{ $t('global.button.showInTreeView') }}
       <v-icon dark>
@@ -250,6 +249,21 @@ export default {
   computed: {
     elementType () {
       return Common.findElementType(this.urn)
+    },
+    getNodeFromElement () {
+      return {
+        id: this.generateItemId(),
+        parentUrn: this.parentUrn,
+        namespaceUrn: this.element.identification.namespaceUrn,
+        urn: this.element.identification.urn,
+        editable: this.editable,
+        isPreferredLanguage: Ajax.preferredLanguage.includes(this.element.definitions[0].language),
+        designation: this.element.definitions[0].designation,
+        type: this.element.identification.elementType,
+        elementStatus: this.element.identification.status,
+        expanded: false,
+        children: []
+      }
     }
   },
   watch: {
@@ -270,6 +284,10 @@ export default {
     this.fetchElementPath()
   },
   methods: {
+    generateItemId () {
+      this.$store.commit('generateItemId')
+      return this.$store.getters.getItemId
+    },
     getLeftButtonClass () {
       return {
         'left-button-marked': this.selectedElementPathType === 'DESIGNATION',

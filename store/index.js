@@ -1,6 +1,6 @@
 export const state = () => ({
   treeItemId: -1,
-  activeTreeItemUrn: ''
+  activeTreeViewNode: ''
 })
 
 export const getters = {
@@ -8,13 +8,16 @@ export const getters = {
     return state.treeItemId
   },
   getActiveTreeItemUrn (state) {
-    return state.activeTreeItemUrn
+    return state.activeTreeViewNode.urn
+  },
+  getActiveTreeViewNode (state) {
+    return state.activeTreeViewNode
   }
 }
 
 export const mutations = {
-  changeActiveTreeItemUrn (state, urn) {
-    state.activeTreeItemUrn = urn
+  changeActiveTreeViewNode (state, node) {
+    state.activeTreeViewNode = node
   },
   generateItemId (state) {
     state.treeItemId = state.treeItemId + 1

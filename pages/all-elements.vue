@@ -174,10 +174,10 @@ export default {
       return this.$auth.loggedIn
     }
   },
-  mounted () {
-    this.$root.$on('changeActiveElement', (node) => {
-      this.fetchElement(node)
-    })
+  watch: {
+    '$store.state.activeTreeViewNode' () {
+      this.fetchElement({ ...this.$store.getters.getActiveTreeViewNode })
+    }
   },
   methods: {
     /*

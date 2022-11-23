@@ -173,7 +173,7 @@
         class="d-block mr-0 ml-auto"
         color="primary"
         rounded
-        @click="dialog.elementType = 'NAMESPACE'; dialog.showNamespace = true"
+        @click="$store.commit('changeActiveTreeViewNode', { ...getNodeFromElement })"
       >
         {{ $t('global.button.showInTreeView') }}
         <v-icon dark>
@@ -262,6 +262,23 @@ export default {
       selectedElementPathType: 'DESIGNATION'
     }
   },
+  computed: {
+    getNodeFromElement () {
+      return {
+        id: this.generateItemId(),
+        parentUrn: this.parentUrn,
+        namespaceUrn: this.dataElement.identification.namespaceUrn,
+        urn: this.dataElement.identification.urn,
+        editable: this.editable,
+        isPreferredLanguage: Ajax.preferredLanguage.includes(this.dataElement.definitions[0].language),
+        designation: this.dataElement.definitions[0].designation,
+        type: this.dataElement.identification.elementType,
+        elementStatus: this.dataElement.identification.status,
+        expanded: false,
+        children: []
+      }
+    }
+  },
   watch: {
     allElementPaths () {
       this.allElementPathsAsString = this.getElementPathsAsStrings(this.selectedElementPathType)
@@ -281,6 +298,10 @@ export default {
     this.fetchElementPath()
   },
   methods: {
+    generateItemId () {
+      this.$store.commit('generateItemId')
+      return this.$store.getters.getItemId
+    },
     getLeftButtonClass () {
       return {
         'left-button-marked': this.selectedElementPathType === 'DESIGNATION',
