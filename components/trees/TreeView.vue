@@ -65,7 +65,7 @@ export default {
       const newChildren = event.newChildren
       for (let i = 0; i < this.treeItems.length; i++) {
         if (this.treeItems[i].urn.toUpperCase() === element.urn.toUpperCase()) {
-          const parentElement = this.treeItems[i]
+          const parentElement = { ...this.treeItems[i] }
           parentElement.children = newChildren
           this.treeItems[i].warnings = this.checkWarnings(parentElement)
           break
@@ -83,10 +83,6 @@ export default {
     },
     ignoreUrnRevision (urn) {
       return urn.substring(0, urn.lastIndexOf(':') + 1)
-    },
-    getNextUrnRevision (urn) {
-      const currentVersion = urn.split(':').pop()
-      return urn.substring(0, urn.lastIndexOf(':') + 1) + (parseInt(currentVersion) + 1)
     },
     async updateTreeItems () {
       if (this.depth === 0) {
