@@ -140,6 +140,9 @@ export default {
     */
     async fetchElement (node) {
       const urn = node.urn
+      if (urn === '') {
+        return
+      }
       await this.$axios.$get(!Common.isNamespace(urn)
         ? this.ajax.elementUrl + urn
         : this.ajax.namespaceUrl + urn.split(':')[1],

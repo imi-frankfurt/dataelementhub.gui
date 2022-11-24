@@ -333,6 +333,7 @@ export default {
       await this.$axios.post(this.ajax.elementUrl + this.urn + '/updateMembers')
         .then(function (res) {
           this.$root.$emit('showSaveSuccessSnackbar')
+          this.$root.$emit('updateTreeView')
         }.bind(this))
         .catch(function (err) {
           this.$log.debug('Could not update Members: ' + err)
@@ -348,6 +349,7 @@ export default {
           .then(function (res) {
             if (res !== undefined) {
               this.$root.$emit('showDeleteSuccessSnackbar')
+              this.$root.$emit('updateTreeView')
             }
           }.bind(this))
           .catch(function (err) {

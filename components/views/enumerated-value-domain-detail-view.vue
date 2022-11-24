@@ -264,6 +264,7 @@ export default {
         await this.$axios.$delete(this.ajax.valueDomainUrl + this.urn)
           .then(function (res) {
             this.$root.$emit('showDeleteSuccessSnackbar')
+            this.$root.$emit('updateTreeView')
           }.bind(this))
           .catch(function (err) {
             this.$root.$emit('handleDeleteFailure', err.response)

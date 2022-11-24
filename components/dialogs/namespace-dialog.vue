@@ -264,6 +264,7 @@ export default {
             .then(function (res) {
               if (res !== undefined) {
                 this.$root.$emit('showSaveSuccessSnackbar')
+                this.$root.$emit('updateTreeView')
                 this.hideDialog()
               }
             }.bind(this))
@@ -277,6 +278,7 @@ export default {
             .then(function (res) {
               if (res !== undefined) {
                 this.$root.$emit('showSaveSuccessSnackbar')
+                this.$root.$emit('updateTreeView')
                 this.hideDialog()
               }
             }.bind(this))

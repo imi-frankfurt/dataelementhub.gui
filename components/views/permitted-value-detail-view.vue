@@ -118,6 +118,7 @@ export default {
           .then(function (res) {
             if (res !== undefined) {
               this.$root.$emit('showDeleteSuccessSnackbar')
+              this.$root.$emit('updateTreeView')
             }
           }.bind(this))
           .catch(function (err) {

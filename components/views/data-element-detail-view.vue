@@ -21,7 +21,7 @@
         v-if="dialog"
         :urn="urn"
         :show="dialog"
-        @dialogClosed="dialog = false"
+        @dialogClosed="dialog = false; fetchDataElementDetails(); fetchElementPath()"
       />
       <v-card
         v-if="!hidePath"
@@ -341,6 +341,7 @@ export default {
           .then(function (res) {
             if (res !== undefined) {
               this.$root.$emit('showDeleteSuccessSnackbar')
+              this.$root.$emit('updateTreeView')
             }
           }.bind(this))
           .catch(function (err) {

@@ -260,7 +260,7 @@ export default {
       }
       return [...new Set(warnings)]
     },
-    activateNode (node) {
+    HandleActivateNode (node) {
       this.$log.debug('Activate Node ' + node.urn)
       if (this.$store.getters.getActiveTreeItemUrn !== node.urn) {
         this.$store.commit('changeActiveTreeViewNode', { ...node })
@@ -356,7 +356,7 @@ export default {
           <div v-else class="node-container-child" :style="{'padding-left': `26px`}">
             <v-icon />
           </div>
-          <div class="designation node-container-child" @click="activateNode(element)">
+          <div class="designation node-container-child" @click="HandleActivateNode(element)">
             <div>
               <div class="node-container-child">
                 <v-icon
