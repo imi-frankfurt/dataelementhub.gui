@@ -21,8 +21,6 @@
         v-if="dialog"
         :urn="urn"
         :show="dialog"
-        @save="$emit('saveSuccess', $event); fetchDataElementDetails(); fetchElementPath()"
-        @saveFailure="$emit('saveFailure', $event)"
         @dialogClosed="dialog = false"
       />
       <v-card
@@ -342,11 +340,11 @@ export default {
         await this.$axios.$delete(this.ajax.dataElementUrl + this.urn)
           .then(function (res) {
             if (res !== undefined) {
-              this.$root.$emit('updateTreeView')
+              this.$root.$emit('showDeleteSuccessSnackbar')
             }
           }.bind(this))
           .catch(function (err) {
-            this.$emit('deleteFailure', err.response)
+            this.$root.$emit('handleDeleteFailure', err.response)
             this.$log.debug('Could not delete this item: ' + err)
           }.bind(this))
       }

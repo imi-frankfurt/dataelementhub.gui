@@ -1,23 +1,5 @@
 <template>
   <v-container fluid class="py-0 px-0 d-flex flex-column flex-grow-1 fill-parent-height align-start">
-    <default-snackbar
-      :text="$t('global.itemDialog.snackbar.deleteFailure') + ': ' + dialog.response.data"
-      :show="snackbar.deleteFailure"
-      color="error"
-    />
-    <default-snackbar
-      :text="$t('global.itemDialog.snackbar.deleteSuccess')"
-      :show="snackbar.deleteSuccess"
-    />
-    <default-snackbar
-      :text="$t('global.itemDialog.snackbar.saveFailure') + ': ' + dialog.response.data"
-      :show="snackbar.saveFailure"
-      color="error"
-    />
-    <default-snackbar
-      :text="$t('global.itemDialog.snackbar.saveSuccess')"
-      :show="snackbar.saveSuccess"
-    />
     <v-row no-gutters class="top-row flex-grow-0 flex-shrink-0">
       <v-col cols="2" class="create-namespace-col pa-3">
         <h4 class="text-h5">
@@ -56,10 +38,6 @@
             :parent-urn="selectedElement.parentUrn"
             :editable="loggedIn && selectedElement.editable"
             :deletable="loggedIn && selectedElement.editable"
-            @save="$root.$emit('updateTreeView'); snackbar.saveSuccess = true"
-            @saveFailure="handleSaveFailure($event)"
-            @delete="$root.$emit('updateTreeView') ; snackbar.deleteSuccess = true"
-            @deleteFailure="handleDeleteFailure ($event)"
           />
           <GroupsRecordsDetailView
             v-if="showDetailedView && selectedElement.identification.elementType === 'DATAELEMENTGROUP'
@@ -68,21 +46,12 @@
             :parent-urn="selectedElement.parentUrn"
             :editable="loggedIn && selectedElement.editable"
             :deletable="loggedIn && selectedElement.editable"
-            @save="snackbar.saveSuccess = true"
-            @saveFailure="handleSaveFailure($event)"
-            @reloadMembers="$root.$emit('updateTreeView')"
-            @delete="$root.$emit('updateTreeView') ; snackbar.deleteSuccess = true"
-            @deleteFailure="handleDeleteFailure ($event)"
           />
           <NamespaceDetailView
             v-if="showDetailedView && selectedElement.identification.elementType === 'NAMESPACE'"
             :urn="selectedElement.identification.urn"
             :editable="loggedIn && selectedElement.editable"
             :deletable="loggedIn && selectedElement.editable"
-            @save="$root.$emit('updateTreeView'); snackbar.saveSuccess = true"
-            @saveFailure="handleSaveFailure($event)"
-            @delete="$root.$emit('updateTreeView'); snackbar.deleteSuccess = true"
-            @deleteFailure="handleDeleteFailure ($event)"
           />
         </div>
       </v-col>
@@ -93,16 +62,12 @@
           v-if="dialog.elementType === 'NAMESPACE'"
           :id="0"
           :show="dialog.showNamespace"
-          @save="$root.$emit('updateTreeView'); showSaveSuccessSnackbar()"
-          @saveFailure="handleSaveFailure($event)"
           @dialogClosed="dialog.showNamespace = false"
         />
         <DataElementDialog
           v-if="dialog.elementType === 'DATAELEMENT'"
           :show="dialog.showDataElement"
           :namespace-urn="dialog.namespaceUrn"
-          @save="$root.$emit('updateTreeView'); showSaveSuccessSnackbar()"
-          @saveFailure="handleSaveFailure($event)"
           @dialogClosed="dialog.showDataElement = false"
         />
         <GroupRecordDialog
@@ -110,8 +75,6 @@
           :show="dialog.showDataElementGroup"
           :namespace-urn="dialog.namespaceUrn"
           :element-type="dialog.elementType"
-          @save="$root.$emit('updateTreeView'); showSaveSuccessSnackbar()"
-          @saveFailure="handleSaveFailure($event)"
           @dialogClosed="dialog.showDataElementGroup = false"
         />
       </v-col>
@@ -126,7 +89,6 @@ import GroupRecordDialog from '~/components/dialogs/group-record-dialog'
 import DataElementDetailView from '~/components/views/data-element-detail-view.vue'
 import GroupsRecordsDetailView from '~/components/views/groups-records-detail-view'
 import NamespaceDetailView from '~/components/views/namespace-detail-view.vue'
-import DefaultSnackbar from '~/components/snackbars/default-snackbar'
 import TreeView from '~/components/trees/TreeView'
 import Common from '~/assets/js/common'
 
@@ -139,8 +101,7 @@ export default {
     GroupRecordDialog,
     DataElementDetailView,
     NamespaceDetailView,
-    GroupsRecordsDetailView,
-    DefaultSnackbar
+    GroupsRecordsDetailView
   },
   data: () => ({
     ajax: {
@@ -156,12 +117,6 @@ export default {
       namespaceUrn: '',
       parentUrn: '',
       response: {}
-    },
-    snackbar: {
-      deleteFailure: false,
-      deleteSuccess: false,
-      saveFailure: false,
-      saveSuccess: false
     },
     selectedElement: null,
     valueDomainIsFetching: true
@@ -210,28 +165,6 @@ export default {
             this.valueDomainIsFetching = false
           }
         }.bind(this))
-    },
-    async showSaveSuccessSnackbar () {
-      this.snackbar.saveSuccess = true
-      await new Promise(resolve => setTimeout(resolve, 2000))
-      this.snackbar.saveSuccess = false
-    },
-    async showDeleteSuccessSnackbar () {
-      this.snackbar.deleteSuccess = true
-      await new Promise(resolve => setTimeout(resolve, 2000))
-      this.snackbar.deleteSuccess = false
-    },
-    async handleSaveFailure (response) {
-      this.dialog.response = response
-      this.snackbar.saveFailure = true
-      await new Promise(resolve => setTimeout(resolve, 3500))
-      this.snackbar.saveFailure = false
-    },
-    async handleDeleteFailure (response) {
-      this.dialog.response = response
-      this.snackbar.deleteFailure = true
-      await new Promise(resolve => setTimeout(resolve, 3500))
-      this.snackbar.deleteFailure = false
     }
   }
 }

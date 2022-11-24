@@ -20,8 +20,6 @@
       v-if="dialog"
       :id="namespaceIdentifier"
       :show="dialog"
-      @save="$emit('save', $event); fetchNamespaceDetails()"
-      @saveFailure="$emit('saveFailure', $event)"
       @dialogClosed="dialog = false"
     />
     <v-card
@@ -189,13 +187,11 @@ export default {
         await this.$axios.$delete(this.ajax.namespaceUrl + this.namespaceIdentifier)
           .then(function (res) {
             if (res !== undefined) {
-              this.$root.$emit('updateTreeView')
+              this.$root.$emit('showDeleteSuccessSnackbar')
             }
           }.bind(this))
           .catch(function (err) {
-            this.$emit('deleteFailure', {
-              urn: this.urn
-            })
+            this.$root.$emit('handleDeleteFailure', err.response)
             this.$log.debug('Could not delete this item: ' + err)
           }.bind(this))
       }

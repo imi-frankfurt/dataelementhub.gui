@@ -22,8 +22,7 @@
       :urn="urn"
       :namespace-urn="element.identification.namespaceUrn"
       :element-type="elementType"
-      @save="saveElement($event)"
-      @saveFailure="$emit('saveFailure', $event)"
+      @save="saveElement()"
       @dialogClosed="dialog = false"
     />
     <v-card
@@ -333,16 +332,11 @@ export default {
     async updateMembers () {
       await this.$axios.post(this.ajax.elementUrl + this.urn + '/updateMembers')
         .then(function (res) {
-          this.$axios.$get(res.headers.location)
-            .then(function (res1) {
-              this.element = res1
-              this.element.previousUrn = this.urn
-              this.element.action = 'UPDATE'
-              this.$emit('reloadMembers', this.element)
-            }.bind(this))
+          this.$root.$emit('showSaveSuccessSnackbar')
         }.bind(this))
         .catch(function (err) {
           this.$log.debug('Could not update Members: ' + err)
+          this.$root.$emit('handleSaveFailure', err.response)
         }.bind(this))
     },
     editItem () {
@@ -353,11 +347,11 @@ export default {
         await this.$axios.$delete(this.ajax.elementUrl + this.urn)
           .then(function (res) {
             if (res !== undefined) {
-              this.$root.$emit('updateTreeView')
+              this.$root.$emit('showDeleteSuccessSnackbar')
             }
           }.bind(this))
           .catch(function (err) {
-            this.$emit('deleteFailure', err.response)
+            this.$root.$emit('handleDeleteFailure', err.response)
             this.$log.debug('Could not delete this item: ' + err)
           }.bind(this))
       }
@@ -394,8 +388,7 @@ export default {
       }
       this.detailViewDialog.show = true
     },
-    saveElement (element) {
-      this.$emit('saveSuccess', element)
+    saveElement () {
       this.loadDetails()
       this.fetchElementPath()
     }

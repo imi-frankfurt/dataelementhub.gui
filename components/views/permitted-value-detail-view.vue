@@ -33,7 +33,9 @@
       </v-card>
       <meta-data :data="permittedValue.identification" />
       <v-list>
-        <v-subheader v-if="permittedValue.value">{{ $t('global.value') }}: {{ permittedValue.value }}</v-subheader>
+        <v-subheader v-if="permittedValue.value">
+          {{ $t('global.value') }}: {{ permittedValue.value }}
+        </v-subheader>
         <v-subheader> {{ $t('global.definitions') }} </v-subheader>
         <v-list-item>
           <v-list-item-content>
@@ -114,14 +116,12 @@ export default {
       if (confirm(this.$i18n.t('global.itemDialog.deleteItemTitle').toString())) {
         await this.$axios.$delete(this.ajax.permittedValueUrl + this.urn)
           .then(function (res) {
-            this.$emit('delete', {
-              urn: this.urn
-            })
+            if (res !== undefined) {
+              this.$root.$emit('showDeleteSuccessSnackbar')
+            }
           }.bind(this))
           .catch(function (err) {
-            this.$emit('deleteFailure', {
-              urn: this.urn
-            })
+            this.$root.$emit('handleDeleteFailure', err.response)
             this.$log.debug('Could not delete this item: ' + err)
           }.bind(this))
       }

@@ -321,28 +321,6 @@ export default {
           return element
         }.bind(this))
       return element
-    },
-    async showSaveSuccessSnackbar () {
-      this.snackbar.saveSuccess = true
-      await new Promise(resolve => setTimeout(resolve, 2000))
-      this.snackbar.saveSuccess = false
-    },
-    async showDeleteSuccessSnackbar () {
-      this.snackbar.deleteSuccess = true
-      await new Promise(resolve => setTimeout(resolve, 2000))
-      this.snackbar.deleteSuccess = false
-    },
-    async handleSaveFailure (response) {
-      this.dialog.response = response
-      this.snackbar.saveFailure = true
-      await new Promise(resolve => setTimeout(resolve, 3500))
-      this.snackbar.saveFailure = false
-    },
-    async handleDeleteFailure (response) {
-      this.dialog.response = response
-      this.snackbar.deleteFailure = true
-      await new Promise(resolve => setTimeout(resolve, 3500))
-      this.snackbar.deleteFailure = false
     }
   }
 }
@@ -467,16 +445,14 @@ export default {
         v-if="dialog.type === 'NAMESPACE'"
         :id="0"
         :show="dialog.showNamespace"
-        @save="updateTreeItems(); showSaveSuccessSnackbar()"
-        @saveFailure="handleSaveFailure($event)"
+        @save="updateTreeItems()"
         @dialogClosed="dialog.showNamespace = false"
       />
       <DialogsDataElementDialog
         v-if="dialog.type === 'DATAELEMENT'"
         :show="dialog.showDataElement"
         :namespace-urn="dialog.namespaceUrn"
-        @save="updateTreeItems(); showSaveSuccessSnackbar()"
-        @saveFailure="handleSaveFailure($event)"
+        @save="updateTreeItems()"
         @dialogClosed="dialog.showDataElement = false"
       />
       <DialogsGroupRecordDialog
@@ -484,8 +460,7 @@ export default {
         :show="dialog.showDataElementGroup"
         :namespace-urn="dialog.namespaceUrn"
         :element-type="dialog.type"
-        @save="updateTreeItems(); showSaveSuccessSnackbar()"
-        @saveFailure="handleSaveFailure($event)"
+        @save="updateTreeItems()"
         @dialogClosed="dialog.showDataElementGroup = false"
       />
     </div>

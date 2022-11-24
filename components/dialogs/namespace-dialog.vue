@@ -263,28 +263,26 @@ export default {
             this.namespace)
             .then(function (res) {
               if (res !== undefined) {
-                this.$root.$emit('updateTreeView')
-                this.$emit('saveSuccess', this.namespace)
+                this.$root.$emit('showSaveSuccessSnackbar')
                 this.hideDialog()
               }
             }.bind(this))
             .catch(function (err) {
               this.$log.debug('Could not save Namespace: ' + err)
-              this.$emit('saveFailure', err.response)
+              this.$root.$emit('handleSaveFailure', err.response)
             }.bind(this))
         } else { // ... otherwise we update it.
           await this.$axios.put(this.ajax.namespaceUrl + this.namespace.identification.identifier,
             this.namespace)
             .then(function (res) {
               if (res !== undefined) {
-                this.$root.$emit('updateTreeView')
-                this.$emit('saveSuccess', this.namespace)
+                this.$root.$emit('showSaveSuccessSnackbar')
                 this.hideDialog()
               }
             }.bind(this))
             .catch(function (err) {
               this.$log.debug('Could not save Namespace: ' + err)
-              this.$emit('saveFailure', err.response)
+              this.$root.$emit('handleSaveFailure', err.response)
             }.bind(this))
         }
       }

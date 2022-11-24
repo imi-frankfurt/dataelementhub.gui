@@ -515,14 +515,13 @@ export default {
           await this.$axios.post(this.ajax.dataElementUrl, element)
             .then(function (res) {
               if (res !== undefined) {
-                this.$root.$emit('updateTreeView', element)
-                this.$emit('saveSuccess', element)
+                this.$root.$emit('showSaveSuccessSnackbar')
                 this.hideDialog()
               }
             }.bind(this))
             .catch(function (err) {
               this.$log.debug('Could not save DataElement: ' + err)
-              this.$emit('saveFailure', err.response)
+              this.$root.$emit('handleSaveFailure', err.response)
             }.bind(this))
         } else { // ... otherwise we update it.
           delete this.dataElement.valueDomain // Remove this for current release
@@ -530,14 +529,13 @@ export default {
             this.dataElement)
             .then(function (res) {
               if (res !== undefined) {
-                this.$root.$emit('updateTreeView', this.dataElement)
-                this.$emit('saveSuccess', this.dataElement)
+                this.$root.$emit('showSaveSuccessSnackbar')
                 this.hideDialog()
               }
             }.bind(this))
             .catch(function (err) {
               this.$log.debug('Could not save DataElement: ' + err)
-              this.$emit('saveFailure', err.response)
+              this.$root.$emit('handleSaveFailure', err.response)
             }.bind(this))
         }
       }

@@ -342,30 +342,26 @@ export default {
             this.element)
             .then(function (res) {
               if (res !== undefined) {
-                this.$root.$emit('updateTreeView')
-                this.$emit('saveSuccess', this.element)
+                this.$root.$emit('showSaveSuccessSnackbar')
                 this.hideDialog()
               }
             }.bind(this))
             .catch(function (err) {
               this.$log.debug('Could not save Element: ' + err)
-              this.$emit('saveFailure', err.response)
+              this.$root.$emit('handleSaveFailure', err.response)
             }.bind(this))
         } else { // ... otherwise we update it.
           await this.$axios.put(this.ajax.elementUrl + this.element.identification.urn,
             this.element)
             .then(function (res) {
               if (res !== undefined) {
-                console.log('res')
-                console.log(res)
-                this.$root.$emit('updateTreeView')
-                this.$emit('saveSuccess', this.element)
+                this.$root.$emit('showSaveSuccessSnackbar')
                 this.hideDialog()
               }
             }.bind(this))
             .catch(function (err) {
               this.$log.debug('Could not save Element: ' + err)
-              this.$emit('saveFailure', err.response)
+              this.$root.$emit('handleSaveFailure', err.response)
             }.bind(this))
         }
       }
