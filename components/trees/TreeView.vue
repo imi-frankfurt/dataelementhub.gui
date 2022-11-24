@@ -265,7 +265,7 @@ export default {
       if (this.$store.getters.getActiveTreeItemUrn !== node.urn) {
         this.$store.commit('changeActiveTreeViewNode', { ...node })
       } else {
-        this.$store.commit('changeActiveTreeViewNode', '')
+        this.$store.commit('deactivateCurrentActiveTreeViewNode')
       }
     },
     containsOutdatedMembers (element) {
