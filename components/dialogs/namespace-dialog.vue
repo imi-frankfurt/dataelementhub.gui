@@ -214,11 +214,15 @@ export default {
     }
   },
   watch: {
-    show (n) {
-      this.dialog = n
-      if (this.dialog && this.id > 0) {
-        this.loadNamespace(this.id)
-      }
+    show: {
+      handler () {
+        this.dialog = this.show
+        if (this.dialog && this.id > 0) {
+          this.loadNamespace(this.id)
+        }
+      },
+      deep: true,
+      immediate: true
     }
   },
   mounted () {

@@ -159,7 +159,7 @@ export default {
   },
   mounted () {
     this.$log.debug('Mounted Namespace view ...')
-    this.namespaceIdentifier = this.urn.split(':')[3]
+    this.namespaceIdentifier = parseInt(this.urn.split(':')[3])
     this.fetchNamespaceDetails()
   },
   methods: {

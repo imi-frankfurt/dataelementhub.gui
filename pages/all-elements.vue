@@ -60,7 +60,6 @@
       <v-col>
         <NamespaceDialog
           v-if="dialog.elementType === 'NAMESPACE'"
-          :id="0"
           :show="dialog.showNamespace"
           @dialogClosed="dialog.showNamespace = false"
         />

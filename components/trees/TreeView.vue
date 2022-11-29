@@ -36,6 +36,9 @@ export default {
   computed: {
     loggedIn () {
       return this.$auth.loggedIn
+    },
+    sortedTreeItems () {
+      return this.sortArrayByProperty([...this.treeItems], 'designation')
     }
   },
   watch: {
@@ -59,6 +62,9 @@ export default {
     }
   },
   methods: {
+    sortArrayByProperty (array, propertyName) {
+      return array.sort((a, b) => (a[propertyName] > b[propertyName]) ? 1 : ((b[propertyName] > a[propertyName]) ? -1 : 0))
+    },
     updateParentWarnings (event) {
       this.$log.debug('Update parentElement warnings.')
       const element = event.element
@@ -335,7 +341,7 @@ export default {
         {{ $t('global.addNamespaces') }}
       </h3>
     </div>
-    <div v-for="(element, index) in treeItems" :key="`${element.urn}-${index}`" class="nodes-container" :class="{ namespaceHover: depth === 0 }">
+    <div v-for="(element, index) in sortedTreeItems" :key="`${element.urn}-${index}`" class="nodes-container" :class="{ namespaceHover: depth === 0 }">
       <div
         class="node"
         :class="{ activeNode: activeElement(element) }"
@@ -439,7 +445,6 @@ export default {
     <div v-if="dialog.showDataElement || dialog.showDataElementGroup || dialog.showNamespace">
       <DialogsNamespaceDialog
         v-if="dialog.type === 'NAMESPACE'"
-        :id="0"
         :show="dialog.showNamespace"
         @save="updateTreeItems()"
         @dialogClosed="dialog.showNamespace = false"
