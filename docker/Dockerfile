@@ -12,8 +12,6 @@ ARG BACKEND_URL
 ENV BACKEND_URL=${BACKEND_URL}
 RUN mkdir -p $DIR
 WORKDIR $DIR
-RUN apt update
-RUN apt dist-upgrade -y
 COPY . $DIR
 RUN npm install && npm run build
 EXPOSE 3000
