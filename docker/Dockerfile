@@ -2,6 +2,8 @@ FROM node:16.17.0-buster-slim
 ENV DIR=/usr/src/dehub-gui
 ARG KEYCLOAK_REALM
 ENV KEYCLOAK_REALM=${KEYCLOAK_REALM}
+ARG KEYCLOAK_CLIENT_ID
+ENV KEYCLOAK_CLIENT_ID=${KEYCLOAK_CLIENT_ID}
 ARG KEYCLOAK_URL
 ENV KEYCLOAK_URL=${KEYCLOAK_URL}
 ARG BASE_URL
@@ -12,7 +14,8 @@ RUN mkdir -p $DIR
 WORKDIR $DIR
 RUN apt update
 RUN apt dist-upgrade -y
-COPY package*.json $DIR
+COPY package.json $DIR
+COPY package-lock.json $DIR
 RUN npm install
 COPY .. $DIR
 RUN npm run build
