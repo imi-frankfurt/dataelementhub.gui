@@ -1,4 +1,4 @@
-FROM node:16.17.0-alpine
+FROM node:16.17.0-alpine-slim
 ENV DIR=/usr/src/dehub-gui
 ARG KEYCLOAK_REALM
 ENV KEYCLOAK_REALM=${KEYCLOAK_REALM}
@@ -13,7 +13,6 @@ ENV BACKEND_URL=${BACKEND_URL}
 RUN mkdir -p $DIR
 WORKDIR $DIR
 COPY . $DIR
-RUN npm install -g npm@8.15.0
 RUN apk add --update python3 make g++ && rm -rf /var/cache/apk/*
 RUN npm install
 RUN npm run build
