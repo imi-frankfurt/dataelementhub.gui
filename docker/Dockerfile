@@ -13,7 +13,10 @@ ENV BACKEND_URL=${BACKEND_URL}
 RUN mkdir -p $DIR
 WORKDIR $DIR
 COPY . $DIR
-RUN npm install && npm run build
+RUN npm install -g npm@8.15.0
+RUN apk add --update python3 make g++ && rm -rf /var/cache/apk/*
+RUN npm install
+RUN npm run build
 EXPOSE 3000
 ENV NUXT_HOST=0.0.0.0
 ENV NUXT_PORT=3000
