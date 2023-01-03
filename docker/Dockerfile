@@ -1,0 +1,22 @@
+FROM node:16.17.0-buster-slim
+ENV DIR=/usr/src/dehub-gui
+ARG KEYCLOAK_REALM
+ENV KEYCLOAK_REALM=${KEYCLOAK_REALM}
+ARG KEYCLOAK_URL
+ENV KEYCLOAK_URL=${KEYCLOAK_URL}
+ARG BASE_URL
+ENV BASE_URL=${BASE_URL}
+ARG BACKEND_URL
+ENV BACKEND_URL=${BACKEND_URL}
+RUN mkdir -p $DIR
+WORKDIR $DIR
+RUN apt update
+RUN apt dist-upgrade -y
+COPY package*.json $DIR
+RUN npm install
+COPY .. $DIR
+RUN npm run build
+EXPOSE 3000
+ENV NUXT_HOST=0.0.0.0
+ENV NUXT_PORT=3000
+CMD [ "npm", "run", "start" ]
