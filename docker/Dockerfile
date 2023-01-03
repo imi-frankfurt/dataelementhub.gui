@@ -15,7 +15,7 @@ WORKDIR $DIR
 COPY package.json $DIR
 COPY package-lock.json $DIR
 RUN npm install
-COPY .. $DIR
+COPY . $DIR
 RUN npm run build
 EXPOSE 3000
 ENV NUXT_HOST=0.0.0.0
