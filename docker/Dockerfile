@@ -13,7 +13,6 @@ ENV BACKEND_URL=${BACKEND_URL}
 RUN mkdir -p $DIR
 WORKDIR $DIR
 COPY . $DIR
-RUN apk add --update python3 make g++ && rm -rf /var/cache/apk/*
 RUN npm install
 RUN npm run build
 EXPOSE 3000
