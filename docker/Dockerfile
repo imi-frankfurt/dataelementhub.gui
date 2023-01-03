@@ -12,11 +12,10 @@ ARG BACKEND_URL
 ENV BACKEND_URL=${BACKEND_URL}
 RUN mkdir -p $DIR
 WORKDIR $DIR
-COPY package.json $DIR
-COPY package-lock.json $DIR
-RUN npm install
+RUN apt update
+RUN apt dist-upgrade -y
 COPY . $DIR
-RUN npm run build
+RUN npm install && npm run build
 EXPOSE 3000
 ENV NUXT_HOST=0.0.0.0
 ENV NUXT_PORT=3000
