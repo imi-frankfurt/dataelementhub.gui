@@ -651,7 +651,7 @@ export default {
 }
 </script>
 
-<style>
+<style scoped>
 .fill-parent-height {
   height: 100%;
 }

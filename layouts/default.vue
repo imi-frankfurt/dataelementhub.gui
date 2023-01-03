@@ -43,6 +43,14 @@
                 </v-list-item-icon>
                 <v-list-item-title><v-list-item-title v-text="$t('global.mainMenu.tools.search')" /></v-list-item-title>
               </v-list-item>
+              <v-list-item to="/tools/import-export">
+                <v-list-item-icon>
+                  <v-icon color="white">
+                    mdi-swap-vertical
+                  </v-icon>
+                </v-list-item-icon>
+                <v-list-item-title><v-list-item-title v-text="$t('global.mainMenu.tools.importExport')" /></v-list-item-title>
+              </v-list-item>
             </v-list-item-group>
           </div>
         </client-only>

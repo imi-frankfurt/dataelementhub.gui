@@ -199,7 +199,7 @@ export default {
         valid: true,
         lazy: false
       },
-      statuses: Common.elementStatuses(),
+      statuses: Common.elementStatuses(['OUTDATED']),
       released: false
     }
   },

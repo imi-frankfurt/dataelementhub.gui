@@ -3,6 +3,18 @@ export default {
   buildUrn (namespaceId, elementType, identifier, version) {
     return 'urn:' + namespaceId + ':' + elementType.toLowerCase() + ':' + identifier + ':' + version
   },
+  cutString (str, len) {
+    return str.length > len ? str.substring(0, len) + '..' : str
+  },
+  getStatusColor (status) {
+    if (status.toUpperCase() === 'OUTDATED') {
+      return '#ff9999'
+    } else if (status.toUpperCase() === 'RELEASED') {
+      return '#9dfc91'
+    } else if (status.toUpperCase() === 'DRAFT') {
+      return '#8a8a8a'
+    }
+  },
   // Find an element type and return it
   findElementType (urn) {
     const regEx = /\b(?:namespace|dataelement|dataelementgroup|record)\b/
@@ -26,11 +38,14 @@ export default {
     ]
   },
   // Return element statuses
-  elementStatuses () {
+  elementStatuses (exclude = []) {
     return [
       'DRAFT',
-      'RELEASED'
-    ]
+      'RELEASED',
+      'OUTDATED'
+    ].filter(function (status) {
+      return !exclude.includes(status)
+    })
   },
   // Return all Element value domains
   elementValueDomains () {
