@@ -1,4 +1,4 @@
-FROM node:16.17.0-buster-slim
+FROM node:16.17.0
 ENV DIR=/usr/src/dehub-gui
 ARG KEYCLOAK_REALM
 ENV KEYCLOAK_REALM=${KEYCLOAK_REALM}
