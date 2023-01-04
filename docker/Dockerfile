@@ -13,7 +13,7 @@ ENV BACKEND_URL=${BACKEND_URL}
 RUN mkdir -p $DIR
 WORKDIR $DIR
 COPY . $DIR
-RUN apt update && apt install python3 -y
+RUN apt update && apt install -y python3 g++ build-essential
 RUN npm install -g npm@8.15.0
 RUN npm install
 RUN npm run build
