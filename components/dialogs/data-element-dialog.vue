@@ -375,9 +375,9 @@ export default {
   data () {
     return {
       ajax: {
-        dataElementUrl: process.env.mdrBackendUrl + '/v1/element/',
-        namespaceUrl: process.env.mdrBackendUrl + '/v1/namespaces/',
-        backendUrl: process.env.mdrBackendUrl
+        dataElementUrl: process.env.backendUrl + '/v1/element/',
+        namespaceUrl: process.env.backendUrl + '/v1/namespaces/',
+        backendUrl: process.env.backendUrl
       },
       dialog: false,
       dataElement: Object.assign({}, Common.defaultDataElement()),

@@ -81,7 +81,7 @@ export default {
   data () {
     return {
       ajax: {
-        permittedValueUrl: process.env.mdrBackendUrl + '/v1/element/'
+        permittedValueUrl: process.env.backendUrl + '/v1/element/'
       },
       permittedValue: undefined,
       dialog: false

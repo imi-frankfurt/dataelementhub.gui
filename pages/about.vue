@@ -5,7 +5,7 @@ export default {
   data () {
     return {
       ajax: {
-        versionUrl: process.env.mdrBackendUrl + '/v1/version'
+        versionUrl: process.env.backendUrl + '/v1/version'
       },
       backendData: undefined
     }

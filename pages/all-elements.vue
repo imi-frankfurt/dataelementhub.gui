@@ -235,8 +235,8 @@ export default {
     componentKey: 0,
     itemId: -1,
     ajax: {
-      namespaceUrl: process.env.mdrBackendUrl + '/v1/namespaces/',
-      elementUrl: process.env.mdrBackendUrl + '/v1/element/'
+      namespaceUrl: process.env.backendUrl + '/v1/namespaces/',
+      elementUrl: process.env.backendUrl + '/v1/element/'
     },
     dialog: {
       urn: '',

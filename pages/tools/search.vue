@@ -143,7 +143,7 @@ export default {
   data () {
     return {
       ajax: {
-        searchUrl: process.env.mdrBackendUrl + '/v1/search'
+        searchUrl: process.env.backendUrl + '/v1/search'
       },
       elementTypes: Common.elementTypes(),
       elementStatuses: Common.elementStatuses(),
