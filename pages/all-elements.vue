@@ -137,43 +137,41 @@
           </template>
         </v-treeview>
       </v-col>
-      <v-col cols="8" class="auto-scroll detail-view-col pa-6 pt-8">
-        <div>
-          <DataElementDetailView
-            v-if="selected && selectedElement.identification.elementType === 'DATAELEMENT'"
-            :urn="selectedElement.identification.urn"
-            :parent-urn="activeElements.slice(-1)[0].parentUrn"
-            :editable="loggedIn && selectedElement.editable"
-            :deletable="loggedIn && selectedElement.editable"
-            @save="updateTree($event); snackbar.saveSuccess = true"
-            @saveFailure="handleSaveFailure($event)"
-            @delete="updateTree(selectedElement) ; snackbar.deleteSuccess = true"
-            @deleteFailure="handleDeleteFailure ($event)"
-          />
-          <GroupsRecordsDetailView
-            v-if="selected && (selectedElement.identification.elementType === 'DATAELEMENTGROUP'
+      <v-col cols="8" class="auto-scroll detail-view-col px-6 pt-8">
+        <GroupsRecordsDetailView
+          v-if="selected && (selectedElement.identification.elementType === 'DATAELEMENTGROUP'
               || selectedElement.identification.elementType === 'RECORD' )"
-            :urn="selectedElement.identification.urn"
-            :parent-urn="activeElements.slice(-1)[0].parentUrn"
-            :editable="loggedIn && selectedElement.editable"
-            :deletable="loggedIn && selectedElement.editable"
-            @save="snackbar.saveSuccess = true"
-            @saveFailure="handleSaveFailure($event)"
-            @reloadMembers="updateTree($event)"
-            @delete="updateTree(selectedElement) ; snackbar.deleteSuccess = true"
-            @deleteFailure="handleDeleteFailure ($event)"
-          />
-          <NamespaceDetailView
-            v-if="selected && selectedElement.identification.elementType === 'NAMESPACE'"
-            :urn="selectedElement.identification.urn"
-            :editable="loggedIn && selectedElement.editable"
-            :deletable="loggedIn && selectedElement.editable"
-            @save="updateTree($event); snackbar.saveSuccess = true"
-            @saveFailure="handleSaveFailure($event)"
-            @delete="updateTree(selectedElement) ; snackbar.deleteSuccess = true"
-            @deleteFailure="handleDeleteFailure ($event)"
-          />
-        </div>
+          :urn="selectedElement.identification.urn"
+          :parent-urn="activeElements.slice(-1)[0].parentUrn"
+          :editable="loggedIn && selectedElement.editable"
+          :deletable="loggedIn && selectedElement.editable"
+          @save="snackbar.saveSuccess = true"
+          @saveFailure="handleSaveFailure($event)"
+          @reloadMembers="updateTree($event)"
+          @delete="updateTree(selectedElement) ; snackbar.deleteSuccess = true"
+          @deleteFailure="handleDeleteFailure ($event)"
+        />
+        <DataElementDetailView
+          v-if="selected && selectedElement.identification.elementType === 'DATAELEMENT'"
+          :urn="selectedElement.identification.urn"
+          :parent-urn="activeElements.slice(-1)[0].parentUrn"
+          :editable="loggedIn && selectedElement.editable"
+          :deletable="loggedIn && selectedElement.editable"
+          @save="updateTree($event); snackbar.saveSuccess = true"
+          @saveFailure="handleSaveFailure($event)"
+          @delete="updateTree(selectedElement) ; snackbar.deleteSuccess = true"
+          @deleteFailure="handleDeleteFailure ($event)"
+        />
+        <NamespaceDetailView
+          v-if="selected && selectedElement.identification.elementType === 'NAMESPACE'"
+          :urn="selectedElement.identification.urn"
+          :editable="loggedIn && selectedElement.editable"
+          :deletable="loggedIn && selectedElement.editable"
+          @save="updateTree($event); snackbar.saveSuccess = true"
+          @saveFailure="handleSaveFailure($event)"
+          @delete="updateTree(selectedElement) ; snackbar.deleteSuccess = true"
+          @deleteFailure="handleDeleteFailure ($event)"
+        />
       </v-col>
     </v-row>
     <v-row v-if="dialog.showDataElement || dialog.showDataElementGroup || dialog.showNamespace">

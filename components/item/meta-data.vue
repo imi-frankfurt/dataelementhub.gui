@@ -1,6 +1,6 @@
 <template>
-  <v-container>
-    <v-row dense>
+  <v-container class="meta-data-container" fluid>
+    <v-row class="meta-data-row" dense>
       <v-col>
         <MetaDataCard
           :title="data.elementType.toUpperCase()"
@@ -106,7 +106,12 @@ export default {
   }
 }
 </script>
-<style>
+<style scoped>
+
+.meta-data-container {
+  padding-inline: 0;
+}
+
 .meta-data-card {
   border-radius: 75px;
   elevation: level;

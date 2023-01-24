@@ -15,171 +15,127 @@
       </v-row>
     </v-container>
   </div>
-  <div v-else>
-    <div v-if="dataElement !== undefined">
-      <data-element-dialog
-        :urn="urn"
-        :show="dialog"
-        @save="$emit('saveSuccess', $event); fetchDataElementDetails(); fetchElementPath()"
-        @saveFailure="$emit('saveFailure', $event)"
-        @dialogClosed="dialog = false"
+  <div class="detail-view-container" v-else>
+    <data-element-dialog
+      :urn="urn"
+      :show="dialog"
+      @save="$emit('saveSuccess', $event); fetchDataElementDetails(); fetchElementPath()"
+      @saveFailure="$emit('saveFailure', $event)"
+      @dialogClosed="dialog = false"
+    />
+    <v-card
+      v-if="!hidePath"
+      color="grey lighten-4 ma-0 pa-0"
+      flat
+    >
+      <detail-view-toolbar
+        :element-path="elementPathInTree"
+        :element-urn="urn"
+        :activate-navigation="activatePathNavigation"
+        :element-is-deletable="deletable"
+        :element-is-editable="editable"
+        @showDetailViewDialog="showDetailViewDialog($event)"
+        @editElement="editDataElement"
+        @deleteElement="deleteDataElement"
       />
-      <v-card
-        v-if="!hidePath"
-        class="detailViewCard"
-        color="grey lighten-4"
-        flat
-      >
-        <!-- Namespace Toolbar TODO: Check of this could be outsourced ...-->
-        <v-toolbar>
-          <v-toolbar-title>
-            <v-container class="text-center">
-              <v-row no-gutters>
-                <v-col v-for="item in elementPathInTree" :key="item.urn">
-                  <v-icon v-if="!item.urn.includes('namespace')">
-                    mdi-slash-forward
-                  </v-icon>
-                  <v-btn
-                    width="130"
-                    class="designationButton"
-                    color="grey lighten-4"
-                    rounded
-                    :disabled="!activatePathNavigation"
-                    @click="showDetailViewDialog(item.urn)"
-                  >
-                    <div
-                      v-if="item.urn === urn"
-                      style="text-align: center; width: 100%; white-space: normal;"
-                    >
-                      {{ item.designation }}
-                    </div>
-                    <a
-                      v-if="item.urn !== urn"
-                      style="text-align: center; width: 100%; white-space: normal;"
-                    >
-                      {{ item.designation }}
-                    </a>
-                  </v-btn>
-                </v-col>
-              </v-row>
-            </v-container>
-          </v-toolbar-title>
-          <v-spacer />
-          <v-btn
-            v-if="editable"
-            icon
-            color="primary"
-            @click="editDataElement"
-          >
-            <v-icon>mdi-pencil</v-icon>
-          </v-btn>
-          <v-btn
-            v-if="deletable"
-            icon
-            @click="deleteDataElement"
-          >
-            <v-icon>mdi-delete</v-icon>
-          </v-btn>
-        </v-toolbar>
-      </v-card>
-      <v-card outlined color="transparent" class="ma-0 pa-0">
-        <MetaData
-          :type="'DATAELEMENT'"
-          :data="dataElement.identification"
-        />
-      </v-card>
-      <v-card v-if="hidePath" class="detailViewCard">
-        <v-list>
-          <v-subheader>
-            {{ $t('global.paths') }}
-            <div class="choose-button-wrapper">
-              <button
-                :class="getLeftButtonClass()"
-                @click="selectedElementPathType = 'DESIGNATION'"
-              >
-                {{ $t('global.designation') }}
-              </button>
-              <button
-                :class="getRightButtonClass()"
-                @click="selectedElementPathType = 'URN'"
-              >
-                {{ $t('global.urn') }}
-              </button>
-            </div>
-          </v-subheader>
-          <v-list-item>
-            <v-list-item-content>
-              <paths-table :paths="allElementPathsAsString" />
-            </v-list-item-content>
-          </v-list-item>
-        </v-list>
-      </v-card>
-      <v-card class="detailViewCard">
-        <v-list>
-          <v-subheader>{{ $t('global.definitions') }}</v-subheader>
-          <v-list-item>
-            <v-list-item-content>
-              <definition-table :definitions="dataElement.definitions" />
-            </v-list-item-content>
-          </v-list-item>
-        </v-list>
-      </v-card>
-      <v-card class="detailViewCard">
-        <v-list>
-          <v-subheader>{{ $t('global.valueDomain') }} : {{ dataElement.valueDomainUrn }}</v-subheader>
-          <v-list-item>
-            <v-list-item-content>
-              <value-domain :urn="dataElement.identification.urn" />
-            </v-list-item-content>
-          </v-list-item>
-        </v-list>
-      </v-card>
-      <v-card class="detailViewCard">
-        <v-list v-if="dataElement.slots.length > 0">
-          <v-subheader>{{ $t('global.slots') }}</v-subheader>
-          <v-list-item>
-            <v-list-item-content>
-              <slot-table :slots="dataElement.slots" />
-            </v-list-item-content>
-          </v-list-item>
-        </v-list>
-      </v-card>
-      <v-card class="detailViewCard">
-        <v-list v-if="dataElement.relations.length > 0">
-          <v-subheader>{{ $t('global.relations') }}</v-subheader>
-          <v-list-item>
-            <v-list-item-content>
-              <relation-table
-                :relations="dataElement.relations"
-                :detail-view-available="relationDetailViewAvailable"
-              />
-            </v-list-item-content>
-          </v-list-item>
-        </v-list>
-      </v-card>
-      <v-card class="detailViewCard">
-        <v-list v-if="dataElement.conceptAssociations.length > 0">
-          <v-subheader>{{ $t('global.conceptAssociations') }}</v-subheader>
-          <v-list-item>
-            <v-list-item-content>
-              <concept-association-table :associations="dataElement.conceptAssociations" />
-            </v-list-item-content>
-          </v-list-item>
-        </v-list>
-      </v-card>
-      <v-btn
-        v-if="showJumpToElementButton"
-        class="d-block mr-0 ml-auto"
-        color="primary"
-        rounded
-        @click="dialog.elementType = 'NAMESPACE'; dialog.showNamespace = true"
-      >
-        {{ $t('global.button.showInTreeView') }}
-        <v-icon dark>
-          mdi-arrow-right-circle
-        </v-icon>
-      </v-btn>
-    </div>
+    </v-card>
+    <v-card outlined color="transparent" class="ma-0 pa-0">
+      <MetaData
+        :type="'DATAELEMENT'"
+        :data="dataElement.identification"
+      />
+    </v-card>
+    <v-card v-if="hidePath" class="detailViewCard">
+      <v-list>
+        <v-subheader>
+          {{ $t('global.paths') }}
+          <div class="choose-button-wrapper">
+            <button
+              :class="getLeftButtonClass()"
+              @click="selectedElementPathType = 'DESIGNATION'"
+            >
+              {{ $t('global.designation') }}
+            </button>
+            <button
+              :class="getRightButtonClass()"
+              @click="selectedElementPathType = 'URN'"
+            >
+              {{ $t('global.urn') }}
+            </button>
+          </div>
+        </v-subheader>
+        <v-list-item>
+          <v-list-item-content>
+            <paths-table :paths="allElementPathsAsString" />
+          </v-list-item-content>
+        </v-list-item>
+      </v-list>
+    </v-card>
+    <v-card class="detailViewCard">
+      <v-list>
+        <v-subheader>{{ $t('global.definitions') }}</v-subheader>
+        <v-list-item>
+          <v-list-item-content>
+            <definition-table :definitions="dataElement.definitions" />
+          </v-list-item-content>
+        </v-list-item>
+      </v-list>
+    </v-card>
+    <v-card class="detailViewCard">
+      <v-list>
+        <v-subheader>{{ $t('global.valueDomain') }} : {{ dataElement.valueDomainUrn }}</v-subheader>
+        <v-list-item>
+          <v-list-item-content>
+            <value-domain :urn="dataElement.identification.urn" />
+          </v-list-item-content>
+        </v-list-item>
+      </v-list>
+    </v-card>
+    <v-card class="detailViewCard">
+      <v-list v-if="dataElement.slots.length > 0">
+        <v-subheader>{{ $t('global.slots') }}</v-subheader>
+        <v-list-item>
+          <v-list-item-content>
+            <slot-table :slots="dataElement.slots" />
+          </v-list-item-content>
+        </v-list-item>
+      </v-list>
+    </v-card>
+    <v-card class="detailViewCard">
+      <v-list v-if="dataElement.relations.length > 0">
+        <v-subheader>{{ $t('global.relations') }}</v-subheader>
+        <v-list-item>
+          <v-list-item-content>
+            <relation-table
+              :relations="dataElement.relations"
+              :detail-view-available="relationDetailViewAvailable"
+            />
+          </v-list-item-content>
+        </v-list-item>
+      </v-list>
+    </v-card>
+    <v-card class="detailViewCard">
+      <v-list v-if="dataElement.conceptAssociations.length > 0">
+        <v-subheader>{{ $t('global.conceptAssociations') }}</v-subheader>
+        <v-list-item>
+          <v-list-item-content>
+            <concept-association-table :associations="dataElement.conceptAssociations" />
+          </v-list-item-content>
+        </v-list-item>
+      </v-list>
+    </v-card>
+    <v-btn
+      v-if="showJumpToElementButton"
+      class="d-block mr-0 ml-auto"
+      color="primary"
+      rounded
+      @click="dialog.elementType = 'NAMESPACE'; dialog.showNamespace = true"
+    >
+      {{ $t('global.button.showInTreeView') }}
+      <v-icon dark>
+        mdi-arrow-right-circle
+      </v-icon>
+    </v-btn>
     <v-dialog
       v-model="detailViewDialog.show"
       width="600"
@@ -217,8 +173,10 @@ import ConceptAssociationTable from '~/components/tables/concept-association-tab
 import ValueDomain from '~/components/views/value-domain'
 import NamespaceDetailView from '~/components/views/namespace-detail-view.vue'
 import PathsTable from '~/components/tables/paths-table'
+import DetailViewToolbar from '~/components/common/detail-view-toolbar'
 export default {
   components: {
+    DetailViewToolbar,
     PathsTable,
     DefinitionTable,
     SlotTable,
@@ -388,7 +346,13 @@ export default {
   }
 }
 </script>
-<style>
+<style scoped>
+
+/* find a better solution */
+.detail-view-container {
+  margin-top: -40px;
+}
+
 .dialogCard {
   padding-top: 40px;
   padding-bottom: 25px;
@@ -397,7 +361,7 @@ export default {
 }
 
 .detailViewCard {
-  margin-bottom: 30px;
+  margin-bottom: 10px;
 }
 
 .designationButton {

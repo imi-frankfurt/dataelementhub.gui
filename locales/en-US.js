@@ -57,7 +57,7 @@ export default {
     public: 'PUBLIC',
     private: 'PRIVATE',
     hidden: 'HIDDEN',
-    imi: 'Institute for Medical Informatics',
+    imi: 'Institute for Medical Informatics Frankfurt',
     login: 'LOG IN',
     addItem: 'ADD ITEM',
     dragAndDrop: 'simply drag and drop',
@@ -393,7 +393,7 @@ export default {
           {
             id: 2,
             question: 'How long will my data be persisted in this instance?',
-            answer: 'Every sunday the data will be automatically deleted from the database.'
+            answer: 'The entire database is automatically cleared every sunday.'
           }
         ]
       }
