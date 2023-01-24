@@ -35,9 +35,10 @@
       </v-col>
     </v-row>
     <v-row class="extern-logos-row">
-      <v-col v-for="logo in externalLogos" :key="logo">
+      <v-col v-for="logo in externalLogos" :key="logo" align="center">
         <v-img
           height="80px"
+          width="80px"
           contain
           :src="require('~/assets/images/logo/extern/' + logo)"
         />
@@ -96,7 +97,6 @@ export default {
   font-family: Avenir, Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  text-align: center;
   color: #2c3e50;
 }
 
