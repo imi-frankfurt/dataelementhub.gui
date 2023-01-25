@@ -24,40 +24,19 @@
     />
     <v-card
       v-if="!hideToolbar"
-      color="grey lighten-4"
+      color="grey lighten-4 ma-0 pa-0"
       flat
     >
-      <!-- Namespace Toolbar TODO: Check of this could be outsourced ...-->
-      <v-toolbar>
-        <v-btn
-          width="140"
-          class="designationButton"
-          color="grey lighten-4"
-          rounded
-        >
-          <div
-            style="text-align: center; width: 100%; white-space: normal;"
-          >
-            {{ namespace.definitions[0].designation }}
-          </div>
-        </v-btn>
-        <v-spacer />
-        <v-btn
-          v-if="editable"
-          icon
-          color="primary"
-          @click="editNamespace"
-        >
-          <v-icon>mdi-pencil</v-icon>
-        </v-btn>
-        <v-btn
-          v-if="deletable"
-          icon
-          @click="deleteNamespace"
-        >
-          <v-icon>mdi-delete</v-icon>
-        </v-btn>
-      </v-toolbar>
+      <detail-view-toolbar
+        :element-path="[namespace.definitions[0]]"
+        :element-urn="urn"
+        :activate-navigation="false"
+        :element-is-deletable="deletable"
+        :element-is-editable="editable"
+        @showDetailViewDialog="showDetailViewDialog($event)"
+        @editElement="editNamespace"
+        @deleteElement="deleteNamespace"
+      />
     </v-card>
     <v-card outlined color="transparent" class="ma-0 pa-0">
       <meta-data
@@ -103,8 +82,10 @@ import DefinitionTable from '~/components/tables/definition-table'
 import SlotTable from '~/components/tables/slot-table'
 import MetaData from '~/components/item/meta-data'
 import NamespaceDialog from '~/components/dialogs/namespace-dialog'
+import DetailViewToolbar from '~/components/common/detail-view-toolbar'
 export default {
   components: {
+    DetailViewToolbar,
     DefinitionTable,
     SlotTable,
     MetaData,
@@ -215,7 +196,7 @@ export default {
   }
 }
 </script>
-<style>
+<style scoped>
 .designationButton {
   min-width: 50px;
   width: 40px;
@@ -223,5 +204,9 @@ export default {
   overflow-wrap: break-word;
   overflow: hidden;
   text-overflow: ellipsis;
+}
+
+.detailViewCard {
+  margin-bottom: 10px;
 }
 </style>

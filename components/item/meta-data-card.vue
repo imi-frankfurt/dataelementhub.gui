@@ -9,7 +9,7 @@ export default {
 
 <template>
   <v-card
-    class="meta-data-card d-flex align-left justify-center"
+    class="meta-data-card d-flex align-left justify-center ma-0 pa-ß"
   >
     <div>
       <v-list-item two-line>
@@ -22,7 +22,7 @@ export default {
   </v-card>
 </template>
 
-<style>
+<style scoped>
 
 .meta-data-card {
   border-radius: 75px;

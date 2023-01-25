@@ -130,7 +130,7 @@ export default {
   }
 }
 </script>
-<style>
+<style scoped>
 
 .permittedValueDetailView {
   padding: 1rem;

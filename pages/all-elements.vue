@@ -172,7 +172,7 @@ export default {
 }
 </script>
 
-<style lang="scss">
+<style scoped lang="scss">
 .fill-parent-height {
   height: 100%;
 }

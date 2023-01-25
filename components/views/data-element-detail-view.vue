@@ -409,7 +409,7 @@ export default {
   }
 }
 </script>
-<style>
+<style scoped>
 .dialogCard {
   padding-top: 40px;
   padding-bottom: 25px;
