@@ -1,6 +1,47 @@
+<script>
+import { marked } from 'marked'
+import HomepageText from '@/assets/others/homepage.md'
+
+export default {
+  data () {
+    return {
+      markdown: HomepageText,
+      externalLogos: process.env.externalLogos
+    }
+  },
+  computed: {
+    markdownToHtml () {
+      return marked(this.markdown)
+    }
+  },
+  methods: {
+    async loginWithKeycloak () {
+      try {
+        await this.$auth.loginWith('keycloak')
+      } catch (err) {
+      }
+    },
+    revealFromRightWithDelay (delay) {
+      return {
+        distance: '100%',
+        origin: 'right',
+        delay
+      }
+    },
+    revealFromTopWithDelay (delay) {
+      return {
+        distance: '50%',
+        origin: 'top',
+        delay
+      }
+    }
+  }
+}
+</script>
+
 <template>
-  <v-container fluid class="main-container">
-    <v-row class="hero-row pb-10">
+  <div class="main-container">
+    <v-row class="pb-10">
       <v-col class="bg-symbol-1 logo-col">
         <v-img
           height="600px"
@@ -51,74 +92,32 @@
         </v-container>
       </v-col>
     </v-row>
-    <v-row class="second-row py-8">
-      <v-col>
+    <v-row class="py-8" align="center" justify="center">
+      <v-col cols="10">
         <div class="markdown-class" v-html="markdownToHtml" />
       </v-col>
     </v-row>
-    <v-row class="extern-logos-row">
+    <v-row class="mb-0 pb-0">
       <v-col v-for="logo in externalLogos" :key="logo" align="center">
         <v-img
-          height="80px"
-          width="80px"
+          height="150px"
+          width="300px"
           contain
           :src="require('~/assets/images/logo/extern/' + logo)"
         />
       </v-col>
     </v-row>
-  </v-container>
+  </div>
 </template>
-
-<script>
-import { marked } from 'marked'
-import HomepageText from '@/assets/others/homepage.md'
-
-export default {
-  data () {
-    return {
-      markdown: HomepageText,
-      externalLogos: process.env.externalLogos
-    }
-  },
-  computed: {
-    markdownToHtml () {
-      return marked(this.markdown)
-    }
-  },
-  methods: {
-    async loginWithKeycloak () {
-      try {
-        await this.$auth.loginWith('keycloak')
-      } catch (err) {
-      }
-    },
-    revealFromRightWithDelay (delay) {
-      return {
-        distance: '100%',
-        origin: 'right',
-        delay
-      }
-    },
-    revealFromTopWithDelay (delay) {
-      return {
-        distance: '50%',
-        origin: 'top',
-        delay
-      }
-    }
-  }
-}
-</script>
 
 <style scoped lang="scss">
 
-.extern-logos-row {
-  background: #e8f9fd;
-}
-
 .main-container {
-  height: 100%;
+  background: #e8f9fd;
+  padding: 10px 0 0;
+  margin: 0;
   width: 100%;
+  min-height: 100%;
 }
 
 .markdown-class {
@@ -126,10 +125,6 @@ export default {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   color: #2c3e50;
-}
-
-.hero-row {
-  background-color: #e8f9fd;
 }
 
 .introduction-col {

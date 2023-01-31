@@ -81,7 +81,7 @@ export default {
   </v-toolbar>
 </template>
 
-<style scoped>
+<style>
 .breadcrumb-item-disabled {
   color: #3d3f3f;
 }

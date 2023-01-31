@@ -399,7 +399,7 @@ export default {
 }
 </script>
 
-<style>
+<style scoped>
 .unreleasedMembersDialog {
   max-width: 40%;
 }
