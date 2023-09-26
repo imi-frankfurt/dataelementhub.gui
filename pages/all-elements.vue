@@ -46,103 +46,14 @@
       class="bottom-row flex-grow-1 flex-shrink-1 align-stretch"
     >
       <v-col cols="4" class="auto-scroll tree-view-col pa-2">
-        <div v-if="treeItems.length === 0" align="middle">
-          <v-icon size="100">
-            mdi-plus
-          </v-icon>
-          <h3 class="text-h2 mb-2">
-            {{ $t('global.noItems') }}
-          </h3>
-          <h3 class="text-h6 mb-2">
-            {{ $t('global.addNamespaces') }}
-          </h3>
-        </div>
-        <v-treeview
-          :key="componentKey"
-          :v-model="treeItems"
-          :active="activeElements"
-          :open.sync="openNodes"
-          :items="treeItems"
-          :load-children="fetchAndReplaceMembers"
-          multiple-active
-          return-object
-          activatable
-          color="warning"
-          rounded
-          hoverable
-          transition
-          @update:active="setActiveElements"
-        >
-          <template #prepend="{ item }">
-            <v-icon
-              v-if="item.elementType === 'NAMESPACE'"
-              color="white"
-            >
-              mdi-garage-variant
-            </v-icon>
-            <v-icon
-              v-else-if="item.elementType === 'DATAELEMENT'"
-              color="white"
-            >
-              mdi-vector-arrange-below
-            </v-icon>
-            <v-icon
-              v-else-if="item.elementType === 'DATAELEMENTGROUP'"
-              color="white"
-            >
-              mdi-group
-            </v-icon>
-            <v-icon
-              v-else-if="item.elementType === 'RECORD'"
-              color="white"
-            >
-              mdi-group
-            </v-icon>
-          </template>
-          <template #append="{ item }">
-            <AlertIcon
-              v-if="!item.isPreferredLanguage"
-              :title="$t('global.alerts.warning')"
-              :alerts="[$t('global.alerts.defineLanguage')]"
-            />
-            <v-menu
-              bottom
-              offset-y
-            >
-              <template #activator="{ on, attrs }">
-                <v-btn
-                  v-if="item.elementType !== 'DATAELEMENT' && item.editable && loggedIn"
-                  class="d-block mr-0 ml-auto"
-                  rounded
-                  v-bind="attrs"
-                  v-on="on"
-                >
-                  <v-icon>mdi-plus</v-icon>
-                  {{ $t('global.button.create') }}
-                </v-btn>
-              </template>
-              <v-list>
-                <v-list-item
-                  v-for="(elementType, i) in ['DATAELEMENT', 'DATAELEMENTGROUP', 'RECORD']"
-                  :key="i"
-                  @click="() => {elementToBeCreated(elementType, item.urn)}"
-                >
-                  <v-list-item-title>
-                    <v-icon>mdi-plus-box</v-icon>
-                    {{ 'CREATE ' + elementType }}
-                  </v-list-item-title>
-                </v-list-item>
-              </v-list>
-            </v-menu>
-          </template>
-        </v-treeview>
+        <TreeView />
       </v-col>
       <v-col cols="8" class="auto-scroll detail-view-col pa-6 pt-8">
-        <div>
+        <div v-if="selectedElement">
           <DataElementDetailView
-            v-if="selected && selectedElement.identification.elementType === 'DATAELEMENT'"
+            v-if="showDetailedView && selectedElement.identification.elementType === 'DATAELEMENT'"
             :urn="selectedElement.identification.urn"
-            :parent-urn="activeElements.slice(-1)[0].parentUrn"
+            :parent-urn="selectedElement.parentUrn"
             :editable="loggedIn && selectedElement.editable"
             :deletable="loggedIn && selectedElement.editable"
             @save="updateTree($event); snackbar.saveSuccess = true"
@@ -151,10 +62,10 @@
             @deleteFailure="handleDeleteFailure ($event)"
           />
           <GroupsRecordsDetailView
-            v-if="selected && (selectedElement.identification.elementType === 'DATAELEMENTGROUP'
-              || selectedElement.identification.elementType === 'RECORD' )"
+            v-if="showDetailedView && selectedElement.identification.elementType === 'DATAELEMENTGROUP'
+              || selectedElement.identification.elementType === 'RECORD'"
             :urn="selectedElement.identification.urn"
-            :parent-urn="activeElements.slice(-1)[0].parentUrn"
+            :parent-urn="selectedElement.parentUrn"
             :editable="loggedIn && selectedElement.editable"
             :deletable="loggedIn && selectedElement.editable"
             @save="snackbar.saveSuccess = true"
@@ -164,7 +75,7 @@
             @deleteFailure="handleDeleteFailure ($event)"
           />
           <NamespaceDetailView
-            v-if="selected && selectedElement.identification.elementType === 'NAMESPACE'"
+            v-if="showDetailedView && selectedElement.identification.elementType === 'NAMESPACE'"
             :urn="selectedElement.identification.urn"
             :editable="loggedIn && selectedElement.editable"
             :deletable="loggedIn && selectedElement.editable"
@@ -218,10 +129,13 @@ import DataElementDetailView from '~/components/views/data-element-detail-view.v
 import GroupsRecordsDetailView from '~/components/views/groups-records-detail-view'
 import NamespaceDetailView from '~/components/views/namespace-detail-view.vue'
 import DefaultSnackbar from '~/components/snackbars/default-snackbar'
+import TreeView from '~/components/trees/TreeView'
+import Common from '~/assets/js/common'
 
 export default {
   auth: false,
   components: {
+    TreeView,
     AlertIcon,
     NamespaceDialog,
     DataElementDialog,
@@ -261,6 +175,9 @@ export default {
     valueDomainIsFetching: true
   }),
   computed: {
+    showDetailedView () {
+      return this.$store.getters.getActiveTreeItemUrn !== ''
+    },
     selected () {
       if (!this.activeElements.length) {
         return undefined
@@ -272,6 +189,9 @@ export default {
     }
   },
   watch: {
+    '$store.state.activeTreeViewNode' () {
+      this.fetchElement({ ...this.$store.getters.getActiveTreeViewNode })
+    },
     activeElements () {
       if (typeof this.activeElements[0] !== 'undefined') {
         this.fetchElement(this.activeElements.slice(-1)[0].urn,
@@ -289,13 +209,21 @@ export default {
     })
   },
   methods: {
+    /*
+    * fetches a dataElementGroup / record / dataElement (with its valueDomain) and saves it.
+    */
+    async fetchElement (node) {
+      const urn = node.urn
+      if (urn === '') {
+        return
+      }
     changeActiveElement (urn) {
       const item = this.getJsonObjects(this.treeItems, 'urn', urn)[0]
       this.activeElements = []
       this.selectedElement = null
       this.activeElements.unshift(item)
       this.setActiveElements(this.activeElements)
-    },
+    }
     updateTree (element) {
       this.$log.debug('Element saved now update the Tree ...')
       this.$log.debug(element)
@@ -543,7 +471,7 @@ export default {
       }
     },
     async fetchElement (urn, parentUrn) {
-      await this.$axios.$get(!this.isNamespace(urn)
+      await this.$axios.$get(!Common.isNamespace(urn)
         ? this.ajax.elementUrl + urn
         : this.ajax.namespaceUrl + urn.split(':')[1],
       {
@@ -555,12 +483,13 @@ export default {
           if
           (!['ENUMERATED_VALUE_DOMAIN', 'DESCRIBED_VALUE_DOMAIN']
             .includes(res.identification.elementType)) {
-            res.editable = this.getNamespace(urn).editable && res.identification.status.toUpperCase() !== 'OUTDATED'
+            res.editable = node.editable && res.identification.status.toUpperCase() !== 'OUTDATED'
             this.selectedElement = res
-            this.selectedElement.parentUrn = parentUrn
+            this.selectedElement.parentUrn = node.parentUrn
             if (this.selectedElement.identification.elementType === 'DATAELEMENT') {
               this.valueDomainIsFetching = true
-              this.fetchElement(this.selectedElement.valueDomainUrn)
+              const valueDomainNode = Object.assign({}, { urn: this.selectedElement.valueDomainUrn })
+              this.fetchElement(valueDomainNode)
             }
           } else {
             this.selectedElement.valueDomain = res
@@ -651,7 +580,7 @@ export default {
 }
 </script>
 
-<style scoped>
+<style scoped lang="scss">
 .fill-parent-height {
   height: 100%;
 }

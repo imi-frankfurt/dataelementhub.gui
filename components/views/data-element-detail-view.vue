@@ -18,11 +18,10 @@
   <div v-else>
     <div v-if="dataElement !== undefined">
       <data-element-dialog
+        v-if="dialog"
         :urn="urn"
         :show="dialog"
-        @save="$emit('saveSuccess', $event); fetchDataElementDetails(); fetchElementPath()"
-        @saveFailure="$emit('saveFailure', $event)"
-        @dialogClosed="dialog = false"
+        @dialogClosed="dialog = false; fetchDataElementDetails(); fetchElementPath()"
       />
       <v-card
         v-if="!hidePath"
@@ -172,7 +171,7 @@
         class="d-block mr-0 ml-auto"
         color="primary"
         rounded
-        @click="dialog.elementType = 'NAMESPACE'; dialog.showNamespace = true"
+        @click="$store.commit('changeActiveTreeViewNode', { ...getNodeFromElement })"
       >
         {{ $t('global.button.showInTreeView') }}
         <v-icon dark>
@@ -261,6 +260,23 @@ export default {
       selectedElementPathType: 'DESIGNATION'
     }
   },
+  computed: {
+    getNodeFromElement () {
+      return {
+        id: this.generateItemId(),
+        parentUrn: this.parentUrn,
+        namespaceUrn: this.dataElement.identification.namespaceUrn,
+        urn: this.dataElement.identification.urn,
+        editable: this.editable,
+        isPreferredLanguage: Ajax.preferredLanguage.includes(this.dataElement.definitions[0].language),
+        designation: this.dataElement.definitions[0].designation,
+        type: this.dataElement.identification.elementType,
+        elementStatus: this.dataElement.identification.status,
+        expanded: false,
+        children: []
+      }
+    }
+  },
   watch: {
     allElementPaths () {
       this.allElementPathsAsString = this.getElementPathsAsStrings(this.selectedElementPathType)
@@ -280,6 +296,10 @@ export default {
     this.fetchElementPath()
   },
   methods: {
+    generateItemId () {
+      this.$store.commit('generateItemId')
+      return this.$store.getters.getItemId
+    },
     getLeftButtonClass () {
       return {
         'left-button-marked': this.selectedElementPathType === 'DESIGNATION',
@@ -319,12 +339,13 @@ export default {
       if (confirm(this.$i18n.t('global.itemDialog.deleteItemTitle').toString())) {
         await this.$axios.$delete(this.ajax.dataElementUrl + this.urn)
           .then(function (res) {
-            this.$emit('delete', {
-              urn: this.urn
-            })
+            if (res !== undefined) {
+              this.$root.$emit('showDeleteSuccessSnackbar')
+              this.$root.$emit('updateTreeView')
+            }
           }.bind(this))
           .catch(function (err) {
-            this.$emit('deleteFailure', err.response)
+            this.$root.$emit('handleDeleteFailure', err.response)
             this.$log.debug('Could not delete this item: ' + err)
           }.bind(this))
       }
@@ -388,7 +409,7 @@ export default {
   }
 }
 </script>
-<style>
+<style scoped>
 .dialogCard {
   padding-top: 40px;
   padding-bottom: 25px;

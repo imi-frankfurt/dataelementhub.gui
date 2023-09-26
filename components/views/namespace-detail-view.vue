@@ -17,48 +17,26 @@
   </div>
   <div v-else>
     <namespace-dialog
+      v-if="dialog"
       :id="namespaceIdentifier"
       :show="dialog"
-      @save="$emit('save', $event); fetchNamespaceDetails()"
-      @saveFailure="$emit('saveFailure', $event)"
       @dialogClosed="dialog = false"
     />
     <v-card
       v-if="!hideToolbar"
-      color="grey lighten-4"
+      color="grey lighten-4 ma-0 pa-0"
       flat
     >
-      <!-- Namespace Toolbar TODO: Check of this could be outsourced ...-->
-      <v-toolbar>
-        <v-btn
-          width="140"
-          class="designationButton"
-          color="grey lighten-4"
-          rounded
-        >
-          <div
-            style="text-align: center; width: 100%; white-space: normal;"
-          >
-            {{ namespace.definitions[0].designation }}
-          </div>
-        </v-btn>
-        <v-spacer />
-        <v-btn
-          v-if="editable"
-          icon
-          color="primary"
-          @click="editNamespace"
-        >
-          <v-icon>mdi-pencil</v-icon>
-        </v-btn>
-        <v-btn
-          v-if="deletable"
-          icon
-          @click="deleteNamespace"
-        >
-          <v-icon>mdi-delete</v-icon>
-        </v-btn>
-      </v-toolbar>
+      <detail-view-toolbar
+        :element-path="[namespace.definitions[0]]"
+        :element-urn="urn"
+        :activate-navigation="false"
+        :element-is-deletable="deletable"
+        :element-is-editable="editable"
+        @showDetailViewDialog="showDetailViewDialog($event)"
+        @editElement="editNamespace"
+        @deleteElement="deleteNamespace"
+      />
     </v-card>
     <v-card outlined color="transparent" class="ma-0 pa-0">
       <meta-data
@@ -89,7 +67,7 @@
       class="d-block mr-0 ml-auto"
       color="primary"
       rounded
-      @click="$root.$emit('changeActiveElement', urn)"
+      @click="$store.commit('changeActiveTreeViewNode', { ...getNodeFromElement } )"
     >
       {{ $t('global.button.showInTreeView') }}
       <v-icon dark>
@@ -104,8 +82,10 @@ import DefinitionTable from '~/components/tables/definition-table'
 import SlotTable from '~/components/tables/slot-table'
 import MetaData from '~/components/item/meta-data'
 import NamespaceDialog from '~/components/dialogs/namespace-dialog'
+import DetailViewToolbar from '~/components/common/detail-view-toolbar'
 export default {
   components: {
+    DetailViewToolbar,
     DefinitionTable,
     SlotTable,
     MetaData,
@@ -134,6 +114,23 @@ export default {
       dialog: false
     }
   },
+  computed: {
+    getNodeFromElement () {
+      return {
+        id: this.generateItemId(),
+        parentUrn: '',
+        namespaceUrn: this.namespace.identification.namespaceUrn,
+        urn: this.namespace.identification.urn,
+        editable: this.editable,
+        isPreferredLanguage: Ajax.preferredLanguage.includes(this.namespace.definitions[0].language),
+        designation: this.namespace.definitions[0].designation,
+        type: this.namespace.identification.elementType,
+        elementStatus: this.namespace.identification.status,
+        expanded: false,
+        children: []
+      }
+    }
+  },
   watch: {
     urn (n) {
       this.fetchingNamespace = true
@@ -143,10 +140,14 @@ export default {
   },
   mounted () {
     this.$log.debug('Mounted Namespace view ...')
-    this.namespaceIdentifier = this.urn.split(':')[3]
+    this.namespaceIdentifier = parseInt(this.urn.split(':')[3])
     this.fetchNamespaceDetails()
   },
   methods: {
+    generateItemId () {
+      this.$store.commit('generateItemId')
+      return this.$store.getters.getItemId
+    },
     async fetchNamespaceDetails () {
       await this.$axios.$get(this.ajax.namespaceUrl + this.namespaceIdentifier,
         Ajax.header.ignoreLanguage)
@@ -166,14 +167,13 @@ export default {
       if (confirm(this.$i18n.t('global.itemDialog.deleteItemTitle').toString())) {
         await this.$axios.$delete(this.ajax.namespaceUrl + this.namespaceIdentifier)
           .then(function (res) {
-            this.$emit('delete', {
-              urn: this.urn
-            })
+            if (res !== undefined) {
+              this.$root.$emit('showDeleteSuccessSnackbar')
+              this.$root.$emit('updateTreeView')
+            }
           }.bind(this))
           .catch(function (err) {
-            this.$emit('deleteFailure', {
-              urn: this.urn
-            })
+            this.$root.$emit('handleDeleteFailure', err.response)
             this.$log.debug('Could not delete this item: ' + err)
           }.bind(this))
       }
@@ -196,7 +196,7 @@ export default {
   }
 }
 </script>
-<style>
+<style scoped>
 .designationButton {
   min-width: 50px;
   width: 40px;
@@ -204,5 +204,9 @@ export default {
   overflow-wrap: break-word;
   overflow: hidden;
   text-overflow: ellipsis;
+}
+
+.detailViewCard {
+  margin-bottom: 10px;
 }
 </style>

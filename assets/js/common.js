@@ -1,4 +1,5 @@
 import ItemDefinition from '~/components/item/item-definition'
+
 export default {
   buildUrn (namespaceId, elementType, identifier, version) {
     return 'urn:' + namespaceId + ':' + elementType.toLowerCase() + ':' + identifier + ':' + version
@@ -24,6 +25,9 @@ export default {
     } else {
       return null
     }
+  },
+  isNamespace (urn) {
+    return urn.toUpperCase().includes('NAMESPACE')
   },
   preferredLanguage () {
     return 'de,en-US;q=0.7,en;q=0.3'

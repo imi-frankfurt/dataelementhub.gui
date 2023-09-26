@@ -437,7 +437,7 @@ export default {
     }
   },
   mounted () {
-    this.$log.debug('Dialog mounted ...')
+    this.$log.debug('DataElement dialog mounted ...')
     this.fetchNamespaces()
     this.dialog = this.show
   },
@@ -514,38 +514,30 @@ export default {
           }
           await this.$axios.post(this.ajax.dataElementUrl, element)
             .then(function (res) {
-              this.$axios.$get(res.headers.location)
-                .then(function (res1) {
-                  element.identification.urn = res1.identification.urn
-                  element.parentUrn = ''
-                  element.action = 'CREATE'
-                  this.$root.$emit('updateTreeView', element)
-                  this.$emit('saveSuccess', element)
-                  this.hideDialog()
-                }.bind(this))
+              if (res !== undefined) {
+                this.$root.$emit('showSaveSuccessSnackbar')
+                this.$root.$emit('updateTreeView')
+                this.hideDialog()
+              }
             }.bind(this))
             .catch(function (err) {
               this.$log.debug('Could not save DataElement: ' + err)
-              this.$emit('saveFailure', err.response)
+              this.$root.$emit('handleSaveFailure', err.response)
             }.bind(this))
         } else { // ... otherwise we update it.
           delete this.dataElement.valueDomain // Remove this for current release
           await this.$axios.put(this.ajax.dataElementUrl + this.dataElement.identification.urn,
             this.dataElement)
             .then(function (res) {
-              this.$axios.$get(res.headers.location)
-                .then(function (res1) {
-                  this.dataElement.identification.urn = res1.identification.urn
-                  this.dataElement.previousUrn = this.urn
-                  this.dataElement.action = 'UPDATE'
-                  this.$root.$emit('updateTreeView', this.dataElement)
-                  this.$emit('saveSuccess', this.dataElement)
-                  this.hideDialog()
-                }.bind(this))
+              if (res !== undefined) {
+                this.$root.$emit('showSaveSuccessSnackbar')
+                this.$root.$emit('updateTreeView')
+                this.hideDialog()
+              }
             }.bind(this))
             .catch(function (err) {
               this.$log.debug('Could not save DataElement: ' + err)
-              this.$emit('saveFailure', err.response)
+              this.$root.$emit('handleSaveFailure', err.response)
             }.bind(this))
         }
       }
