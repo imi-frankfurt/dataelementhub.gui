@@ -1,52 +1,3 @@
-<template>
-  <v-container fluid class="main-container">
-    <v-row class="hero-row pb-10">
-      <v-col class="bg-symbol-1 logo-col">
-        <v-img
-          height="600px"
-          max-height="45vw"
-          contain
-          :src="require('~/assets/images/logo/2.png')"
-          :lazy-src="require('~/assets/images/logo/2.png')"
-        />
-      </v-col>
-      <v-col>
-        <v-container fill-height fluid>
-          <v-row align="center" justify="center">
-            <v-col class="mx-4">
-              <h1
-                class="introduction-text mb-5"
-              >
-                {{ $t('pages.home.introduction') }}
-              </h1>
-              <h3
-                class="dehub-text mb-5"
-              >
-                {{ $t('pages.home.dehub') }}
-              </h3>
-            </v-col>
-          </v-row>
-        </v-container>
-      </v-col>
-    </v-row>
-    <v-row class="second-row py-8">
-      <v-col>
-        <div class="markdown-class" v-html="markdownToHtml" />
-      </v-col>
-    </v-row>
-    <v-row class="extern-logos-row">
-      <v-col v-for="logo in externalLogos" :key="logo" align="center">
-        <v-img
-          height="80px"
-          width="80px"
-          contain
-          :src="require('~/assets/images/logo/extern/' + logo)"
-        />
-      </v-col>
-    </v-row>
-  </v-container>
-</template>
-
 <script>
 import { marked } from 'marked'
 import HomepageText from '@/assets/others/homepage.md'
@@ -82,15 +33,63 @@ export default {
 }
 </script>
 
+<template>
+  <div class="main-container">
+    <v-row class="hero-row pb-10">
+      <v-col class="bg-symbol-1 logo-col">
+        <v-img
+          height="600px"
+          max-height="45vw"
+          contain
+          :src="require('~/assets/images/logo/2.png')"
+          :lazy-src="require('~/assets/images/logo/2.png')"
+        />
+      </v-col>
+      <v-col>
+        <v-container fill-height fluid>
+          <v-row align="center" justify="center">
+            <v-col class="mx-4">
+              <h1
+                class="introduction-text mb-5"
+              >
+                {{ $t('pages.home.introduction') }}
+              </h1>
+              <h3
+                class="dehub-text mb-5"
+              >
+                {{ $t('pages.home.dehub') }}
+              </h3>
+            </v-col>
+          </v-row>
+        </v-container>
+      </v-col>
+    </v-row>
+    <v-row class="py-8" align="center" justify="center">
+      <v-col cols="10">
+        <div class="markdown-class" v-html="markdownToHtml" />
+      </v-col>
+    </v-row>
+    <v-row class="mb-0 pb-0">
+      <v-col v-for="logo in externalLogos" :key="logo" align="center">
+        <v-img
+          height="150px"
+          width="300px"
+          contain
+          :src="require('~/assets/images/logo/extern/' + logo)"
+        />
+      </v-col>
+    </v-row>
+  </div>
+</template>
+
 <style scoped lang="scss">
 
-.extern-logos-row {
-  background: #e8f9fd;
-}
-
 .main-container {
-  height: 100%;
+  background: #e8f9fd;
+  padding: 10px 0 0;
+  margin: 0;
   width: 100%;
+  min-height: 100%;
 }
 
 .markdown-class {
