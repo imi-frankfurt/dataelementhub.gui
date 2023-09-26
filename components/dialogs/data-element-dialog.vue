@@ -392,7 +392,7 @@ export default {
       },
       availableEnumertedValueDomains: [],
       selectedNamespaceId: -1,
-      statuses: Common.elementStatuses(),
+      statuses: Common.elementStatuses(['OUTDATED']),
       namespaces: [],
       elementValueDomains: Common.elementValueDomains(),
       released: false,
