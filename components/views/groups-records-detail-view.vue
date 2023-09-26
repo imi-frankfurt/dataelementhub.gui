@@ -17,12 +17,12 @@
   </div>
   <div v-else>
     <GroupRecordDialog
+      v-if="dialog"
       :show="dialog"
       :urn="urn"
       :namespace-urn="element.identification.namespaceUrn"
       :element-type="elementType"
-      @save="saveElement($event)"
-      @saveFailure="$emit('saveFailure', $event)"
+      @save="saveElement()"
       @dialogClosed="dialog = false"
     />
     <v-card
@@ -131,7 +131,7 @@
       class="d-block mr-0 ml-auto"
       color="primary"
       rounded
-      @click="$root.$emit('changeActiveElement', urn)"
+      @click="$store.commit('changeActiveTreeViewNode', { ...getNodeFromElement })"
     >
       {{ $t('global.button.showInTreeView') }}
       <v-icon dark>
@@ -195,6 +195,21 @@ export default {
   computed: {
     elementType () {
       return Common.findElementType(this.urn)
+    },
+    getNodeFromElement () {
+      return {
+        id: this.generateItemId(),
+        parentUrn: this.parentUrn,
+        namespaceUrn: this.element.identification.namespaceUrn,
+        urn: this.element.identification.urn,
+        editable: this.editable,
+        isPreferredLanguage: Ajax.preferredLanguage.includes(this.element.definitions[0].language),
+        designation: this.element.definitions[0].designation,
+        type: this.element.identification.elementType,
+        elementStatus: this.element.identification.status,
+        expanded: false,
+        children: []
+      }
     }
   },
   watch: {
@@ -215,6 +230,10 @@ export default {
     this.fetchElementPath()
   },
   methods: {
+    generateItemId () {
+      this.$store.commit('generateItemId')
+      return this.$store.getters.getItemId
+    },
     getLeftButtonClass () {
       return {
         'left-button-marked': this.selectedElementPathType === 'DESIGNATION',
@@ -260,16 +279,12 @@ export default {
     async updateMembers () {
       await this.$axios.post(this.ajax.elementUrl + this.urn + '/updateMembers')
         .then(function (res) {
-          this.$axios.$get(res.headers.location)
-            .then(function (res1) {
-              this.element = res1
-              this.element.previousUrn = this.urn
-              this.element.action = 'UPDATE'
-              this.$emit('reloadMembers', this.element)
-            }.bind(this))
+          this.$root.$emit('showSaveSuccessSnackbar')
+          this.$root.$emit('updateTreeView')
         }.bind(this))
         .catch(function (err) {
           this.$log.debug('Could not update Members: ' + err)
+          this.$root.$emit('handleSaveFailure', err.response)
         }.bind(this))
     },
     editItem () {
@@ -279,12 +294,13 @@ export default {
       if (confirm(this.$i18n.t('global.itemDialog.deleteItemTitle').toString())) {
         await this.$axios.$delete(this.ajax.elementUrl + this.urn)
           .then(function (res) {
-            this.$emit('delete', {
-              urn: this.urn
-            })
+            if (res !== undefined) {
+              this.$root.$emit('showDeleteSuccessSnackbar')
+              this.$root.$emit('updateTreeView')
+            }
           }.bind(this))
           .catch(function (err) {
-            this.$emit('deleteFailure', err.response)
+            this.$root.$emit('handleDeleteFailure', err.response)
             this.$log.debug('Could not delete this item: ' + err)
           }.bind(this))
       }
@@ -321,8 +337,7 @@ export default {
       }
       this.detailViewDialog.show = true
     },
-    saveElement (element) {
-      this.$emit('saveSuccess', element)
+    saveElement () {
       this.loadDetails()
       this.fetchElementPath()
     }

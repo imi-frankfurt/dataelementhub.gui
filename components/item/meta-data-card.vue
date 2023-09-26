@@ -11,14 +11,14 @@ export default {
   <v-card
     class="meta-data-card d-flex align-left justify-center ma-0 pa-ß"
   >
-    <card>
+    <div>
       <v-list-item two-line>
         <v-list-item-content>
           <v-list-item-subtitle class="text-h9 text-center" v-text="subtitle" />
           <v-list-item-title class="text-h7 text-center" v-text="title" />
         </v-list-item-content>
       </v-list-item>
-    </card>
+    </div>
   </v-card>
 </template>
 

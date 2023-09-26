@@ -35,7 +35,9 @@ export default {
     },
     alerts: {
       warning: 'WARNING!',
-      defineLanguage: 'Preferred Language is not defined.'
+      defineLanguage: 'Preferred Language is not defined.',
+      outdatedMembers: 'This element contains outdated members.',
+      outdatedElement: 'This element is outdated.'
     },
     button: {
       save: 'Save',

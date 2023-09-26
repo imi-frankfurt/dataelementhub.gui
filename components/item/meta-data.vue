@@ -17,7 +17,7 @@
         <v-card
           class="meta-data-card d-flex align-center justify-center pt-4"
         >
-          <card>
+          <div>
             <v-list-item two-line class="two-line-list">
               <v-list-item-content>
                 <v-list-item-subtitle class="text-h9 text-center" v-text="$t('global.urn')" />
@@ -29,7 +29,7 @@
                     style="max-width: 300px;"
                   >
                     <template #activator="{ on, attrs }">
-                      <v-div
+                      <div
                         v-bind="attrs"
                         v-on="on"
                       >
@@ -55,7 +55,7 @@
                             </v-icon>
                           </span>
                         </p>
-                      </v-div>
+                      </div>
                     </template>
                     <v-list>
                       <v-list-item>
@@ -79,7 +79,7 @@
                 </v-list-item-title>
               </v-list-item-content>
             </v-list-item>
-          </card>
+          </div>
         </v-card>
       </v-col>
       <v-col v-if="type === 'NAMESPACE'">

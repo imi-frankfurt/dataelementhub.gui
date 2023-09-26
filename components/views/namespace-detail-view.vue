@@ -17,10 +17,9 @@
   </div>
   <div v-else>
     <namespace-dialog
+      v-if="dialog"
       :id="namespaceIdentifier"
       :show="dialog"
-      @save="$emit('save', $event); fetchNamespaceDetails()"
-      @saveFailure="$emit('saveFailure', $event)"
       @dialogClosed="dialog = false"
     />
     <v-card
@@ -68,7 +67,7 @@
       class="d-block mr-0 ml-auto"
       color="primary"
       rounded
-      @click="$root.$emit('changeActiveElement', urn)"
+      @click="$store.commit('changeActiveTreeViewNode', { ...getNodeFromElement } )"
     >
       {{ $t('global.button.showInTreeView') }}
       <v-icon dark>
@@ -115,6 +114,23 @@ export default {
       dialog: false
     }
   },
+  computed: {
+    getNodeFromElement () {
+      return {
+        id: this.generateItemId(),
+        parentUrn: '',
+        namespaceUrn: this.namespace.identification.namespaceUrn,
+        urn: this.namespace.identification.urn,
+        editable: this.editable,
+        isPreferredLanguage: Ajax.preferredLanguage.includes(this.namespace.definitions[0].language),
+        designation: this.namespace.definitions[0].designation,
+        type: this.namespace.identification.elementType,
+        elementStatus: this.namespace.identification.status,
+        expanded: false,
+        children: []
+      }
+    }
+  },
   watch: {
     urn (n) {
       this.fetchingNamespace = true
@@ -124,10 +140,14 @@ export default {
   },
   mounted () {
     this.$log.debug('Mounted Namespace view ...')
-    this.namespaceIdentifier = this.urn.split(':')[3]
+    this.namespaceIdentifier = parseInt(this.urn.split(':')[3])
     this.fetchNamespaceDetails()
   },
   methods: {
+    generateItemId () {
+      this.$store.commit('generateItemId')
+      return this.$store.getters.getItemId
+    },
     async fetchNamespaceDetails () {
       await this.$axios.$get(this.ajax.namespaceUrl + this.namespaceIdentifier,
         Ajax.header.ignoreLanguage)
@@ -147,14 +167,13 @@ export default {
       if (confirm(this.$i18n.t('global.itemDialog.deleteItemTitle').toString())) {
         await this.$axios.$delete(this.ajax.namespaceUrl + this.namespaceIdentifier)
           .then(function (res) {
-            this.$emit('delete', {
-              urn: this.urn
-            })
+            if (res !== undefined) {
+              this.$root.$emit('showDeleteSuccessSnackbar')
+              this.$root.$emit('updateTreeView')
+            }
           }.bind(this))
           .catch(function (err) {
-            this.$emit('deleteFailure', {
-              urn: this.urn
-            })
+            this.$root.$emit('handleDeleteFailure', err.response)
             this.$log.debug('Could not delete this item: ' + err)
           }.bind(this))
       }

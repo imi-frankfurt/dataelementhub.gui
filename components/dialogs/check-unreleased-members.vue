@@ -58,9 +58,7 @@
         :key="editDialog.show"
         :urn="editDialog.urn"
         :show="editDialog.show"
-        @saveSuccess="$emit('saveSuccess', $event); removeIfReleased(editDialog.urn)"
-        @saveFailure="$emit('saveFailure', $event)"
-        @dialogClosed="editDialog.show = false"
+        @dialogClosed="editDialog.show = false; removeIfReleased(editDialog.urn)"
       />
     </v-row>
     <v-row
@@ -73,9 +71,7 @@
         :show="editDialog.show"
         :urn="editDialog.urn"
         :element-type="dialog.elementType"
-        @saveSuccess="$emit('saveSuccess', $event); removeIfReleased(editDialog.urn)"
-        @saveFailure="$emit('saveFailure', $event)"
-        @dialogClosed="editDialog.show = false"
+        @dialogClosed="editDialog.show = false; removeIfReleased(editDialog.urn)"
       />
     </v-row>
   </v-dialog>
