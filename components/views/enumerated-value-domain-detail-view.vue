@@ -19,60 +19,19 @@
     <div v-if="valueDomain !== undefined" class="detailView">
       <v-card
         v-if="!hidePath"
-        class="detailViewCard"
         color="grey lighten-4"
         flat
       >
-        <v-toolbar>
-          <v-toolbar-title>
-            <v-container class="text-center">
-              <v-row no-gutters>
-                <v-col v-for="item in elementPathInTree" :key="item.urn">
-                  <v-icon v-if="!item.urn.includes('namespace')">
-                    mdi-slash-forward
-                  </v-icon>
-                  <v-btn
-                    width="130"
-                    class="designationButton"
-                    color="grey lighten-4"
-                    rounded
-                    :disabled="!activatePathNavigation"
-                    @click="showDetailViewDialog(item.urn)"
-                  >
-                    <div
-                      v-if="item.urn === urn"
-                      style="text-align: center; width: 100%; white-space: normal;"
-                    >
-                      {{ item.designation }}
-                    </div>
-                    <a
-                      v-if="item.urn !== urn"
-                      style="text-align: center; width: 100%; white-space: normal;"
-                    >
-                      {{ item.designation }}
-                    </a>
-                  </v-btn>
-                </v-col>
-              </v-row>
-            </v-container>
-          </v-toolbar-title>
-          <v-spacer />
-          <v-btn
-            v-if="editable"
-            icon
-            color="primary"
-            @click="editValueDomain"
-          >
-            <v-icon>mdi-pencil</v-icon>
-          </v-btn>
-          <v-btn
-            v-if="deletable"
-            icon
-            @click="deleteValueDomain"
-          >
-            <v-icon>mdi-delete</v-icon>
-          </v-btn>
-        </v-toolbar>
+        <common-detail-view-toolbar
+          :element-path="elementPathInTree"
+          :element-urn="urn"
+          :activate-navigation="activatePathNavigation"
+          :element-is-deletable="deletable"
+          :element-is-editable="editable"
+          @showDetailViewDialog="showDetailViewDialog($event)"
+          @editElement="editValueDomain"
+          @deleteElement="deleteValueDomain"
+        />
       </v-card>
       <v-card outlined color="transparent" class="ma-0 pa-0">
         <MetaData
@@ -263,12 +222,11 @@ export default {
       if (confirm(this.$i18n.t('global.itemDialog.deleteItemTitle').toString())) {
         await this.$axios.$delete(this.ajax.valueDomainUrl + this.urn)
           .then(function (res) {
-            this.$emit('delete', {
-              urn: this.urn
-            })
+            this.$root.$emit('showDeleteSuccessSnackbar')
+            this.$root.$emit('updateTreeView')
           }.bind(this))
           .catch(function (err) {
-            this.$emit('deleteFailure', err.response)
+            this.$root.$emit('handleDeleteFailure', err.response)
             this.$log.debug('Could not delete this item: ' + err)
           }.bind(this))
       }
@@ -332,7 +290,7 @@ export default {
   }
 }
 </script>
-<style>
+<style scoped>
 
 .detailView {
   padding: 2px 10px;
@@ -346,7 +304,7 @@ export default {
 }
 
 .detailViewCard {
-  margin-bottom: 30px;
+  margin-bottom: 10px;
 }
 
 .designationButton {

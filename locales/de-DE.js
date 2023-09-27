@@ -35,7 +35,9 @@ export default {
     },
     alerts: {
       warning: 'WARNUNG!',
-      defineLanguage: 'Bevorzugte Sprache ist nicht definiert.'
+      defineLanguage: 'Bevorzugte Sprache ist nicht definiert.',
+      outdatedMembers: 'Dieses Element enthält outdated members.',
+      outdatedElement: 'Dieses Element ist outdated.'
     },
     button: {
       save: 'Speichern',
@@ -56,7 +58,7 @@ export default {
     path: 'Pfad',
     paths: 'Pfade',
     private: 'PRIVAT',
-    imi: 'Institut für Medizininformatik',
+    imi: 'Institut für Medizininformatik Frankfurt',
     dragAndDrop: 'einfach ziehen und ablegen',
     metaData: 'Meta Daten',
     status: 'Status',

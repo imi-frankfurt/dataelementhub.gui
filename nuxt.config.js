@@ -1,10 +1,19 @@
+import fs from 'fs'
 import colors from 'vuetify/es5/util/colors'
+
+let allExternalLogos
+if (fs.existsSync('assets/images/logo/extern')) {
+  allExternalLogos = fs.readdirSync('assets/images/logo/extern')
+} else {
+  allExternalLogos = []
+}
 
 export default {
   env: {
     baseUrl: process.env.BASE_URL || 'http://localhost:3000',
     backendUrl: process.env.BACKEND_URL || 'http://localhost:8090',
-    snackbarTimeout: process.env.SNACKBAR_TIMEOUT || 2000
+    snackbarTimeout: process.env.SNACKBAR_TIMEOUT || 2000,
+    externalLogos: allExternalLogos
   },
   // Global page headers: https://go.nuxtjs.dev/config-head
   head: {
@@ -197,6 +206,12 @@ export default {
 
   // Build Configuration: https://go.nuxtjs.dev/config-build
   build: {
+    extend (config) {
+      config.module.rules.push({
+        test: /\.md$/,
+        loader: 'raw-loader'
+      })
+    },
     transpile: [
       'vuetify/lib'
     ],

@@ -35,7 +35,9 @@ export default {
     },
     alerts: {
       warning: 'WARNING!',
-      defineLanguage: 'Preferred Language is not defined.'
+      defineLanguage: 'Preferred Language is not defined.',
+      outdatedMembers: 'This element contains outdated members.',
+      outdatedElement: 'This element is outdated.'
     },
     button: {
       save: 'Save',
@@ -57,7 +59,7 @@ export default {
     public: 'PUBLIC',
     private: 'PRIVATE',
     hidden: 'HIDDEN',
-    imi: 'Institute for Medical Informatics',
+    imi: 'Institute for Medical Informatics Frankfurt',
     login: 'LOG IN',
     addItem: 'ADD ITEM',
     dragAndDrop: 'simply drag and drop',
@@ -393,7 +395,7 @@ export default {
           {
             id: 2,
             question: 'How long will my data be persisted in this instance?',
-            answer: 'Every sunday the data will be automatically deleted from the database.'
+            answer: 'The entire database is automatically cleared every sunday.'
           }
         ]
       }
