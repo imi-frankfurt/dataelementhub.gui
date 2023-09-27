@@ -58,7 +58,7 @@ export default {
   data () {
     return {
       ajax: {
-        sourceIdUrl: process.env.mdrBackendUrl + '/v1/source/'
+        sourceIdUrl: process.env.backendUrl + '/v1/source/'
       },
       sourceIds: [],
       currentConcept: this.conceptAssociation,

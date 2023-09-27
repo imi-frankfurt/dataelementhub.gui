@@ -101,7 +101,7 @@ export default {
   data () {
     return {
       ajax: {
-        namespaceUrl: process.env.mdrBackendUrl + '/v1/namespaces/'
+        namespaceUrl: process.env.backendUrl + '/v1/namespaces/'
       },
       detailViewDialog: {
         urn: '',

@@ -89,8 +89,8 @@ export default {
         filteredMembers: []
       },
       ajax: {
-        namespaceUrl: process.env.mdrBackendUrl + '/v1/namespaces/',
-        elementUrl: process.env.mdrBackendUrl + '/v1/element/'
+        namespaceUrl: process.env.backendUrl + '/v1/namespaces/',
+        elementUrl: process.env.backendUrl + '/v1/element/'
       },
       namespaceMembers: [],
       selectedMembers: [],

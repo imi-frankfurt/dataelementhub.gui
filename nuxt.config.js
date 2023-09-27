@@ -11,7 +11,7 @@ if (fs.existsSync('assets/images/logo/extern')) {
 export default {
   env: {
     baseUrl: process.env.BASE_URL || 'http://localhost:3000',
-    mdrBackendUrl: process.env.MDR_BACKEND_URL || 'http://localhost:8090',
+    backendUrl: process.env.BACKEND_URL || 'http://localhost:8090',
     snackbarTimeout: process.env.SNACKBAR_TIMEOUT || 2000,
     externalLogos: allExternalLogos
   },

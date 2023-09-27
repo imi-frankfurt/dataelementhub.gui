@@ -242,7 +242,7 @@ export default {
   data () {
     return {
       ajax: {
-        dataElementUrl: process.env.mdrBackendUrl + '/v1/element/'
+        dataElementUrl: process.env.backendUrl + '/v1/element/'
       },
       detailViewDialog: {
         urn: '',

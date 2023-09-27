@@ -93,8 +93,8 @@ export default {
   data () {
     return {
       ajax: {
-        dataElementUrl: process.env.mdrBackendUrl + '/v1/element/',
-        namespaceUrl: process.env.mdrBackendUrl + '/v1/namespaces/'
+        dataElementUrl: process.env.backendUrl + '/v1/element/',
+        namespaceUrl: process.env.backendUrl + '/v1/namespaces/'
       },
       dialog: this.show,
       selectedItem: 1,

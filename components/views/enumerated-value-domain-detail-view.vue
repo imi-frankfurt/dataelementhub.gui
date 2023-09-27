@@ -155,7 +155,7 @@ export default {
   data () {
     return {
       ajax: {
-        valueDomainUrl: process.env.mdrBackendUrl + '/v1/element/'
+        valueDomainUrl: process.env.backendUrl + '/v1/element/'
       },
       detailViewDialog: {
         urn: '',
