@@ -100,7 +100,7 @@ export default {
     ],
     cookie: {
       options: {
-        httpOnly: true,
+        httpOnly: false,
         secure: true
       }
     },
