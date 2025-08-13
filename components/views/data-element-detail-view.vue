@@ -318,11 +318,16 @@ export default {
         .then(function (res) {
           res.relations = []
           this.dataElement = Object.assign({}, res)
+          console.log('this.dataElement:', this.dataElement) // to delete
+          console.log('dataElement.valueDomainUrn', this.dataElement.valueDomainUrn) // to delete
           this.$log.debug('Fetching DataElement relations ...')
           this.$axios.$get(this.ajax.dataElementUrl + this.urn + '/relations', Ajax.header.ignoreLanguage)
             .then(function (res1) {
+              console.log('this.urn', this.urn) // to delete
+              console.log('Fetched relations response:', res1) // to delete
               this.dataElement.relations = res1
               this.fetchingDataElement = false
+              console.log('this.dataElement.relations', this.dataElement.relations) // to delete
             }.bind(this))
             .catch(function (err) {
               this.$log.error('Could not fetch relations: ' + err)

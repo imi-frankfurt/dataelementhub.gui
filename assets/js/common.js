@@ -53,7 +53,7 @@ export default {
   },
   // Return all Element value domains
   elementValueDomains () {
-    return ['STRING', 'NUMERIC', 'BOOLEAN', 'ENUMERATED', 'DATETIME', 'DATE',
+    return ['STRING', 'NUMERIC', 'BOOLEAN', 'ENUMERATED', 'DEFINED', 'DATETIME', 'DATE',
       'TIME', 'TBD']
   },
   numericValueDomains () {
@@ -115,6 +115,37 @@ export default {
         {
           identification: {
             elementType: 'PERMISSIBLE_VALUE',
+            status: 'DRAFT'
+          },
+          definitions: [
+            ItemDefinition.data().defaultDefinition
+          ],
+          value: 'value'
+        }
+      ]
+    }
+  },
+  defaultDefinedValueDomain () {
+    return {
+      identification: {
+        elementType: 'DEFINED_VALUE_DOMAIN',
+        status: 'DRAFT'
+      },
+      definitions: [
+        ItemDefinition.data().defaultDefinition
+      ],
+      type: 'DEFINED',
+      valueDomainReferenceDTO: {
+        codeSystem: {
+          version: '',
+          sourceId: ''
+        },
+        subsetUri: ''
+      },
+      definedPermittedValues: [
+        {
+          identification: {
+            elementType: 'DEFINED_PERMISSIBLE_VALUE',
             status: 'DRAFT'
           },
           definitions: [

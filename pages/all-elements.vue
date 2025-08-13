@@ -194,7 +194,7 @@ export default {
       })
         .then(function (res) {
           if
-          (!['ENUMERATED_VALUE_DOMAIN', 'DESCRIBED_VALUE_DOMAIN']
+          (!['ENUMERATED_VALUE_DOMAIN', 'DESCRIBED_VALUE_DOMAIN', 'DEFINED_VALUE_DOMAIN']
             .includes(res.identification.elementType)) {
             res.editable = node.editable && res.identification.status.toUpperCase() !== 'OUTDATED'
             this.selectedElement = res

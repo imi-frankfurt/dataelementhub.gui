@@ -230,8 +230,8 @@ export default {
             </v-toolbar>
           </template>
           <template #[`item.converted`]="{ item }">
-            {{ item.converted.toFixed(2) * 100 + ' %' }}
-          </template>
+            {{ (Number(item.converted) || 0).toFixed(2) * 100 + ' %' }}
+          </template>n
           <template #[`item.namespaceUrn`]="{ item }">
             <v-btn
               small

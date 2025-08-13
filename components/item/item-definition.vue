@@ -17,6 +17,7 @@
         :label="label[1]"
         rows="1"
         auto-grow
+        :readonly="definitionReadonly"
         @input="$emit('definition', $event)"
       />
     </v-col>
@@ -36,7 +37,8 @@ export default {
   props: {
     designation: { required: false, default: '', type: String },
     definition: { required: false, default: '', type: String },
-    language: { required: false, default: 'en', type: String }
+    language: { required: false, default: 'en', type: String },
+    definitionReadonly: { type: Boolean, default: false }
   },
   data () {
     return {

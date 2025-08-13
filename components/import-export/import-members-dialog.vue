@@ -16,6 +16,7 @@ export default {
       importUrl: process.env.mdrBackendUrl + '/v1/import/'
     },
     loadingTableData: false,
+    loadingConvert: false,
     stagedElementDialog: {
       show: false,
       stagedElement: {}
@@ -86,6 +87,8 @@ export default {
             this.fetchImportMembers(this.importId)
             this.selected = []
             this.loadingTableData = false
+            this.loadingConvert = true
+            this.setPropertyFalseAfterDelay()
           }
         }.bind(this))
     },
@@ -103,6 +106,12 @@ export default {
         .then(function (res) {
           this.stagedElementDialog.stagedElement = res
         }.bind(this))
+    },
+    setPropertyFalseAfterDelay () {
+      setTimeout(() => {
+        this.loadingConvert = false
+        this.fetchImportMembers(this.importId)
+      }, 5000) // 5 seconds (5 000 ms)
     }
   }
 }
@@ -158,7 +167,11 @@ export default {
       </v-card-text>
     </v-card>
     <v-card v-else>
+      <div v-if="loadingConvert">
+        <h3 class="text-center pa-8">Loading...</h3>
+      </div>
       <v-data-table
+        v-if="!loadingConvert"
         v-model="selected"
         :items="allImportMembers"
         :headers="headers"
@@ -168,8 +181,9 @@ export default {
         show-select
         class="elevation-1 pa-8"
         fixed-header
-        hide-default-footer
         height="400px"
+        hide-default-footer
+        :items-per-page="-1"
       >
         <template #top>
           <v-toolbar
