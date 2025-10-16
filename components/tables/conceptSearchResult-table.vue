@@ -45,20 +45,17 @@ export default {
             disable-sort
             @click:row="$emit('select', $event)"
           >
-            <template #item.system="{ item }">
+            <template v-slot:[`itemSystem`]="{ item }">
               <v-card outlined color="transparent">{{ item.system }}</v-card>
             </template>
-
-            <template #item.version="{ item }">
-              <v-card outlined color="transparent">{{ item.version }}</v-card>
+            <template v-slot:[`itemversion`]="{ item }">
+              <v-card outlined color="transparent">{{ item.system }}</v-card>
             </template>
-
-            <template #item.term="{ item }">
-              <v-card outlined color="transparent">{{ item.term }}</v-card>
+            <template v-slot:[`itemterm`]="{ item }">
+              <v-card outlined color="transparent">{{ item.system }}</v-card>
             </template>
-
-            <template #item.text="{ item }">
-              <v-card outlined color="transparent">{{ item.text }}</v-card>
+            <template v-slot:[`itemtext`]="{ item }">
+              <v-card outlined color="transparent">{{ item.system }}</v-card>
             </template>
           </v-data-table>
       </v-card-text>

@@ -19,10 +19,19 @@
       <v-select
         v-if="isSemlookpSelected"
         v-model="selectedTerminologyId"
-        :items="terminologyList"
+        :items="semlookpOptions"
         item-value="id"
         item-text="label"
-        label="Ontologie auswählen"
+        label="Select Ontology"
+        clearable
+      />
+      <v-select
+        v-if="isUmlsSelected"
+        v-model="selectedTerminologyId2"
+        :items="umlsOptions"
+        item-value="id"
+        item-text="label"
+        label="select Ontology"
         clearable
       />
       <v-btn
@@ -136,20 +145,25 @@ export default {
           param: 'query'
         },
         Semlookp: {
-          url: process.env.mdrBackendUrl + '/v1/semlookp/search',
+          searchAllUrl: process.env.mdrBackendUrl + '/v1/semlookp/searchInAllOntology',
+          searchInOntologyUrl: process.env.mdrBackendUrl + '/v1/semlookp/search',
           param: 'query',
           ontology: 'id'
         },
         UMLS: {
-          url: process.env.mdrBackendUrl + '/v1/umls/search',
-          param: 'term'
+          searchAllUrl2: process.env.mdrBackendUrl + '/v1/umls/search',
+          searchInOntologyUrl: process.env.mdrBackendUrl + '/v1/umls/searchInOntology',
+          param: 'term',
+          sabs: 'id'
         }
       },
       searchResults: [],
       sourceName: '',
       showResultsModal: false,
       selectedTerminologyId: '',
-      terminologyList: [],
+      selectedTerminologyId2: '',
+      rawOntologies: [],
+      rawOntologies2: [],
       selectedSourceId: null
     }
   },
@@ -176,6 +190,23 @@ export default {
     },
     isSemlookpSelected () {
       return this.selectedSource?.name?.toLowerCase() === 'semlookp'
+    },
+    isUmlsSelected () {
+      return this.selectedSource?.name?.toLowerCase() === 'umls'
+    },
+    semlookpOptions () {
+      // add all ontologies in the select
+      return [
+        { id: '', label: '🌐 All Ontologies' },
+        ...this.rawOntologies
+      ]
+    },
+    umlsOptions () {
+      // add all ontologies in the select
+      return [
+        { id: '', label: '🌐 All sources' },
+        ...this.rawOntologies2
+      ]
     }
   },
   watch: {
@@ -189,6 +220,7 @@ export default {
   mounted () {
     this.getSourceId()
     this.loadSemlookpOntologies()
+    this.loadUmlsOntologies()
   },
   methods: {
     async getSourceId () {
@@ -203,7 +235,7 @@ export default {
         // Set a preselection or leave the field empty
         this.currentConcept.sourceId = this.terminologyServers[0]?.id || null
       } catch (error) {
-        console.error('Fehler beim Laden der Source IDs:', error)
+        console.error('Error loading source identifiers:', error)
       }
     },
 
@@ -211,12 +243,24 @@ export default {
       try {
         const response = await fetch(process.env.mdrBackendUrl + '/v1/semlookp/ids')
         const data = await response.json()
-        this.terminologyList = data.map(id => ({
+        this.rawOntologies = data.map(id => ({
           id,
           label: id
         }))
       } catch (error) {
-        console.error('Fehler beim Laden der SemLookp-Ontologien:', error)
+        console.error('Error loading SemLookp-Ontologies:', error)
+      }
+    },
+    async loadUmlsOntologies () {
+      try {
+        const response = await fetch(process.env.mdrBackendUrl + '/v1/umls/ids')
+        const data = await response.json()
+        this.rawOntologies2 = data.map(id => ({
+          id,
+          label: id
+        }))
+      } catch (error) {
+        console.error('Error loading UMLS-Ontologies:', error)
       }
     },
     async fetchTerminologyData (query) {
@@ -224,42 +268,88 @@ export default {
       const selectedSource = this.terminologyServers.find(s => s.id === selectedId)
 
       if (!selectedSource) {
-        console.warn('Keine Terminologiequelle ausgewählt.')
+        console.warn('No terminology source selected')
         return
       }
       const selected = this.endpointMap[selectedSource.name]
       if (!selected) {
-        console.warn('Kein API-Endpunkt definiert für:', selectedSource.name)
+        console.warn('No API endpoint defined for:', selectedSource.name)
         return
       }
-
+      const q = (query ?? '').trim()
+      if (!q) {
+        console.warn('Empty query')
+        return
+      }
+      // Semlookp
       try {
         if (selectedSource.name?.toLowerCase() === 'semlookp') {
-          if (!this.selectedTerminologyId) {
-            console.warn('Keine Ontologie für Semlookp ausgewählt.')
+          if (this.selectedTerminologyId === null || this.selectedTerminologyId === undefined) {
+            alert('Please select either ‘All ontologies’ or a specific ontology before searching')
             return
           }
+          let url
+          if (!this.selectedTerminologyId) {
+            url = `${selected.searchAllUrl}?` + new URLSearchParams({
+              query: q,
+              obsoletes: 'false'
+            }).toString()
+          } else {
+            url = `${selected.searchInOntologyUrl}?` + new URLSearchParams({
+              query: q,
+              ontology: this.selectedTerminologyId,
+              obsoletes: 'false'
+            }).toString()
+          }
+          const res = await fetch(url, { cache: 'no-store' })
+          if (!res.ok) { throw new Error(`HTTP ${res.status}`) }
+          const data = await res.json()
 
-          const response = await fetch(`${selected.url}?` +
-            new URLSearchParams({
-              [selected.param]: query,
-              ontology: this.selectedTerminologyId
-            })
-          )
-          const results = await response.json()
-          this.searchResults = results
+          this.searchResults = data.items ?? data
           this.showResultsModal = true
-          console.log('Ergebnisse:', results)
+          console.log('response:', this.searchResults)
+          return
+        }
+        // UMLS
+        if (selectedSource.name?.toLowerCase() === 'umls') {
+          if (this.selectedTerminologyId2 === null || this.selectedTerminologyId2 === undefined) {
+            alert('Please select either ‘All sources’ or a specific source before searching')
+            return
+          }
+          let url
+          if (!this.selectedTerminologyId2 || this.selectedTerminologyId2 === 'ALL') {
+            url = `${selected.searchAllUrl2}?` + new URLSearchParams({
+              term: q
+            }).toString()
+          } else {
+            url = `${selected.searchInOntologyUrl}?` + new URLSearchParams({
+              query: q,
+              sabs: this.selectedTerminologyId2
+            }).toString()
+          }
+          const res = await fetch(url, { cache: 'no-store' })
+          if (!res.ok) { throw new Error(`HTTP ${res.status}`) }
+          const data = await res.json()
+
+          this.searchResults = data.items ?? data
+          this.showResultsModal = true
+          console.log('response:', this.searchResults)
           return
         }
 
         // Other Terminologyservers
-        const result = await this.$axios.$get(`${selected.url}?${selected.param}=${encodeURIComponent(query)}`)
-        this.searchResults = result
+        const url = `${selected.url}?` + new URLSearchParams({
+          [selected.param]: q
+        }).toString()
+        const res = await fetch(url, { cache: 'no-store' })
+        if (!res.ok) { throw new Error(`HTTP ${res.status}`) }
+        const data = await res.json()
+
+        this.searchResults = data
         this.showResultsModal = true
-        console.log('Ergebnisse:', result)
+        console.log('response:', this.searchResults)
       } catch (error) {
-        console.error('Fehler beim Abrufen der Terminologie:', error)
+        console.error('Error retrieving terminology:', error)
       }
     },
     fillFormFromResult (item) {
