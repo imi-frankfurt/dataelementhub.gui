@@ -31,7 +31,7 @@
         :items="umlsOptions"
         item-value="id"
         item-text="label"
-        label="select Ontology"
+        label="select source"
         clearable
       />
       <v-btn
