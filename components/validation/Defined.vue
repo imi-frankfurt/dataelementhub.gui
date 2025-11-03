@@ -2,23 +2,12 @@
   <div>
     <v-card-text>
       <v-form ref="form" v-model="formValid">
-        <v-btn
-          color="primary"
-          rounded
-          small
-          @click="showPermittedValueSearch = true"
-        >
-          <v-icon dark>
-            mdi-plus
-          </v-icon>
-          Add Defined Permitted Value
-        </v-btn>
-        <div v-if="showPermittedValueSearch" style="margin-top: 20px;">
+        <div style="margin-top: 20px;">
           <v-row>
             <v-col cols="3">
               <v-select
                 v-model="terminologyServer"
-                :items="terminologyServers"
+                :items="DVDServers"
                 label="Select terminology server"
                 item-value="id"
                 item-text="name"
@@ -34,11 +23,12 @@
                 required
               />
             </v-col>
-            <v-col cols="3">
+            <v-col class="d-flex flex-nowrap ga-2 overflow-x-auto">
               <v-btn
                 color="primary"
                 rounded
                 small
+                class="mr-2"
                 @click="fetchTerminologyData(showCustomSearch ? searchterm : designation)"
               >
                 <v-icon dark>
@@ -214,6 +204,12 @@ export default {
     },
     disableRemoveDefinedValueAction () {
       return this.definedPermittedValues.length === 1
+    },
+    DVDServers () {
+      // Only server for Defined Value Domains
+      return this.terminologyServers.filter(server =>
+        server.name.toLowerCase().includes('loinc') || server.name.toLowerCase().includes('fhir-tx') // || server.name.toLowerCase().includes('snomed-ct')
+      )
     }
   },
   watch: {
@@ -257,8 +253,9 @@ export default {
     getEndpointConfig (name) {
       const baseUrl = process.env.mdrBackendUrl
       const endpoints = {
-        SnomedCT: { url: `${baseUrl}/v1/snomed/search`, param: 'term' },
-        LOINC: { url: `${baseUrl}/v1/loincFHIR/searchValueSet`, param: 'query' }
+        'SNOMED-CT': { url: `${baseUrl}/v1/definedValueDomain/snomedFHIR/searchValueSet`, param: 'query' },
+        LOINC: { url: `${baseUrl}/v1/definedValueDomain/loincFHIR/searchValueSet`, param: 'query' },
+        'FHIR-TX': { url: `${baseUrl}/v1/definedValueDomain/fhirTx/searchValueSet`, param: 'query' }
       }
       return endpoints[name] || null
     },

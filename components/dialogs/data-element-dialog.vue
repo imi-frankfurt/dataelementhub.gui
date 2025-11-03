@@ -502,11 +502,15 @@ export default {
               if (res1.permittedValues !== undefined) {
                 valueDomain.permittedValues = res1.permittedValues
               }
+              if (res1.definitions !== undefined) {
+                valueDomain.definitions = res1.definitions
+              }
               if (res1.definedPermittedValues !== undefined) {
                 valueDomain.definedPermittedValues = res1.definedPermittedValues
               }
               dataElement.valueDomain = Object.assign({}, valueDomain)
               this.dataElement = Object.assign({}, dataElement)
+              console.log(dataElement.valueDomain)
               this.released = (this.dataElement.identification.status === 'RELEASED')
               this.edit = true
             }.bind(this))

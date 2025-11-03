@@ -1,51 +1,74 @@
 <template>
   <div>
-    <v-col
+    <v-row
       class="d-flex"
       cols="12"
       sm="6"
     >
-      <v-select
-        v-model="selectedSourceId"
-        :items="terminologyServers"
-        label="Select terminology server"
-        item-value="id"
-        item-text="name"
-        clearable
-      >
-        Search in
-      </v-select>
+      <v-col cols="3">
+        <v-select
+          v-model="selectedSourceId"
+          :items="terminologyServers"
+          label="Select terminology server"
+          item-value="id"
+          item-text="name"
+          clearable
+        >
+          Search in
+        </v-select>
 
-      <v-select
-        v-if="isSemlookpSelected"
-        v-model="selectedTerminologyId"
-        :items="semlookpOptions"
-        item-value="id"
-        item-text="label"
-        label="Select Ontology"
-        clearable
-      />
-      <v-select
-        v-if="isUmlsSelected"
-        v-model="selectedTerminologyId2"
-        :items="umlsOptions"
-        item-value="id"
-        item-text="label"
-        label="select source"
-        clearable
-      />
-      <v-btn
-        color="primary"
-        rounded
-        small
-        @click="fetchTerminologyData(designation)"
-      >
-        <v-icon dark>
-          mdi-magnify
-        </v-icon>
-        search in Terminology Server
-      </v-btn>
-    </v-col>
+        <v-select
+          v-if="isSemlookpSelected"
+          v-model="selectedTerminologyId"
+          :items="semlookpOptions"
+          item-value="id"
+          item-text="label"
+          label="Select Ontology"
+          clearable
+        />
+        <v-select
+          v-if="isUmlsSelected"
+          v-model="selectedTerminologyId2"
+          :items="umlsOptions"
+          item-value="id"
+          item-text="label"
+          label="select source"
+          clearable
+        />
+      </v-col>
+      <v-col v-if="showCustomSearch" cols="3">
+        <v-text-field
+          v-model="searchterm"
+          label="Add search term"
+          required
+        />
+      </v-col>
+      <v-col class="d-flex flex-nowrap ga-2 overflow-x-auto">
+        <v-btn
+          color="primary"
+          rounded
+          small
+          class="mr-2"
+          @click="fetchTerminologyData(showCustomSearch ? searchterm : designation)"
+        >
+          <v-icon dark>
+            mdi-magnify
+          </v-icon>
+          Search in Terminology Server
+        </v-btn>
+        <v-btn
+          color="primary"
+          rounded
+          small
+          @click="showCustomSearch = !showCustomSearch"
+        >
+          <v-icon left>
+            {{ showCustomSearch ? 'mdi-close' : 'mdi-pencil' }}
+          </v-icon>
+          {{ showCustomSearch ? 'Close custom search term' : 'Use custom search term' }}
+        </v-btn>
+      </v-col>
+    </v-row>
     <v-row>
       <v-col cols="4">
         <v-text-field
@@ -100,6 +123,21 @@
       @close="showResultsModal = false"
       @select="fillFormFromResult"
     />
+    <!-- Snackbar for user feedback -->
+    <v-snackbar
+      v-model="snackbar.show"
+      :color="snackbar.color"
+      top
+      right
+    >
+      {{ snackbar.message }}
+      <v-btn
+        text
+        @click="snackbar.show = false"
+      >
+        Close
+      </v-btn>
+    </v-snackbar>
   </div>
 </template>
 <script>
@@ -136,7 +174,7 @@ export default {
         'inexact'
       ],
       endpointMap: {
-        SnomedCT: {
+        'SNOMED-CT': {
           url: process.env.mdrBackendUrl + '/v1/snomed/search',
           param: 'term'
         },
@@ -155,6 +193,10 @@ export default {
           searchInOntologyUrl: process.env.mdrBackendUrl + '/v1/umls/searchInOntology',
           param: 'term',
           sabs: 'id'
+        },
+        'FHIR-TX': {
+          url: process.env.mdrBackendUrl + '/v1/fhirTx/searchTerm',
+          param: 'query'
         }
       },
       searchResults: [],
@@ -164,7 +206,14 @@ export default {
       selectedTerminologyId2: '',
       rawOntologies: [],
       rawOntologies2: [],
-      selectedSourceId: null
+      selectedSourceId: null,
+      showCustomSearch: false,
+      searchterm: '',
+      snackbar: {
+        show: false,
+        message: '',
+        color: 'error'
+      }
     }
   },
   computed: {
@@ -266,9 +315,9 @@ export default {
     async fetchTerminologyData (query) {
       const selectedId = this.currentConcept.sourceId
       const selectedSource = this.terminologyServers.find(s => s.id === selectedId)
-
-      if (!selectedSource) {
-        console.warn('No terminology source selected')
+      const q = (query ?? '').trim()
+      if (!q) {
+        this.showSnackbar('Enter designation or search term')
         return
       }
       const selected = this.endpointMap[selectedSource.name]
@@ -276,9 +325,8 @@ export default {
         console.warn('No API endpoint defined for:', selectedSource.name)
         return
       }
-      const q = (query ?? '').trim()
-      if (!q) {
-        console.warn('Empty query')
+      if (!selectedSource) {
+        this.showSnackbar('No valid terminology server selected.')
         return
       }
       // Semlookp
@@ -302,7 +350,9 @@ export default {
             }).toString()
           }
           const res = await fetch(url, { cache: 'no-store' })
-          if (!res.ok) { throw new Error(`HTTP ${res.status}`) }
+          if (!res.ok) {
+            throw new Error(`HTTP ${res.status}`)
+          }
           const data = await res.json()
 
           this.searchResults = data.items ?? data
@@ -328,7 +378,9 @@ export default {
             }).toString()
           }
           const res = await fetch(url, { cache: 'no-store' })
-          if (!res.ok) { throw new Error(`HTTP ${res.status}`) }
+          if (!res.ok) {
+            throw new Error(`HTTP ${res.status}`)
+          }
           const data = await res.json()
 
           this.searchResults = data.items ?? data
@@ -342,7 +394,9 @@ export default {
           [selected.param]: q
         }).toString()
         const res = await fetch(url, { cache: 'no-store' })
-        if (!res.ok) { throw new Error(`HTTP ${res.status}`) }
+        if (!res.ok) {
+          throw new Error(`HTTP ${res.status}`)
+        }
         const data = await res.json()
 
         this.searchResults = data
@@ -358,6 +412,9 @@ export default {
       this.currentConcept.system = item.system
       this.currentConcept.version = item.version
       this.showResultsModal = false
+    },
+    showSnackbar (message, color = 'error') {
+      this.snackbar = { show: true, message, color }
     }
   }
 }
