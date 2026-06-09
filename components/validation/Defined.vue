@@ -165,7 +165,7 @@ export default {
   data () {
     return {
       ajax: {
-        sourceIdUrl: process.env.mdrBackendUrl + '/v1/source/'
+        sourceIdUrl: process.env.mdrBackendUrl + '/v1/source'
       },
       sourceIds: [],
       terminologyServers: [],
@@ -208,7 +208,7 @@ export default {
     DVDServers () {
       // Only server for Defined Value Domains
       return this.terminologyServers.filter(server =>
-        server.name.toLowerCase().includes('loinc') || server.name.toLowerCase().includes('fhir-tx') // || server.name.toLowerCase().includes('snomed-ct')
+        server.name.toLowerCase().includes('loinc') || server.name.toLowerCase().includes('fhir-tx') || server.name.toLowerCase().includes('snomed-ct')
       )
     }
   },
@@ -253,9 +253,9 @@ export default {
     getEndpointConfig (name) {
       const baseUrl = process.env.mdrBackendUrl
       const endpoints = {
-        'SNOMED-CT': { url: `${baseUrl}/v1/definedValueDomain/snomedFHIR/searchValueSet`, param: 'query' },
         LOINC: { url: `${baseUrl}/v1/definedValueDomain/loincFHIR/searchValueSet`, param: 'query' },
-        'FHIR-TX': { url: `${baseUrl}/v1/definedValueDomain/fhirTx/searchValueSet`, param: 'query' }
+        'FHIR-TX': { url: `${baseUrl}/v1/definedValueDomain/fhirTx/searchValueSet`, param: 'query' },
+        'SNOMED-CT': { url: `${baseUrl}/v1/definedValueDomain/snomedFHIR/searchValueSet`, param: 'query' }
       }
       return endpoints[name] || null
     },
