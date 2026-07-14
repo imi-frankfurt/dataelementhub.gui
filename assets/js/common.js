@@ -1,7 +1,20 @@
 import ItemDefinition from '~/components/item/item-definition'
+
 export default {
   buildUrn (namespaceId, elementType, identifier, version) {
     return 'urn:' + namespaceId + ':' + elementType.toLowerCase() + ':' + identifier + ':' + version
+  },
+  cutString (str, len) {
+    return str.length > len ? str.substring(0, len) + '..' : str
+  },
+  getStatusColor (status) {
+    if (status.toUpperCase() === 'OUTDATED') {
+      return '#ff9999'
+    } else if (status.toUpperCase() === 'RELEASED') {
+      return '#9dfc91'
+    } else if (status.toUpperCase() === 'DRAFT') {
+      return '#8a8a8a'
+    }
   },
   // Find an element type and return it
   findElementType (urn) {
@@ -12,6 +25,9 @@ export default {
     } else {
       return null
     }
+  },
+  isNamespace (urn) {
+    return urn.toUpperCase().includes('NAMESPACE')
   },
   preferredLanguage () {
     return 'de,en-US;q=0.7,en;q=0.3'
@@ -26,11 +42,14 @@ export default {
     ]
   },
   // Return element statuses
-  elementStatuses () {
+  elementStatuses (exclude = []) {
     return [
       'DRAFT',
-      'RELEASED'
-    ]
+      'RELEASED',
+      'OUTDATED'
+    ].filter(function (status) {
+      return !exclude.includes(status)
+    })
   },
   // Return all Element value domains
   elementValueDomains () {

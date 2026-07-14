@@ -27,7 +27,10 @@ export default {
         mapping: 'Mapping',
         visualizer: 'Visualizer',
         importExport: 'Import / Export',
-        search: 'Search'
+        import: 'Import',
+        export: 'Export',
+        search: 'Search',
+        relation: 'Relation'
       },
       settings: 'Settings',
       about: 'About',
@@ -35,7 +38,9 @@ export default {
     },
     alerts: {
       warning: 'WARNING!',
-      defineLanguage: 'Preferred Language is not defined.'
+      defineLanguage: 'Preferred Language is not defined.',
+      outdatedMembers: 'This element contains outdated members.',
+      outdatedElement: 'This element is outdated.'
     },
     button: {
       save: 'Save',
@@ -57,7 +62,7 @@ export default {
     public: 'PUBLIC',
     private: 'PRIVATE',
     hidden: 'HIDDEN',
-    imi: 'Institute for Medical Informatics',
+    imi: 'Institute for Medical Informatics Frankfurt',
     login: 'LOG IN',
     addItem: 'ADD ITEM',
     dragAndDrop: 'simply drag and drop',
@@ -200,6 +205,29 @@ export default {
         1: 'Enumerated value domains can only be created using the rest api:',
         2: 'Available Value Domains'
       }
+    },
+    importMembersDialog: {
+      importedMembers: 'IMPORTED MEMBERS',
+      importId: 'Import id',
+      namespaceUrn: 'Namespace urn',
+      buttons: {
+        back: 'BACK',
+        close: 'CLOSE',
+        convertToDraft: 'CONVERT TO DRAFT'
+      },
+      infoTexts: {
+        1: 'This is a staged element only and exists in the staging area. If you want to use it in your namespace, you must first convert it to a draft.'
+      }
+    },
+    startExportDialog: {
+      newExport: 'NEW EXPORT',
+      exportLabel: 'Enter your export label',
+      fullExport: 'Full export',
+      fullExportDescription: 'This option will automatically add elements history to the export (all available revisions).',
+      exportFormat: 'Export format',
+      json: 'JSON',
+      xml: 'XML',
+      search: 'Search'
     }
   },
   pages: {
@@ -339,13 +367,44 @@ export default {
       },
       importExport: {
         title: 'Import & Export',
-        subtitle: ''
+        subtitle: '',
+        import: {
+          buttons: {
+            cancel: 'CANCEL',
+            ok: 'OK'
+          },
+          newImport: 'NEW IMPORT',
+          deleteImportConfirmation: 'Are you sure you want to permanently remove this import?',
+          manageImportedElements: 'MANAGE IMPORTED ELEMENTS',
+          noImportsAvailable: 'NO IMPORTS AVAILABLE',
+          downloadImportFileExample: 'Download import file example'
+        },
+        export: {
+          newExport: 'NEW EXPORT',
+          noExportsAvailable: 'NO EXPORTS AVAILABLE',
+          downloadExportFile: 'Download export file',
+          exportedElementsUrns: 'Exported elements urns',
+          infoTexts: {
+            1: 'empty export'
+          }
+        }
       },
       search: {
         title: 'Search',
         subtitle: '',
         elementSections: 'Element sections',
         searchResult: 'Search result'
+      },
+      relation: {
+        title: 'Relation',
+        newRelation: 'Create New Relation',
+        relationMessage: {
+          deleteRelationConfirmation: 'Are you sure you want to permanently remove this relation?',
+          buttons: {
+            cancel: 'CANCEL',
+            ok: 'OK'
+          }
+        }
       }
     },
     settings: {
@@ -393,7 +452,7 @@ export default {
           {
             id: 2,
             question: 'How long will my data be persisted in this instance?',
-            answer: 'Every sunday the data will be automatically deleted from the database.'
+            answer: 'The entire database is automatically cleared every sunday.'
           }
         ]
       }

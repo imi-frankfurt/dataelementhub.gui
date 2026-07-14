@@ -43,6 +43,22 @@
                 </v-list-item-icon>
                 <v-list-item-title><v-list-item-title v-text="$t('global.mainMenu.tools.search')" /></v-list-item-title>
               </v-list-item>
+              <v-list-item to="/tools/import-export">
+                <v-list-item-icon>
+                  <v-icon color="white">
+                    mdi-swap-vertical
+                  </v-icon>
+                </v-list-item-icon>
+                <v-list-item-title><v-list-item-title v-text="$t('global.mainMenu.tools.importExport')" /></v-list-item-title>
+              </v-list-item>
+              <v-list-item to="/tools/relation">
+                <v-list-item-icon>
+                  <v-icon color="white">
+                    mdi-relation-many-to-many
+                  </v-icon>
+                </v-list-item-icon>
+                <v-list-item-title><v-list-item-title v-text="$t('global.mainMenu.tools.relation')" /></v-list-item-title>
+              </v-list-item>
             </v-list-item-group>
           </div>
         </client-only>
@@ -123,13 +139,35 @@
       </client-only>
     </v-app-bar>
     <v-main style="height: 100vh;">
+      <default-snackbar
+        :text="$t('global.itemDialog.snackbar.deleteFailure') + ': ' + snackbar.msg.data"
+        :show="snackbar.deleteFailure"
+        color="error"
+      />
+      <default-snackbar
+        :text="$t('global.itemDialog.snackbar.deleteSuccess')"
+        :show="snackbar.deleteSuccess"
+      />
+      <default-snackbar
+        :text="$t('global.itemDialog.snackbar.saveFailure') + ': ' + snackbar.msg.data"
+        :show="snackbar.saveFailure"
+        color="error"
+      />
+      <default-snackbar
+        :text="$t('global.itemDialog.snackbar.saveSuccess')"
+        :show="snackbar.saveSuccess"
+      />
       <nuxt />
     </v-main>
   </v-app>
 </template>
 
 <script>
+import DefaultSnackbar from '~/components/snackbars/default-snackbar'
 export default {
+  components: {
+    DefaultSnackbar
+  },
   data () {
     return {
       clipped: false,
@@ -138,10 +176,29 @@ export default {
       miniVariant: true,
       right: true,
       rightDrawer: false,
-      title: 'global.appName'
+      title: 'global.appName',
+      snackbar: {
+        msg: '',
+        deleteFailure: false,
+        deleteSuccess: false,
+        saveFailure: false,
+        saveSuccess: false
+      }
     }
   },
   mounted () {
+    this.$root.$on('showSaveSuccessSnackbar', () => {
+      this.showSaveSuccessSnackbar()
+    })
+    this.$root.$on('showDeleteSuccessSnackbar', () => {
+      this.showDeleteSuccessSnackbar()
+    })
+    this.$root.$on('handleSaveFailure', (msg) => {
+      this.handleSaveFailure(msg)
+    })
+    this.$root.$on('handleDeleteFailure', (msg) => {
+      this.handleDeleteFailure(msg)
+    })
     window.addEventListener('storage', function (event) {
       if (event.key === 'auth._token.keycloak' && event.oldValue !== event.newValue && event.newValue === 'false') {
         location.reload()
@@ -161,6 +218,28 @@ export default {
         await this.$auth.loginWith('keycloak')
       } catch (err) {
       }
+    },
+    async showSaveSuccessSnackbar () {
+      this.snackbar.saveSuccess = true
+      await new Promise(resolve => setTimeout(resolve, 2000))
+      this.snackbar.saveSuccess = false
+    },
+    async showDeleteSuccessSnackbar () {
+      this.snackbar.deleteSuccess = true
+      await new Promise(resolve => setTimeout(resolve, 2000))
+      this.snackbar.deleteSuccess = false
+    },
+    async handleSaveFailure (msg) {
+      this.snackbar.msg = msg
+      this.snackbar.saveFailure = true
+      await new Promise(resolve => setTimeout(resolve, 3500))
+      this.snackbar.saveFailure = false
+    },
+    async handleDeleteFailure (msg) {
+      this.snackbar.msg = msg
+      this.snackbar.deleteFailure = true
+      await new Promise(resolve => setTimeout(resolve, 3500))
+      this.snackbar.deleteFailure = false
     }
   }
 }

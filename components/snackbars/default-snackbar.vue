@@ -8,7 +8,7 @@
     {{ text }}
     <v-btn
       text
-      @click="snackbar = false"
+      @click="snackbar = false; $emit('hideSnackbar')"
     >
       {{ $t('global.button.close') }}
     </v-btn>
@@ -29,6 +29,16 @@ export default {
   watch: {
     show (n) {
       this.snackbar = n
+      if (this.snackbar === true) {
+        this.hideSnackbarAfter(3.5)
+      }
+    }
+  },
+  methods: {
+    async hideSnackbarAfter (seconds) {
+      await new Promise(resolve => setTimeout(resolve, seconds * 1000))
+      this.snackbar = false
+      this.$emit('hideSnackbar')
     }
   }
 }

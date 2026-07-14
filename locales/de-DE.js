@@ -27,7 +27,10 @@ export default {
         mapping: 'Mapping',
         visualizer: 'Visualizer',
         importExport: 'Importieren / Exportieren',
-        search: 'Suche'
+        import: 'Import',
+        export: 'Export',
+        search: 'Suche',
+        relation: 'Beziehung'
       },
       settings: 'Einstellungen',
       about: 'App Informationen',
@@ -35,7 +38,9 @@ export default {
     },
     alerts: {
       warning: 'WARNUNG!',
-      defineLanguage: 'Bevorzugte Sprache ist nicht definiert.'
+      defineLanguage: 'Bevorzugte Sprache ist nicht definiert.',
+      outdatedMembers: 'Dieses Element enthält outdated members.',
+      outdatedElement: 'Dieses Element ist outdated.'
     },
     button: {
       save: 'Speichern',
@@ -56,7 +61,7 @@ export default {
     path: 'Pfad',
     paths: 'Pfade',
     private: 'PRIVAT',
-    imi: 'Institut für Medizininformatik',
+    imi: 'Institut für Medizininformatik Frankfurt',
     dragAndDrop: 'einfach ziehen und ablegen',
     metaData: 'Meta Daten',
     status: 'Status',
@@ -198,6 +203,29 @@ export default {
         1: 'Enumerated value domains können nur mit der Rest-API erstellt werden:',
         2: 'Verfügbare Value Domains'
       }
+    },
+    importMembersDialog: {
+      importedMembers: 'IMPORTIERTE MEMBERS',
+      importId: 'Import id',
+      namespaceUrn: 'Namespace urn',
+      buttons: {
+        back: 'ZURÜCK',
+        close: 'SCHLIEßEN',
+        convertToDraft: 'IN DRAFT KONVERTIEREN'
+      },
+      infoTexts: {
+        1: 'Dies ist nur ein staged Element und befindet sich im staging area. Wenn Sie es in Ihrem Namespace verwenden möchten, müssen Sie es zuerst in einen DRAFT konvertieren.'
+      }
+    },
+    startExportDialog: {
+      newExport: 'NEUER EXPORT',
+      exportLabel: 'Geben Sie Ihr Exportlabel ein',
+      fullExport: 'Full export',
+      fullExportDescription: 'Diese Option fügt dem Export automatisch den Elementverlauf hinzu (alle verfügbaren Revisionen).',
+      exportFormat: 'Export format',
+      json: 'JSON',
+      xml: 'XML',
+      search: 'Suche'
     }
   },
   pages: {
@@ -336,14 +364,45 @@ export default {
         subtitle: ''
       },
       importExport: {
-        title: 'Import & Export',
-        subtitle: ''
+        title: 'Importieren / Exportieren',
+        subtitle: '',
+        import: {
+          buttons: {
+            cancel: 'ABBRECHEN',
+            ok: 'OK'
+          },
+          newImport: 'NEUER IMPORT',
+          deleteImportConfirmation: 'Möchten Sie diesen Import wirklich dauerhaft entfernen?',
+          manageImportedElements: 'IMPORTIERTE ELEMENTE VERWALTEN',
+          noImportsAvailable: 'KEINE IMPORTE VERFÜGBAR',
+          downloadImportFileExample: 'Laden Sie ein Beispiel für eine Importdatei herunter'
+        },
+        export: {
+          newExport: 'NEUER EXPORT',
+          noExportsAvailable: 'KEINE EXPORTE VERFÜGBAR',
+          downloadExportFile: 'Exportdatei herunterladen',
+          exportedElementsUrns: 'Exportierte Elemente urns',
+          infoTexts: {
+            1: 'leerer Export'
+          }
+        }
       },
       search: {
         title: 'Search',
         subtitle: '',
         elementSections: 'Element sections',
         searchResult: 'Search result'
+      },
+      relation: {
+        title: 'Beziehung',
+        newRelation: 'Neue Beziehung erstellen',
+        relationMessage: {
+          deleteRelationConfirmation: 'Wollen Sie diese Beziehung wirklich dauerhaft löschen?',
+          buttons: {
+            cancel: 'ABBRECHEN',
+            ok: 'OK'
+          }
+        }
       }
     },
     settings: {
