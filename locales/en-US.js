@@ -29,7 +29,8 @@ export default {
         importExport: 'Import / Export',
         import: 'Import',
         export: 'Export',
-        search: 'Search'
+        search: 'Search',
+        relation: 'Relation'
       },
       settings: 'Settings',
       about: 'About',
@@ -393,6 +394,17 @@ export default {
         subtitle: '',
         elementSections: 'Element sections',
         searchResult: 'Search result'
+      },
+      relation: {
+        title: 'Relation',
+        newRelation: 'Create New Relation',
+        relationMessage: {
+          deleteRelationConfirmation: 'Are you sure you want to permanently remove this relation?',
+          buttons: {
+            cancel: 'CANCEL',
+            ok: 'OK'
+          }
+        }
       }
     },
     settings: {

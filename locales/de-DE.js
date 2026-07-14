@@ -29,7 +29,8 @@ export default {
         importExport: 'Importieren / Exportieren',
         import: 'Import',
         export: 'Export',
-        search: 'Suche'
+        search: 'Suche',
+        relation: 'Beziehung'
       },
       settings: 'Einstellungen',
       about: 'App Informationen',
@@ -391,6 +392,17 @@ export default {
         subtitle: '',
         elementSections: 'Element sections',
         searchResult: 'Search result'
+      },
+      relation: {
+        title: 'Beziehung',
+        newRelation: 'Neue Beziehung erstellen',
+        relationMessage: {
+          deleteRelationConfirmation: 'Wollen Sie diese Beziehung wirklich dauerhaft löschen?',
+          buttons: {
+            cancel: 'ABBRECHEN',
+            ok: 'OK'
+          }
+        }
       }
     },
     settings: {

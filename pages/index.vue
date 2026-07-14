@@ -40,7 +40,7 @@
           height="80px"
           width="80px"
           contain
-          :src="require('~/assets/images/logo/extern/' + logo)"
+          :src="('~/assets/images/logo/extern/' + logo)"
         />
       </v-col>
     </v-row>

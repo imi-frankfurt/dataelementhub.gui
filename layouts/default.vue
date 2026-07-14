@@ -51,6 +51,14 @@
                 </v-list-item-icon>
                 <v-list-item-title><v-list-item-title v-text="$t('global.mainMenu.tools.importExport')" /></v-list-item-title>
               </v-list-item>
+              <v-list-item to="/tools/relation">
+                <v-list-item-icon>
+                  <v-icon color="white">
+                    mdi-relation-many-to-many
+                  </v-icon>
+                </v-list-item-icon>
+                <v-list-item-title><v-list-item-title v-text="$t('global.mainMenu.tools.relation')" /></v-list-item-title>
+              </v-list-item>
             </v-list-item-group>
           </div>
         </client-only>

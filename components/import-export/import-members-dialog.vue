@@ -168,7 +168,6 @@ export default {
         show-select
         class="elevation-1 pa-8"
         fixed-header
-        hide-default-footer
         height="400px"
       >
         <template #top>
