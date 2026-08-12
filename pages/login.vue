@@ -58,12 +58,12 @@
     </v-row>
     <v-row class="extern-logos-row">
       <v-col v-for="logo in externalLogos" :key="logo" align="center">
-<!--        <v-img-->
-<!--          height="80px"-->
-<!--          width="80px"-->
-<!--          contain-->
-<!--     :src="require('~/assets/images/logo/extern/' + logo)"-->
-<!--        />-->
+        <v-img
+          height="80px"
+          width="80px"
+          contain
+          :src="('~/assets/images/logo/extern/' + logo)"
+        />
       </v-col>
     </v-row>
   </v-container>

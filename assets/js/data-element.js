@@ -2,7 +2,6 @@ import TextValidation from '~/components/validation/text'
 import NumericValidation from '~/components/validation/numeric'
 import DateTimeValidation from '~/components/validation/datetime'
 import ItemDefinition from '~/components/item/item-definition'
-// import defined from '~/components/validation/Defined.vue'
 export default {
   defaultDataElement () {
     return {

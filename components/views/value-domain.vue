@@ -154,9 +154,7 @@ export default {
       await this.$axios.$get(this.ajax.dataElementUrl + this.urn + '/valuedomain',
         Ajax.header.preferredLanguage)
         .then(function (res) {
-          console.log('res:', res)
           this.valueDomain = res
-          console.log('this.valueDomain:', this.valueDomain)
         }.bind(this))
         .catch(function (err) {
           this.$log.error('Unable to fetch ValueDomain:' + err)

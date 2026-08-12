@@ -369,7 +369,6 @@ import EnumeratedValueDomainDetailView from '~/components/views/enumerated-value
 import Defined from '~/components/validation/Defined.vue'
 export default {
   components: {
-    // DefinedValueDomainDetailView,
     Defined,
     Enumerated,
     ItemDefinition,
@@ -510,7 +509,6 @@ export default {
               }
               dataElement.valueDomain = Object.assign({}, valueDomain)
               this.dataElement = Object.assign({}, dataElement)
-              console.log(dataElement.valueDomain)
               this.released = (this.dataElement.identification.status === 'RELEASED')
               this.edit = true
             }.bind(this))
@@ -557,7 +555,7 @@ export default {
               this.$root.$emit('handleSaveFailure', err.response)
             }.bind(this))
         } else { // ... otherwise we update it.
-          delete this.dataElement.valueDomain // Remove this for current release
+          delete this.dataElement.valueDomain
           await this.$axios.put(this.ajax.dataElementUrl + this.dataElement.identification.urn,
             this.dataElement)
             .then(function (res) {
