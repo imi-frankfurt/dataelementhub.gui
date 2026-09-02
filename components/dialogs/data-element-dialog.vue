@@ -537,10 +537,6 @@ export default {
           if (element.valueDomain && element.valueDomain.type === 'ENUMERATED') {
             delete element.valueDomain
           }
-          console.log('element', element)
-          console.log('definitions', this.dataElement.valueDomain.definitions)
-          console.log('definedPermittedValues', this.dataElement.valueDomain.definedPermittedValues)
-          console.log('valueDomainReferenceDTO', this.dataElement.valueDomain.valueDomainReferenceDTO)
 
           await this.$axios.post(this.ajax.dataElementUrl, element)
             .then(function (res) {

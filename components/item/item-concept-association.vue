@@ -357,7 +357,6 @@ export default {
 
           this.searchResults = data.items ?? data
           this.showResultsModal = true
-          console.log('response:', this.searchResults)
           return
         }
         // UMLS
@@ -385,7 +384,6 @@ export default {
 
           this.searchResults = data.items ?? data
           this.showResultsModal = true
-          console.log('response:', this.searchResults)
           return
         }
 
@@ -401,7 +399,6 @@ export default {
 
         this.searchResults = data
         this.showResultsModal = true
-        console.log('response:', this.searchResults)
       } catch (error) {
         console.error('Error retrieving terminology:', error)
       }
