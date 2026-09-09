@@ -96,7 +96,7 @@
                         :designation="itemDefinition.designation"
                         :language="itemDefinition.language"
                         @definition="itemDefinition.definition = $event"
-                        @designation="itemDefinition.designation = $event"
+                        @designation="updateDesignation(index, $event)"
                         @language="itemDefinition.language = $event"
                       />
                     </v-col>
@@ -241,6 +241,16 @@
                     </a>
                   </v-list-item-subtitle>
                 </v-list-item>
+                <Defined
+                  v-if="dataElement.valueDomain.type === 'DEFINED'"
+                  :namespace-id="selectedNamespaceId"
+                  :definitions="dataElement.valueDomain.definitions"
+                  :defined-permitted-values="dataElement.valueDomain.definedPermittedValues"
+                  :value-domain-reference-d-t-o="dataElement.valueDomain.valueDomainReferenceDTO"
+                  @update:definitions="dataElement.valueDomain.definitions = $event"
+                  @update:definedPermittedValues="dataElement.valueDomain.definedPermittedValues = $event"
+                  @update:valueDomainReferenceDTO="dataElement.valueDomain.valueDomainReferenceDTO = $event"
+                />
                 <text-validation
                   v-if="dataElement.valueDomain.type === 'STRING'"
                   :use-reg-ex="dataElement.valueDomain.text.useRegEx"
@@ -356,8 +366,10 @@ import NumericValidation from '~/components/validation/numeric'
 import DatetimeValidation from '~/components/validation/datetime'
 import Enumerated from '~/components/validation/enumerated'
 import EnumeratedValueDomainDetailView from '~/components/views/enumerated-value-domain-detail-view'
+import Defined from '~/components/validation/Defined.vue'
 export default {
   components: {
+    Defined,
     Enumerated,
     ItemDefinition,
     ItemSlot,
@@ -382,6 +394,7 @@ export default {
       dialog: false,
       dataElement: Object.assign({}, Common.defaultDataElement()),
       defaultEnumeratedValueDomain: Object.assign({}, Common.defaultEnumeratedValueDomain()),
+      defaultDefinedValueDomain: Object.assign({}, Common.defaultDefinedValueDomain()),
       form: {
         valid: true,
         lazy: false
@@ -391,14 +404,18 @@ export default {
         urn: ''
       },
       availableEnumertedValueDomains: [],
+      availableDefinedValueDomains: [],
       selectedNamespaceId: -1,
-      statuses: Common.elementStatuses(),
+      statuses: Common.elementStatuses(['OUTDATED']),
       namespaces: [],
       elementValueDomains: Common.elementValueDomains(),
       released: false,
       edit: false,
       selectNumeric: 'INTEGER',
-      numericValueDomains: Common.numericValueDomains()
+      numericValueDomains: Common.numericValueDomains(),
+      definedPermittedValues: [],
+      valueDomainReferenceDTO: {},
+      valueDomainDefinitions: []
     }
   },
   computed: {
@@ -479,8 +496,16 @@ export default {
               if (res1.text !== undefined) { valueDomain.text = res1.text }
               if (res1.datetime !== undefined) { valueDomain.datetime = res1.datetime }
               if (res1.numeric !== undefined) { valueDomain.numeric = res1.numeric }
+              if (res1.enumerated !== undefined) { valueDomain.enumerated = res1.enumerated }
+              if (res1.defined !== undefined) { valueDomain.defined = res1.defined }
               if (res1.permittedValues !== undefined) {
                 valueDomain.permittedValues = res1.permittedValues
+              }
+              if (res1.definitions !== undefined) {
+                valueDomain.definitions = res1.definitions
+              }
+              if (res1.definedPermittedValues !== undefined) {
+                valueDomain.definedPermittedValues = res1.definedPermittedValues
               }
               dataElement.valueDomain = Object.assign({}, valueDomain)
               this.dataElement = Object.assign({}, dataElement)
@@ -509,9 +534,10 @@ export default {
         this.$log.debug('Saving DataElement ...')
         if (this.urn === '') { // If the DataElement URN is empty we have to save it ...
           const element = this.dataElement
-          if (element.valueDomain.type === 'ENUMERATED') {
+          if (element.valueDomain && element.valueDomain.type === 'ENUMERATED') {
             delete element.valueDomain
           }
+
           await this.$axios.post(this.ajax.dataElementUrl, element)
             .then(function (res) {
               if (res !== undefined) {
@@ -525,7 +551,7 @@ export default {
               this.$root.$emit('handleSaveFailure', err.response)
             }.bind(this))
         } else { // ... otherwise we update it.
-          delete this.dataElement.valueDomain // Remove this for current release
+          delete this.dataElement.valueDomain
           await this.$axios.put(this.ajax.dataElementUrl + this.dataElement.identification.urn,
             this.dataElement)
             .then(function (res) {
@@ -540,7 +566,13 @@ export default {
               this.$root.$emit('handleSaveFailure', err.response)
             }.bind(this))
         }
+        this.$store.commit('setDesignation', '')
       }
+    },
+    // save the value of designation and update in store
+    updateDesignation (index, value) {
+      this.dataElement.definitions[index].designation = value
+      this.$store.dispatch('updateDesignation', value) // Update Vuex
     },
     addDefinition () {
       this.dataElement.definitions.push(ItemDefinition.data().defaultDefinition)
@@ -568,6 +600,7 @@ export default {
       this.$delete(valueDomain, 'numeric')
       this.$delete(valueDomain, 'datetime')
       this.$delete(valueDomain, 'permittedValues')
+      this.$delete(valueDomain, 'definedPermittedValues')
       this.$log.debug(this.dataElement)
       switch (valueDomain.type) {
         case 'NUMERIC':
@@ -575,6 +608,9 @@ export default {
           break
         case 'ENUMERATED':
           this.$set(valueDomain, 'permittedValues', DataElement.defaultPermittedValuesValueDomain())
+          break
+        case 'DEFINED':
+          this.$set(valueDomain, 'definedPermittedValues', DataElement.defaultDefinedValueDomain())
           break
         case 'DATETIME':
           this.$set(valueDomain, 'datetime', DataElement.defaultDateTimeValidation())

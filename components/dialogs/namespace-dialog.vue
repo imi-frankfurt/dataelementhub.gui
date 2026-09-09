@@ -191,7 +191,7 @@ export default {
   data () {
     return {
       ajax: {
-        namespaceUrl: process.env.mdrBackendUrl + '/v1/namespaces/'
+        namespaceUrl: process.env.mdrBackendUrl + '/v1/namespaces'
       },
       dialog: false,
       namespace: Object.assign({}, Common.defaultNamespace()),
@@ -199,7 +199,7 @@ export default {
         valid: true,
         lazy: false
       },
-      statuses: Common.elementStatuses(),
+      statuses: Common.elementStatuses(['OUTDATED']),
       released: false
     }
   },

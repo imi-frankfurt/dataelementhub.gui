@@ -73,5 +73,57 @@ export default {
         meanings: []
       }
     ]
+  },
+  defaultDefinedValueDomain () {
+    return [
+      {
+        identification: {
+          elementType: 'DEFINED_VALUE_DOMAIN',
+          status: 'DRAFT'
+        },
+        definitions: [{
+          designation: ItemDefinition.props.designation.default,
+          definition: ItemDefinition.props.definition.default,
+          language: ItemDefinition.props.language.default
+        }],
+        valueDomainReferenceDTO: {
+          codeSystem: {
+            version: '',
+            sourceId: ''
+          },
+          subsetUri: ''
+        },
+        definedPermittedValues: [
+          {
+            identification: {
+              elementType: 'DEFINED_PERMISSIBLE_VALUE',
+              status: 'DRAFT'
+            },
+            definitions: [{
+              designation: ItemDefinition.props.designation.default,
+              definition: ItemDefinition.props.definition.default,
+              language: ItemDefinition.props.language.default
+            }],
+            value: undefined
+          }
+        ]
+      }
+    ]
+  },
+  defaultDefinedPermittedValuesValueDomain () {
+    return [
+      {
+        identification: {
+          elementType: 'DEFINED_PERMISSIBLE_VALUE',
+          status: 'DRAFT'
+        },
+        definitions: [{
+          designation: ItemDefinition.props.designation.default,
+          definition: ItemDefinition.props.definition.default,
+          language: ItemDefinition.props.language.default
+        }],
+        value: undefined
+      }
+    ]
   }
 }

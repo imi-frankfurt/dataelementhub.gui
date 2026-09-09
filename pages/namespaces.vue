@@ -284,7 +284,7 @@ export default {
   data () {
     return {
       ajax: {
-        namespaceUrl: process.env.mdrBackendUrl + '/namespaces/'
+        namespaceUrl: process.env.mdrBackendUrl + '/v1/namespaces'
       },
       global: {
         currentNamespace: undefined,

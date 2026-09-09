@@ -27,6 +27,28 @@
       :values="valueDomain.permittedValues"
       :clickable="true"
     />
+    <v-card v-if="valueDomain.type === 'DEFINED' && valueDomain.valueDomainReferenceDTO" outlined>
+      <v-card-title class="text-h6" />
+      <v-card-text>
+        <v-row dense>
+          <v-col cols="12" sm="3">
+            <strong>Value Domain Designation:</strong> {{ valueDomain.definitions[0]?.designation || '-' }}
+          </v-col>
+          <v-col cols="12" sm="3">
+            <strong>Value Domain Definition:</strong> {{ valueDomain.definitions[0]?.definition || '-' }}
+          </v-col>
+          <v-col cols="12" sm="3">
+            <strong>Subset URI:</strong>
+            <a :href="valueDomain.valueDomainReferenceDTO.subsetUri" target="_blank">{{ valueDomain.valueDomainReferenceDTO.subsetUri }}</a>
+          </v-col>
+        </v-row>
+      </v-card-text>
+    </v-card>
+    <DefinedPermittedValuesTable
+      v-if="valueDomain.type === 'DEFINED' && valueDomain.valueDomainReferenceDTO"
+      :values="valueDomain.definedPermittedValues"
+      :clickable="true"
+    />
     <concept-association-table
       v-if="valueDomain.conceptAssociations.length > 0"
       :associations="valueDomain.conceptAssociations"
@@ -37,8 +59,10 @@
 import Ajax from '~/config/ajax'
 import ConceptAssociationTable from '~/components/tables/concept-association-table'
 import PermittedValuesTable from '~/components/tables/permitted-values-table'
+import DefinedPermittedValuesTable from '~/components/tables/defined-permitted-values-table.vue'
 export default {
   components: {
+    DefinedPermittedValuesTable,
     ConceptAssociationTable,
     PermittedValuesTable
   },
@@ -118,6 +142,8 @@ export default {
             this.$i18n.t('global.hourFormat'), this.$i18n.t('global.date'))
           this.valueDomainMetaData.values.push(this.valueDomain.datetime.time,
             this.valueDomain.datetime.hourFormat, this.valueDomain.datetime.date)
+          break
+        case 'DEFINED':
           break
         default:
           break

@@ -27,6 +27,8 @@ export default {
         mapping: 'Mapping',
         visualizer: 'Visualizer',
         importExport: 'Import / Export',
+        import: 'Import',
+        export: 'Export',
         search: 'Search'
       },
       settings: 'Settings',
@@ -88,6 +90,9 @@ export default {
     slots: 'Slots',
     valueDomain: 'Value Domain',
     permittedValue: 'Permitted Value',
+    definedPermittedValue: 'Defined Permitted Value',
+    definedPermittedValues: 'Defined Permitted Values',
+    valueDomainReferenceDTO: 'Value Domain Reference',
     valueDomains: 'Value Domains',
     valueDomainNotEditable: 'Value Domains can not be edited right now.',
     language: 'Language',
@@ -202,6 +207,29 @@ export default {
         1: 'Enumerated value domains can only be created using the rest api:',
         2: 'Available Value Domains'
       }
+    },
+    importMembersDialog: {
+      importedMembers: 'IMPORTED MEMBERS',
+      importId: 'Import id',
+      namespaceUrn: 'Namespace urn',
+      buttons: {
+        back: 'BACK',
+        close: 'CLOSE',
+        convertToDraft: 'CONVERT TO DRAFT'
+      },
+      infoTexts: {
+        1: 'This is a staged element only and exists in the staging area. If you want to use it in your namespace, you must first convert it to a draft.'
+      }
+    },
+    startExportDialog: {
+      newExport: 'NEW EXPORT',
+      exportLabel: 'Enter your export label',
+      fullExport: 'Full export',
+      fullExportDescription: 'This option will automatically add elements history to the export (all available revisions).',
+      exportFormat: 'Export format',
+      json: 'JSON',
+      xml: 'XML',
+      search: 'Search'
     }
   },
   pages: {
@@ -341,7 +369,27 @@ export default {
       },
       importExport: {
         title: 'Import & Export',
-        subtitle: ''
+        subtitle: '',
+        import: {
+          buttons: {
+            cancel: 'CANCEL',
+            ok: 'OK'
+          },
+          newImport: 'NEW IMPORT',
+          deleteImportConfirmation: 'Are you sure you want to permanently remove this import?',
+          manageImportedElements: 'MANAGE IMPORTED ELEMENTS',
+          noImportsAvailable: 'NO IMPORTS AVAILABLE',
+          downloadImportFileExample: 'Download import file example'
+        },
+        export: {
+          newExport: 'NEW EXPORT',
+          noExportsAvailable: 'NO EXPORTS AVAILABLE',
+          downloadExportFile: 'Download export file',
+          exportedElementsUrns: 'Exported elements urns',
+          infoTexts: {
+            1: 'empty export'
+          }
+        }
       },
       search: {
         title: 'Search',

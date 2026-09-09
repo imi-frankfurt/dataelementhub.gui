@@ -1,6 +1,7 @@
 export const state = () => ({
   treeItemId: -1,
-  activeTreeViewNode: { urn: '' }
+  activeTreeViewNode: { urn: '' },
+  designation: ''
 })
 
 export const getters = {
@@ -12,6 +13,9 @@ export const getters = {
   },
   getActiveTreeViewNode (state) {
     return state.activeTreeViewNode
+  },
+  getDesignation (state) {
+    return state.designation
   }
 }
 
@@ -24,5 +28,13 @@ export const mutations = {
   },
   generateItemId (state) {
     state.treeItemId = state.treeItemId + 1
+  },
+  setDesignation (state, value) {
+    state.designation = value
+  }
+}
+export const actions = {
+  updateDesignation ({ commit }, value) {
+    commit('setDesignation', value)
   }
 }
